@@ -102,10 +102,12 @@
 //   );
 // }
 
-import LoginForm from '@/components/forms/LoginForm'
+// import LoginForm from '@/components/forms/LoginForm'
+import InternDashboard from './(intern)/dashboard/InternDashboard'
 
 export default function HomePage() {
   // console.log('SUPABASE URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
   // console.log('SUPABASE ANON:', process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY)
-  return <LoginForm />
+  // return <LoginForm />
+  return <InternDashboard />
 }
