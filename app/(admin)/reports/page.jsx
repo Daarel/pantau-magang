@@ -1,9 +1,9 @@
 import LayoutWrapper from '@/components/layout/LayoutWrapper'
 
-export default function InternSchedule() {
+export default function AdminReports() {
   return (
     <LayoutWrapper>
-      <h1>InternSchedule</h1>
+      <h1>Daftar Report</h1>
     </LayoutWrapper>
   )
 }

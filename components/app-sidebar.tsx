@@ -14,34 +14,53 @@ import {
 } from "@/components/ui/sidebar"
 
 // Menu items.
-const items = [
-  {
-    title: "Dashboard",
-    url: "#",
-    icon: FiHome,
-    path: '/dashboard'
-  },
-  {
-    title: "Attendance",
-    url: "#",
-    icon: GoClock,
-    path: '/attendance'
-  },
-  {
-    title: "Schedule",
-    url: "#",
-    icon: FiCalendar,
-    path: '/schedule'
-  },
-  {
-    title: "Leave Requests",
-    url: "#",
-    icon: IoDocumentTextOutline,
-    path: '/leave'
-  },
-]
+// const items = [
+//   {
+//     title: "Dashboard",
+//     url: "#",
+//     icon: FiHome,
+//     path: '/intern/dashboard'
+//   },
+//   {
+//     title: "Attendance",
+//     url: "#",
+//     icon: GoClock,
+//     path: '/attendance'
+//   },
+//   {
+//     title: "Schedule",
+//     url: "#",
+//     icon: FiCalendar,
+//     path: '/schedule'
+//   },
+//   {
+//     title: "Leave Requests",
+//     url: "#",
+//     icon: IoDocumentTextOutline,
+//     path: '/leave'
+//   },
+// ]
+
+const menuByRole = {
+  intern: [
+    { title: 'Dashboard', path: '/dashboard', icon: FiHome, },
+    { title: 'Attendance', path: '/attendance', icon: GoClock, },
+    { title: 'Schedule', path: '/schedule', icon: FiCalendar, },
+    { title: 'Leave', path: '/leave', icon: IoDocumentTextOutline, }
+  ],
+  supervisor: [
+    { title: 'My Interns', path: '/interns', icon: FiHome, },
+    { title: 'Reports', path: '/supervisor_reports', icon: GoClock, },
+  ],
+  admin: [
+    { title: 'Users', path: '/users', icon: FiHome, },
+    { title: 'Reports', path: '/reports', icon: GoClock, },
+    { title: 'Settings', path: '/settings', icon: GoClock, },
+  ],
+}
 
 export function AppSidebar() {
+  const role = "intern" // dummy role
   return (
     <Sidebar>
       <SidebarContent>
@@ -49,13 +68,18 @@ export function AppSidebar() {
           {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {/* {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    {/* <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a> */}
+                    <Link href={item.path}>
+                      <item.icon />{item.title}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))} */}
+              {menuByRole[role].map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
                     <Link href={item.path}>
                       <item.icon />{item.title}
                     </Link>

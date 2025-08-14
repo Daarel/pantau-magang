@@ -26,7 +26,10 @@ export default function Navbar() {
         <NavigationMenuList className="flex items-center gap-4">
           <NavigationMenuItem>
             <div className="flex items-center gap-2">
-              <span>{user.full_name}</span>
+              <div className="flex flex-col">
+                <span>{user.full_name}</span>
+                <span className="text-sm text-gray-600"></span>
+              </div>
               <Avatar>
                 <AvatarFallback>{user.full_name.charAt(0)}</AvatarFallback>
               </Avatar>
