@@ -102,7 +102,7 @@
 //   );
 // }
 
-// import LoginForm from '@/components/forms/LoginForm'
+import LoginForm from '@/components/forms/LoginForm'
 import InternDashboard from './(intern)/dashboard/InternDashboard'
 
 export default function HomePage() {
