@@ -1,14 +1,23 @@
 'use client'
-import Sidebar from './Sidebar'
-import Navbar from './Navbar'
+import { SidebarProvider, SidebarInset, } from "@/components/ui/sidebar"
+// import { AppSidebar } from "@/components/layout/AppSidebar";
+import { AppSidebar } from "@/components/app-sidebar"
+
+import Navbar from "@/components/layout/Navbar";
 
 export default function LayoutWrapper({ children }) {
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1">
-        <Navbar />
-        <main className="p-4">{children}</main>
+    <div className="flex flex-col w-full">
+      <Navbar />
+      <div className="flex flex-1">
+        <SidebarProvider>
+          <div className="flex min-h-screen w-full">
+            <AppSidebar />
+            <SidebarInset>
+              <main className="p-4 mt-12">{children}</main>
+            </SidebarInset>
+          </div>
+        </SidebarProvider>
       </div>
     </div>
   )
