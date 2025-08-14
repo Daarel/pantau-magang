@@ -1,3 +1,29 @@
+// import { supabase } from "./supabaseClient";
+// import bcrypt from "bcryptjs";
+
+// export async function loginUser(nomorInduk: string, password: string) {
+//   // Ambil user berdasarkan nomor_induk
+//   const { data: user, error } = await supabase
+//     .from("user")
+//     .select("*")
+//     .eq("nomor_induk", nomorInduk)
+//     .single();
+
+//   if (error || !user) {
+//     return { error: "Nomor Induk tidak ditemukan" };
+//   }
+
+//   // Bandingkan password input dengan hash dari database
+//   const isPasswordValid = await bcrypt.compare(password, user.password);
+
+//   if (!isPasswordValid) {
+//     return { error: "Password salah" };
+//   }
+
+//   // Kembalikan data user jika sukses
+//   return { user };
+// }
+
 // import bcrypt from 'bcryptjs'
 // import { supabase } from './supabaseClient'
 
@@ -30,15 +56,15 @@
 import bcrypt from 'bcryptjs'
 import { supabase } from './supabaseClient'
 
-export async function loginUser(nmr_induk, password) {
-  console.log("DEBUG: Input nomor induk:", nmr_induk)
+export async function loginUser(nomorInduk: string, password: string) {
+  console.log("DEBUG: Input nomor induk:", nomorInduk)
   console.log("DEBUG: Input password:", password)
 
   // Query ke Supabase
   const { data: user, error } = await supabase
     .from('users')
     .select('*')
-    .eq('nmr_induk', nmr_induk) // Jangan parse jadi int untuk tes debug
+    .eq('nmr_induk', nomorInduk) // Jangan parse jadi int untuk tes debug
     .single()
 
   console.log("DEBUG: Response Supabase data:", user)
