@@ -139,4 +139,22 @@
   body {
     @apply bg-background text-foreground;
   }
+  .h1 {
+    @apply text-[36px] xl:text-[48px];
+  }
+  .h2 {
+  @apply text-[30px] xl:text-[40px];
+  }
+  .h3 {
+    @apply text-[24px] xl:text-[32px];
+  }
+  .h4 {
+    @apply text-[20px] xl:text-[28px];
+  }
+  .h5 {
+    @apply text-[18px] xl:text-[24px];
+  }
+  .h6 {
+    @apply text-[16px] xl:text-[20px];
+  }
 }

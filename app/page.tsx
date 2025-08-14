@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";  
 import LoginForm from "@/components/forms/LoginForm";
 
+import InternDashboard from "@/app/(intern)/dashboard/InternDashboard";
+
 type UserRole = "intern" | "supervisor" | "admin";
 
 export interface User {
@@ -30,7 +32,8 @@ export default function LoginPage() {
   };
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <LoginForm onLogin={handleLogin} />
+      {/* <LoginForm onLogin={handleLogin} /> */}
+      <InternDashboard />
     </main>
   );
 }
