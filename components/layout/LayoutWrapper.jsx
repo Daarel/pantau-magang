@@ -14,7 +14,7 @@ export default function LayoutWrapper({ children }) {
           <div className="flex min-h-screen w-full">
             <AppSidebar />
             <SidebarInset>
-              <main className="p-4 mt-12">{children}</main>
+              <main className="p-4 mt-16 sm:mt-12">{children}</main>
             </SidebarInset>
           </div>
         </SidebarProvider>
