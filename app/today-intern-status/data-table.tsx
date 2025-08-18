@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="border-2 rounded-md p-4">
       <div>
-        <h5 className="h5 font-semibold mb-4">Today's Intern Status</h5>
+        <h5 className="h5 font-semibold mb-4">Today&apos;s Intern Status</h5>
       </div>
       {/* Field input filter */}
       {(enableFilter || enableColumnVisibility) && (
