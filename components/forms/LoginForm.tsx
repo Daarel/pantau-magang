@@ -4,15 +4,16 @@ import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { CiLock } from "react-icons/ci";
 import { FaRegUser } from "react-icons/fa";
+import Image from "next/image";
+import LogoESDM from '@/public/logo.png';
 import Card from "../Card";
 import CardContent from "../CardContent";
 import CardHeader from "../CardHeader";
 import CardTitle from "../CardTitle";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import type { FC } from "react";
 import { loginUser } from "@/lib/auth";
-
+import type { FC } from "react";
 import type { User } from "@/app/page";
 
 interface LoginFormProps {
@@ -20,11 +21,11 @@ interface LoginFormProps {
 }
 
 const LoginForm: FC<LoginFormProps> = ({ onLogin }) => {
-  const [nomorInduk, setNomorInduk] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [nomorInduk, setNomorInduk] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +33,7 @@ const LoginForm: FC<LoginFormProps> = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const res = await loginUser(nomorInduk, password);
+      const res = await loginUser(Number(nomorInduk), password);
       if (res.error) {
         setError(res.error);
       } else {
@@ -50,8 +51,8 @@ const LoginForm: FC<LoginFormProps> = ({ onLogin }) => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto bg-blue-600 rounded-lg p-3 w-fit mb-4">
-            <div className="text-white font-bold text-lg">LEMIGAS</div>
+          <div className="mx-auto p-3 w-fit mb-4">
+            <Image src={LogoESDM} alt="Logo Kementrian Energi dan Sumber Daya Mineral" width={150} height={150} priority />
           </div>
           <CardTitle className="text-2xl text-gray-900">
             PANTAU MAGANG
@@ -95,9 +96,9 @@ const LoginForm: FC<LoginFormProps> = ({ onLogin }) => {
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 {showPassword ? (
-                  <AiOutlineEyeInvisible className="h-5 w-5" />
-                ) : (
                   <AiOutlineEye className="h-5 w-5" />
+                ) : (
+                  <AiOutlineEyeInvisible className="h-5 w-5" />
                 )}
               </button>
             </div>
