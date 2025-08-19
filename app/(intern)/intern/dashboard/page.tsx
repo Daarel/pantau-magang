@@ -1,6 +1,5 @@
 'use client'
 import LayoutWrapper from '@/components/layout/LayoutWrapper'
-import React, { useState, useEffect } from 'react';
 // Icons
 import { GoClock } from "react-icons/go";
 import { FiCalendar, } from "react-icons/fi";
@@ -9,7 +8,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { Badge } from "@/components/ui/badge"
 import PieChart from '@/components/PieChart';
 // Styles
-import '../../globals.css'
+import '../../../globals.css'
 
 export default function InternDashboard() {
   return (
@@ -29,7 +28,7 @@ export default function InternDashboard() {
             {/* Header */}
             <div className='flex items-center justify-center gap-3'>
               <GoClock className='text-blue-500 w-6 h-6' />
-              <h4 className='h5 font-semibold'> Today's Attendance</h4>
+              <h4 className='h5 font-semibold'> Today&apos;s Attendance</h4>
             </div>
 
             {/* Status */}

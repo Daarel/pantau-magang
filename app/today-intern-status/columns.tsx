@@ -1,7 +1,6 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
 import { DataTableColumnHeader } from "@/components/data-table-column-header"
 
 // This type is used to define the shape of our data.

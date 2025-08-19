@@ -18,7 +18,7 @@ export default function SupervisorDashboard() {
       <div className='flex flex-col items-center min-h-screen w-full gap-4'>
         {/* 1. Header */}
         <div className='bg-[#16A049] w-full p-7 rounded-md'>
-          <h1 className='title'>Supervisor Dashboard</h1>
+          <h1 className='title_header'>Supervisor Dashboard</h1>
           <h6 className='text-xl mb-1 text-white'>Welcome, Yasdi Pramesti</h6>
           <h6 className='text-xl mb-1 text-white'>Manage your assigned interns and track their progress</h6>
         </div>

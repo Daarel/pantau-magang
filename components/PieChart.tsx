@@ -42,7 +42,7 @@ export default function PieChart() {
   };
 
   return (
-    <div className="flex items-center justify-center w-2/3 xl:w-1/2">
+    <div className='flex items-center justify-center w-2/3 xl:w-1/2'>
       <Pie data={data} options={options} />
     </div>
   );
