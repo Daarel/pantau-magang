@@ -8,7 +8,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { Badge } from "@/components/ui/badge"
 import PieChart from '@/components/PieChart';
 // Styles
-import '../../globals.css'
+import '../../../globals.css'
 
 export default function InternDashboard() {
   return (

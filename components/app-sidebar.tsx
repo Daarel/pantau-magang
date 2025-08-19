@@ -12,55 +12,40 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-
-// Menu items.
-// const items = [
-//   {
-//     title: "Dashboard",
-//     url: "#",
-//     icon: FiHome,
-//     path: '/intern/dashboard'
-//   },
-//   {
-//     title: "Attendance",
-//     url: "#",
-//     icon: GoClock,
-//     path: '/attendance'
-//   },
-//   {
-//     title: "Schedule",
-//     url: "#",
-//     icon: FiCalendar,
-//     path: '/schedule'
-//   },
-//   {
-//     title: "Leave Requests",
-//     url: "#",
-//     icon: IoDocumentTextOutline,
-//     path: '/leave'
-//   },
-// ]
+// import { auth } from "@/lib/server/auth"
 
 const menuByRole = {
   intern: [
-    { title: 'Dashboard', path: '/dashboard', icon: FiHome, },
-    { title: 'Attendance', path: '/attendance', icon: GoClock, },
-    { title: 'Schedule', path: '/schedule', icon: FiCalendar, },
-    { title: 'Leave', path: '/leave', icon: IoDocumentTextOutline, }
+    { title: 'Dashboard', path: '/intern/dashboard', icon: FiHome, },
+    { title: 'Attendance', path: '/intern/attendance', icon: GoClock, },
+    { title: 'Schedule', path: '/intern/schedule', icon: FiCalendar, },
+    { title: 'Leave', path: '/intern/leave', icon: IoDocumentTextOutline, }
   ],
   supervisor: [
-    { title: 'My Interns', path: '/interns', icon: FiHome, },
-    { title: 'Reports', path: '/supervisor_reports', icon: GoClock, },
+    { title: 'Dashboard', path: '/supervisor/dashboard', icon: FiHome, },
+    { title: 'Attendance', path: '/supervisor/attendance', icon: GoClock, },
+    { title: 'Schedule', path: '/supervisor/schedule', icon: FiCalendar, },
+    { title: 'Leave Requests', path: '/supervisor/leave-request', icon: IoDocumentTextOutline, },
+    { title: 'My Interns', path: '/supervisor/my-interns', icon: FiHome, },
+    { title: 'Reports', path: '/supervisor/reports', icon: GoClock, },
   ],
   admin: [
-    { title: 'Users', path: '/users', icon: FiHome, },
-    { title: 'Reports', path: '/reports', icon: GoClock, },
-    { title: 'Settings', path: '/settings', icon: GoClock, },
+    { title: 'Dashboard', path: '/admin/dashboard', icon: FiHome, },
+    { title: 'Attendance', path: '/admin/attendance', icon: GoClock, },
+    { title: 'Schedule', path: '/admin/schedule', icon: FiCalendar, },
+    { title: 'Leave Requests', path: '/admin/leave-request', icon: IoDocumentTextOutline, },
+    { title: 'Users', path: '/admin/users', icon: FiHome, },
+    { title: 'Reports', path: '/admin/reports', icon: GoClock, },
+    { title: 'Settings', path: '/admin/settings', icon: GoClock, },
   ],
 }
 
-export function AppSidebar() {
+export async function AppSidebar() {
   const role = "intern" // dummy role
+  // const session = await auth()
+  // const role = session?.role || 'intern';
+  // const menuItems = menuByRole[role as keyof typeof menuByRole] || menuByRole.intern;
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -68,7 +53,7 @@ export function AppSidebar() {
           {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
-              {/* {items.map((item) => (
+              {/* {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link href={item.path}>

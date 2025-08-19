@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getCurrentUser, logoutUser } from '@/lib/auth'
+import { getCurrentUser, logoutUser } from '@/lib/server/auth'
 
 export default function useAuth() {
   const [user, setUser] = useState(null)
