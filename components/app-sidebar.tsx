@@ -40,7 +40,7 @@ const menuByRole = {
   ],
 }
 
-export async function AppSidebar() {
+export function AppSidebar() {
   const role = "intern" // dummy role
   // const session = await auth()
   // const role = session?.role || 'intern';
