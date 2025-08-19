@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getAttendanceByUser } from '@/lib/queries'
+import { getAttendanceByUser } from '@/app/lib/queries'
 
 interface Attendance {
   id: number

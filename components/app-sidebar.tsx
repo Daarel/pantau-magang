@@ -1,3 +1,5 @@
+// "use client";
+
 import { FiHome, FiCalendar, } from "react-icons/fi";
 import { GoClock } from "react-icons/go";
 import { IoDocumentTextOutline } from "react-icons/io5";
@@ -13,6 +15,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 // import { auth } from "@/lib/server/auth"
+import { SessionData } from '@/lib/server/auth';
 
 const menuByRole = {
   intern: [

@@ -12,7 +12,7 @@ import CardHeader from "../CardHeader";
 import CardTitle from "../CardTitle";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { loginUser } from "@/lib/client/auth";
+import { loginUser } from "@/app/lib/client/auth";
 import type { FC } from "react";
 import type { User } from "@/app/page";
 
