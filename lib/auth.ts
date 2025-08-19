@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClient";
+import { supabase } from "./supabaseClient"
 
 export async function loginUser(nomorInduk: number, password: string) {
   console.log("DEBUG: Input nomor induk:", nomorInduk);
@@ -23,22 +23,15 @@ export async function loginUser(nomorInduk: number, password: string) {
     return { error: "Password salah" };
   }
 
+  // ✅ Simpan full user di localStorage (untuk client)
   localStorage.setItem("user", JSON.stringify(user));
-  console.log("DEBUG: User berhasil login, session tersimpan");
+
+  // ✅ Set cookie (supaya middleware bisa baca)
+  const session = { id: user.id, role: user.role };
+  const maxAge = 60 * 60 * 24 * 7; // 7 hari
+  document.cookie = `session=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=${maxAge}; samesite=lax`;
+
+  console.log("DEBUG: User berhasil login, session tersimpan + cookie di-set");
 
   return { user };
-}
-
-export function getCurrentUser() {
-  if (typeof window !== "undefined") {
-    const user = localStorage.getItem("user");
-    return user ? JSON.parse(user) : null;
-  }
-  return null;
-}
-
-export function logoutUser() {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("user");
-  }
 }
