@@ -1,4 +1,4 @@
-'use server'
+'use client'
 
 import { columns, Attendance } from "./columns"
 import { DataTable } from "./data-table"
