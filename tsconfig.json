@@ -22,6 +22,10 @@
       "@/*": ["./*"]
     }
   },
+<<<<<<< HEAD
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/lib/supabaseClient.ts", "app/lib/middleware.ts", "components/PieChart.tsx"],
+=======
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "lib/supabaseClient.ts", "lib/middleware.ts", "components/PieChart.tsx", "app/(supervisor)/supervisor/attendance/page.jsx", "app/intern/attendance/page.jsx"],
+>>>>>>> main
   "exclude": ["node_modules"]
 }

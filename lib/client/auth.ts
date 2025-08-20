@@ -20,11 +20,11 @@ export async function loginUser(nomorInduk: number, password: string) {
     return { error: "Nomor Induk tidak ditemukan" };
   }
 
-  const passwordMatch = await bcrypt.compare(password, user.password);
-  if (!passwordMatch) {
-    console.error("DEBUG: Password salah");
-    return { error: "Password salah" };
-  }
+  // const passwordMatch = await bcrypt.compare(password, user.password);
+  // if (!passwordMatch) {
+  //   console.error("DEBUG: Password salah");
+  //   return { error: "Password salah" };
+  // }
 
   // ✅ Simpan full user di localStorage (untuk client)
   const clientSafeUser = {
@@ -62,16 +62,20 @@ export async function loginUser(nomorInduk: number, password: string) {
 }
 
 export async function logoutUser() {
-  // Hapus dari localStorage
-  localStorage.removeItem("user");
-  
-  // Set cookie kedaluwarsa di masa lalu
-  document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-  
-  console.log("DEBUG: User berhasil logout");
+  try {
+    // Hapus data user dari localStorage
+    localStorage.removeItem("user");
+
+    // Hapus cookie session (set expire ke masa lalu)
+    document.cookie = "session=; path=/; max-age=0; secure; samesite=strict";
+
+    console.log("DEBUG: User berhasil logout");
+  } catch (err) {
+    console.error("DEBUG: Gagal logout", err);
+  }
 }
 
-export async function hashPassword(password: string): Promise<string> {
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
-}
+// export async function hashPassword(password: string): Promise<string> {
+//   const salt = await bcrypt.genSalt(10);
+//   return bcrypt.hash(password, salt);
+// }

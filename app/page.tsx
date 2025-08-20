@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useRouter } from "next/navigation";
 import LoginForm from "@/components/forms/LoginForm";
@@ -6,7 +6,7 @@ import LoginForm from "@/components/forms/LoginForm";
 type UserRole = "intern" | "supervisor" | "admin";
 
 export interface User {
-  role: UserRole
+  role: UserRole;
 }
 
 export default function LoginPage() {
@@ -29,7 +29,7 @@ export default function LoginPage() {
     }
   };
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+    <main className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100'>
       <LoginForm onLogin={handleLogin} />
     </main>
   );
