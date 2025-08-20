@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import LoginForm from "@/components/forms/LoginForm";
-import AdminDashboard from "@/app/admin/attendance/page";
+import AdminDashboard from "@/app/admin/dashboard/page";
 
 type UserRole = "intern" | "supervisor" | "admin";
 
