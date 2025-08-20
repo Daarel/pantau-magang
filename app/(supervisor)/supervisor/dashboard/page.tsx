@@ -1,6 +1,6 @@
 'use client'
 import LayoutWrapper from '@/components/layout/LayoutWrapper'
-import React, { useState, useEffect } from 'react';
+
 // Icons
 import { GoClock, GoPeople } from "react-icons/go";
 import { FiTrendingUp } from 'react-icons/fi';
