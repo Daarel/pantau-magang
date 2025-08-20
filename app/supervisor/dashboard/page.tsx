@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import TodayInternStatus from '@/app/today-intern-status/page';
 // Styles
-import '../../../globals.css'
+import '../../globals.css'
 
 export default function SupervisorDashboard() {
   return (
