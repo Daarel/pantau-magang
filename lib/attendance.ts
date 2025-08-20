@@ -4,9 +4,9 @@ import { format } from 'date-fns';
 import { ReactNode } from 'react';
 
 export interface AttendanceRecord {
-  checkOut: ReactNode;
+  checkOut: string | null;
   location: ReactNode;
-  checkIn: ReactNode;
+  checkIn: string | null;
   id: string;
   user_id: string;
   date: string;
