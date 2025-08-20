@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-// import { auth } from "@/lib/server/auth"
+import { useEffect, useState } from "react";
 
 const menuByRole = {
   intern: [
