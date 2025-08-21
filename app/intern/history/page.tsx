@@ -2,10 +2,10 @@
 
 import LayoutWrapper from '@/components/layout/LayoutWrapper'
 
-export default function InternLeave() {
+export default function InternHistory() {
   return (
     <LayoutWrapper>
-      <h1>InternLeave</h1>
+      <h1>InternHistory</h1>
     </LayoutWrapper>
   )
 }

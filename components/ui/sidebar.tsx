@@ -266,7 +266,8 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("size-7", className)}
+      // className={cn("size-7", className)}
+      className={cn("size-9", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
@@ -388,7 +389,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="sidebar-group"
       data-sidebar="group"
       // className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
-      className={cn("flex w-full min-w-0 flex-col p-2 ml-4", className)}
+      className={cn("flex w-full min-w-0 flex-col p-2", className)}
       {...props}
     />
   )

@@ -5,6 +5,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { SidebarTrigger } from "@/components/ui/sidebar"
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -27,13 +28,16 @@ export default function Navbar() {
     <nav className='z-50 w-full border-b bg-white px-4 py-2 shadow-sm flex justify-between items-center'>
       {/* Logo & Nama Perusahaan */}
       <div className='flex items-center gap-3'>
+        <div className="sm:hidden">
+          <SidebarTrigger />
+        </div>
         <Image
-              src={logo}
-              alt='Logo Kementrian Energi dan Sumber Daya Mineral'
-              priority
-              className="size-12"
-            />
-        <span className='font-bold text-xl'>PANTAU MAGANG</span>
+          src={logo}
+          alt='Logo Kementrian Energi dan Sumber Daya Mineral'
+          priority
+          className="size-10"
+        />
+        <span className='hidden sm:block sm:font-bold sm:text-md'>PANTAU MAGANG</span>
       </div>
 
       {/* Navigation Menu */}
@@ -41,15 +45,15 @@ export default function Navbar() {
         <NavigationMenuList className='flex items-center gap-4'>
           <NavigationMenuItem>
             <div className='flex h-full w-full items-center gap-2'>
-              <span className='text-lg font-semibold'>{user.full_name}</span>
+              <span className='hidden md:text-lg md:font-semibold'>{user.full_name}</span>
               <Avatar>
                 <AvatarFallback className="font-bold bg-gray-300">{user.full_name.charAt(0)}</AvatarFallback>
               </Avatar>
             </div>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Button variant='destructive' size='sm' onClick={handleLogout}>
-              <FiLogOut className='size-6' />
+            <Button variant='destructive' size='icon' onClick={handleLogout}>
+              <FiLogOut className='size-4 sm:size-6' />
             </Button>
           </NavigationMenuItem>
         </NavigationMenuList>
