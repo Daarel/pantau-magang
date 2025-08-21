@@ -57,7 +57,7 @@ export function AppSidebar() {
   }, []);
 
   return (
-    <Sidebar>
+    <Sidebar className="pt-18">
       <SidebarContent>
         {/* <SidebarGroup className="mt-12"> */}
         <SidebarGroup>
@@ -67,7 +67,8 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link href={item.path}>
-                      <item.icon /> {item.title}
+                      <item.icon className="h-9 w-9"/> 
+                      {item.title}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

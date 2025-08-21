@@ -24,35 +24,32 @@ export default function Navbar() {
 
   return (
     // <nav className='fixed -top-2 pt-4 left-0 right-0 z-50 w-full border-b bg-white px-4 py-2 shadow-sm flex justify-between items-center'>
-    <nav className='z-50 w-full border-b bg-white p-4 shadow-sm flex justify-between items-center'>
+    <nav className='z-50 w-full border-b bg-white px-4 py-2 shadow-sm flex justify-between items-center'>
       {/* Logo & Nama Perusahaan */}
-      <div className='flex items-center gap-2'>
+      <div className='flex items-center gap-3'>
         <Image
               src={logo}
               alt='Logo Kementrian Energi dan Sumber Daya Mineral'
               priority
-              className="h-9 w-9"
+              className="size-12"
             />
-        <span className='font-bold text-lg'>LEMIGAS</span>
+        <span className='font-bold text-xl'>PANTAU MAGANG</span>
       </div>
 
       {/* Navigation Menu */}
       <NavigationMenu>
         <NavigationMenuList className='flex items-center gap-4'>
           <NavigationMenuItem>
-            <div className='flex items-center gap-2'>
-              <div className='flex flex-col'>
-                <span>{user.full_name}</span>
-                <span className='text-sm text-gray-600'></span>
-              </div>
+            <div className='flex h-full w-full items-center gap-2'>
+              <span className='text-lg font-semibold'>{user.full_name}</span>
               <Avatar>
-                <AvatarFallback>{user.full_name.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="font-bold bg-gray-300">{user.full_name.charAt(0)}</AvatarFallback>
               </Avatar>
             </div>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <Button variant='destructive' size='sm' onClick={handleLogout}>
-              <FiLogOut className='' />
+              <FiLogOut className='size-6' />
             </Button>
           </NavigationMenuItem>
         </NavigationMenuList>
