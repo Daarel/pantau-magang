@@ -5,11 +5,13 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { FiLogOut } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import {logoutUser} from "@/lib/client/auth"; // Assuming you have a logout function
+import { logoutUser } from "@/lib/client/auth";
+import logo from "@/public/logo.png";
 
 export default function Navbar() {
   // Data dummy
@@ -21,11 +23,17 @@ export default function Navbar() {
   };
 
   return (
-    <nav className='fixed top-0 left-0 right-0 z-50 w-full border-b bg-white px-4 py-2 shadow-sm flex justify-between items-center'>
+    // <nav className='fixed -top-2 pt-4 left-0 right-0 z-50 w-full border-b bg-white px-4 py-2 shadow-sm flex justify-between items-center'>
+    <nav className='z-50 w-full border-b bg-white p-4 shadow-sm flex justify-between items-center'>
       {/* Logo & Nama Perusahaan */}
       <div className='flex items-center gap-2'>
-        <div className='w-8 h-8 bg-gray-300 rounded' />
-        <span className='font-bold text-lg'>PT Dummy Corp</span>
+        <Image
+              src={logo}
+              alt='Logo Kementrian Energi dan Sumber Daya Mineral'
+              priority
+              className="h-9 w-9"
+            />
+        <span className='font-bold text-lg'>LEMIGAS</span>
       </div>
 
       {/* Navigation Menu */}

@@ -59,7 +59,8 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
-        <SidebarGroup className="mt-12">
+        {/* <SidebarGroup className="mt-12"> */}
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuByRole[role].map((item) => (
