@@ -1,4 +1,7 @@
-'use client';
+"use client";
+
+// import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import Card from "@/components/Card";
@@ -6,18 +9,22 @@ import CardContent from "@/components/CardContent";
 import StatCard from "@/components/StatCard";
 
 import { FaUsers, FaBuilding, FaRegCheckCircle } from "react-icons/fa";
-import { IoMdTrendingUp } from "react-icons/io";
 import { AiFillFileText } from "react-icons/ai";
 import { FiAlertTriangle } from "react-icons/fi";
 import CardHeader from "@/components/CardHeader";
 import CardTitle from "@/components/CardTitle";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
-export default function AdminAttendance() {
+export default function AdminDashboard() {
+  // const router = useRouter();
+
+  // const handleNavigate = (page: string) => {
+  //   router.push(`/admin/${page}`);
+  // };
+
   // Mock data
   const user = {
-    full_name: "Windah Barusadar",
+    full_name: "Mia Melita",
   };
 
   const stats = {
@@ -42,7 +49,7 @@ export default function AdminAttendance() {
       action: "Leave request approved",
       user: "Jane Smith",
       time: "5 minutes ago",
-      type: "approval",
+      type: "attendance",
     },
     {
       id: 3,
@@ -56,7 +63,7 @@ export default function AdminAttendance() {
       action: "New supervisor assigned",
       user: "Dr. Sarah Wilson",
       time: "1 hour ago",
-      type: "user",
+      type: "attendance",
     },
   ];
 
@@ -75,21 +82,20 @@ export default function AdminAttendance() {
 
   return (
     <LayoutWrapper>
-      <div className='space-y-6 mb-7'>
-        <h1 className='text-2xl font-bold'>Admin Dashboard</h1>
-        <p className=' mt-1'>Welcome, {user?.full_name}</p>
-        <p>Manage the entire internship attendance system</p>
+      <div className=' space-y-2 mb-7 bg-[#9929EA] h-48 p-8 rounded-lg'>
+        <h1 className='title_header'>Selamat Datang, Ibu {user.full_name}!</h1>
+        <h2 className='text-white text-2xl'>Kamis, 14 Agustus 2025</h2>
+        <p className='text-white text-lg'>13:18:15</p>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+      <div className='grid grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-6'>
         <Card>
           <CardContent className='flex items-center p-6'>
             <StatCard
-              icon={<FaUsers className='h-6 w-6 text-blue-600' />}
+              Icon={FaUsers}
               title='Total Users'
               value={stats.totalUsers}
-              subtitle='+5 this week'
-              subtitleColor='text-blue-600'
+              contentColor='text-blue-600'
             />
           </CardContent>
         </Card>
@@ -97,11 +103,10 @@ export default function AdminAttendance() {
         <Card>
           <CardContent className='flex items-center p-6'>
             <StatCard
-              icon={<FaBuilding className='h-6 w-6 text-green-600' />}
+              Icon={FaBuilding}
               title='Active Interns'
               value={stats.activeInterns}
-              subtitle='Across all departments'
-              subtitleColor='text-green-600'
+              contentColor='text-green-600'
             />
           </CardContent>
         </Card>
@@ -109,23 +114,10 @@ export default function AdminAttendance() {
         <Card>
           <CardContent className='flex items-center p-6'>
             <StatCard
-              icon={<IoMdTrendingUp className='h-6 w-6 text-purple-600' />}
-              title='Overall Attendance'
-              value={`${stats.totalAttendance}%`}
-              subtitle='This month'
-              subtitleColor='text-purple-600'
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='flex items-center p-6'>
-            <StatCard
-              icon={<AiFillFileText className='h-6 w-6 text-yellow-600' />}
+              Icon={AiFillFileText}
               title='Pending Requests'
               value={stats.pendingRequests}
-              subtitle='Need approval'
-              subtitleColor='text-yellow-600'
+              contentColor='text-yellow-600'
             />
           </CardContent>
         </Card>
@@ -133,30 +125,17 @@ export default function AdminAttendance() {
         <Card>
           <CardContent className='flex items-center p-6'>
             <StatCard
-              icon={<FaUsers className='h-6 w-6 text-indigo-600' />}
+              Icon={FaUsers}
               title='Supervisors'
               value={stats.supervisors}
-              subtitle='Managing interns'
-              subtitleColor='text-indigo-600'
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='flex items-center p-6'>
-            <StatCard
-              icon={<FiAlertTriangle className='h-6 w-6 text-red-600' />}
-              title='System Alerts'
-              value={stats.systemAlerts}
-              subtitle='Require attention'
-              subtitleColor='text-red-600'
+              contentColor='text-indigo-600'
             />
           </CardContent>
         </Card>
       </div>
 
-      <div className='grid gird-cols-1 lg:grid-cols-2 gap-6'>
-        <Card>
+      <div className='flex flex-row mt-5 justify-center gap-6 items-center'>
+        <Card className='w-1/2'>
           <CardHeader>
             <CardTitle>Recent Activities</CardTitle>
           </CardHeader>
@@ -181,75 +160,27 @@ export default function AdminAttendance() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className='w-1/2 h-[300px]'>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className='grid grid-cols-2 gap-4'>
-            <Button
-              variant='outline'
-              className='flex flex-col items-center py-6'
-            >
-              <FaUsers className='h-8 w-8 mb-2 text-blue-600' />
-              <span className='text-sm'>Add User</span>
+          <CardContent className='flex flex-col gap-10'>
+            <Button asChild variant='outline' className='p-10'>
+              <Link href='/admin/user'>
+                <FaUsers className='h-8 w-8 text-blue-600' />
+                <span className='text-sm'>Add User</span>
+              </Link>
             </Button>
-            <Button
-              variant='outline'
-              className='flex flex-col items-center py-6'
-            >
-              <AiFillFileText className='h-8 w-8 mb-2 text-green-600' />
-              <span className='text-sm'>Generate Report</span>
-            </Button>
-            <Button
-              variant='outline'
-              className='flex flex-col items-center py-6'
-            >
-              <FaBuilding className='h-8 w-8 mb-2 text-purple-600' />
-              <span className='text-sm'>System Settings</span>
-            </Button>
-            <Button
-              variant='outline'
-              className='flex flex-col items-center py-6'
-            >
-              <FiAlertTriangle className='h-8 w-8 mb-2 text-red-600' />
-              <span className='text-sm'>View Alerts</span>
+
+            <Button asChild variant='outline' className='p-10'>
+              <Link href='/admin/supervisor'>
+                <AiFillFileText className='h-8 w-8 text-green-600' />
+                <span className='text-sm'>Add Supervisor</span>
+              </Link>
             </Button>
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>System Status</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-            <div className='flex items-center justify-between p-4 bg-green-50 rounded-lg'>
-              <div className='flex items-center'>
-                <FaRegCheckCircle className='h-5 w-5 text-green-600 mr-2' />
-                <span className='text-sm font-medium'>Database</span>
-              </div>
-              <Badge variant='success'>Healthy</Badge>
-            </div>
-
-            <div className='flex items-center justify-between p-4 bg-green-50 rounded-lg'>
-              <div className='flex items-center'>
-                <FaRegCheckCircle className='h-5 w-5 text-green-600 mr-2' />
-                <span className='text-sm font-medium'>API Status</span>
-              </div>
-              <Badge variant='success'>Online</Badge>
-            </div>
-
-            <div className='flex items-center justify-between p-4 bg-yellow-50 rounded-lg'>
-              <div className='flex items-center'>
-                <FiAlertTriangle className='h-5 w-5 text-yellow-600 mr-2' />
-                <span className='text-sm font-medium'>Email Service</span>
-              </div>
-              <Badge variant='warning'>Limited</Badge>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </LayoutWrapper>
   );
 }

@@ -1,4 +1,3 @@
-// src/components/AttendanceHistory.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { Download, Clock, MapPin, Calendar } from "lucide-react";
@@ -8,7 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 import { AttendanceRecord } from "@/lib/attendance";
 
-export default function Attendance() {
+export default function AdminUser() {
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
