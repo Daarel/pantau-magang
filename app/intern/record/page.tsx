@@ -2,10 +2,10 @@
 
 import LayoutWrapper from '@/components/layout/LayoutWrapper'
 
-export default function SupervisorSchedule() {
+export default function InternRecord() {
   return (
     <LayoutWrapper>
-      <h1>Schedule Supervisor</h1>
+      <h1>InternRecord</h1>
     </LayoutWrapper>
   )
 }
