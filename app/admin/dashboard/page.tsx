@@ -1,27 +1,17 @@
 "use client";
 
-// import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
-import Card from "@/components/Card";
-import CardContent from "@/components/CardContent";
+import { Card, CardContent, CardTitle, CardHeader } from "@/components/Card";
 import StatCard from "@/components/StatCard";
 
 import { FaUsers, FaBuilding, FaRegCheckCircle } from "react-icons/fa";
 import { AiFillFileText } from "react-icons/ai";
 import { FiAlertTriangle } from "react-icons/fi";
-import CardHeader from "@/components/CardHeader";
-import CardTitle from "@/components/CardTitle";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
-  // const router = useRouter();
-
-  // const handleNavigate = (page: string) => {
-  //   router.push(`/admin/${page}`);
-  // };
-
   // Mock data
   const user = {
     full_name: "Mia Melita",

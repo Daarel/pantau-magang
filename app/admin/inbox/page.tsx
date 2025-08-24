@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Download, Clock, MapPin, Calendar } from "lucide-react";
+import { Clock, MapPin, Calendar } from "lucide-react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { getAttendanceHistory } from "@/lib/attendance";
 import { supabase } from "@/lib/supabaseClient";
