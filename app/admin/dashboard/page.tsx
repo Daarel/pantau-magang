@@ -88,7 +88,7 @@ export default function AdminDashboard() {
         <p className='text-white text-lg'>13:18:15</p>
       </div>
 
-      <div className='grid grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+      <div className='grid grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:grid-cols-2'>
         <Card>
           <CardContent className='flex items-center p-6'>
             <StatCard
@@ -134,8 +134,8 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className='flex flex-row mt-5 justify-center gap-6 items-center'>
-        <Card className='w-1/2'>
+      <div className='flex flex-row mt-5 justify-center gap-6 items-center '>
+        <Card className='w-1/2 max-h-[320px] h-[320px]'>
           <CardHeader>
             <CardTitle>Recent Activities</CardTitle>
           </CardHeader>
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className='w-1/2 h-[300px]'>
+        <Card className='w-1/2 h-[320px] max-h-[320px]'>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>

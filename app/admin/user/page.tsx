@@ -62,9 +62,9 @@ export default function AdminUser() {
         {/* Header */}
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-2xl font-bold'>Attendance History</h1>
+            <h1 className='text-2xl font-bold'>Daftar Peserta Magang</h1>
             <p className='text-gray-500'>
-              Track your attendance records and patterns
+              List Daftar Peserta Magang Aktif
             </p>
           </div>
           <button className='flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700'>
@@ -75,7 +75,7 @@ export default function AdminUser() {
 
         {/* Tabs */}
         <div className='flex gap-6 border-b mt-6'>
-          {["All Records", "Present", "Late", "Absent"].map((tab) => (
+          {["Semua Gedung", "Telematika", "Arsip", "Pendukung", "Eksploitasi"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
