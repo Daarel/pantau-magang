@@ -25,9 +25,6 @@ const menuByRole = {
   supervisor: [
     { title: "Dashboard", path: "/supervisor/dashboard", icon: FiHome },
     { title: "Attendance", path: "/supervisor/attendance", icon: GoClock },
-    { title: "Schedule", path: "/supervisor/schedule", icon: FiCalendar },
-    { title: "Leave Requests", path: "/supervisor/leave-request", icon: IoDocumentTextOutline },
-    { title: "My Interns", path: "/supervisor/my-interns", icon: FiHome },
     { title: "Reports", path: "/supervisor/reports", icon: GoClock },
   ],
   admin: [
