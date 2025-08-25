@@ -14,7 +14,7 @@ export interface AttendanceRecord {
   check_out_time?: string;
   check_in_location?: { lat: number; lng: number; address: string };
   check_out_location?: { lat: number; lng: number; address: string };
-  status: 'present' | 'absent' | 'late' | 'early_leave';
+  status: 'hadir' | 'izin' | 'sakit' | 'alfa';
   notes?: string;
 }
 
