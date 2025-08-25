@@ -48,11 +48,11 @@ export default function ProfileDropDown({ username, role }: profileDropDown) {
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => handleNavigate("profile")}>
             <FaUser className='mr-2 h-4 w-4' />
-            <span>Profil</span>
+            <span className="cursor-pointer">Profil</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => handleNavigate("logout")}>
             <IoLogOutOutline className='mr-2 h-4 w-4 text-red-600' />
-            <span className="text-red-600">Log Out</span>
+            <span className="cursor-pointer text-red-600">Log Out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
