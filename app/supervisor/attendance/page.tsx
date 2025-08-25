@@ -6,56 +6,56 @@ import { Download, Clock, MapPin, Calendar } from "lucide-react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { getAttendanceHistory } from "@/lib/attendance";
 import { supabase } from "@/lib/supabaseClient";
-
+import TabelSupervisor from "@/app/tabel-supervisor/page";
 import { AttendanceRecord } from "@/lib/attendance";
 
 export default function Attendance() {
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<string>("All Records");
+  const [activeTab, setActiveTab] = useState<string>("Semua Daftar");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setErrorMsg("");
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     setErrorMsg("");
 
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+  //     try {
+  //       const {
+  //         data: { session },
+  //       } = await supabase.auth.getSession();
 
-        const userId = session?.user?.id;
+  //       const userId = session?.user?.id;
 
-        if (!userId) {
-          setLoading(false);
-          return;
-        }
+  //       if (!userId) {
+  //         setLoading(false);
+  //         return;
+  //       }
 
-        const records: AttendanceRecord[] | null = await getAttendanceHistory(userId);
-        setAttendanceData(records || []);
-      } catch (error: unknown) {
-        console.error("Get attendance history error:", error);
-        if (error instanceof Error) {
-          setErrorMsg(error.message);
-        } else {
-          setErrorMsg("Gagal memuat data absensi");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       const records: AttendanceRecord[] | null = await getAttendanceHistory(userId);
+  //       setAttendanceData(records || []);
+  //     } catch (error: unknown) {
+  //       console.error("Get attendance history error:", error);
+  //       if (error instanceof Error) {
+  //         setErrorMsg(error.message);
+  //       } else {
+  //         setErrorMsg("Gagal memuat data absensi");
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  const filteredData =
-    activeTab === "All Records"
-      ? attendanceData
-      : attendanceData.filter(
-          (record) =>
-            record.status?.toLowerCase() === activeTab.toLowerCase()
-        );
+  // const filteredData =
+  //   activeTab === "Semua Daftar"
+  //     ? attendanceData
+  //     : attendanceData.filter(
+  //         (record) =>
+  //           record.status?.toLowerCase() === activeTab.toLowerCase()
+  //       );
 
   return (
     <LayoutWrapper>
@@ -63,9 +63,9 @@ export default function Attendance() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Attendance History</h1>
+            <h1 className="text-2xl font-bold">Daftar Kehadiran</h1>
             <p className="text-gray-500">
-              Track your attendance records and patterns
+              Lacak catatan dan pola kehadiran anak magang
             </p>
           </div>
           <button className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">
@@ -76,11 +76,11 @@ export default function Attendance() {
 
         {/* Tabs */}
         <div className="flex gap-6 border-b mt-6">
-          {["All Records", "Present", "Late", "Absent"].map((tab) => (
+          {["Semua Daftar", "Hadir", "Sakit", "Izin", "Alfa"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-2 ${
+              className={`pb-2 cursor-pointer ${
                 activeTab === tab
                   ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-gray-500 hover:text-blue-600"
@@ -93,7 +93,7 @@ export default function Attendance() {
 
         {/* Content */}
         <div className="mt-6 space-y-4">
-          {loading ? (
+          {/* {loading ? (
             <div className="text-center text-gray-500 mt-10">
               Loading attendance records...
             </div>
@@ -123,25 +123,16 @@ export default function Attendance() {
                   </span>
                 </div>
 
-                <div className="mt-3 space-y-1 text-sm">
-                  <div className="flex items-center gap-2 text-green-600">
-                    <Clock size={16} /> Check In: {record.checkIn}
-                  </div>
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <MapPin size={16} /> Location: {record.location}
-                  </div>
-                  <div className="flex items-center gap-2 text-red-600">
-                    <Clock size={16} /> Check Out: {record.checkOut}
-                  </div>
-                </div>
+                
               </div>
             ))
           ) : (
             <div className="text-center text-gray-500 mt-10">
               No attendance records found
             </div>
-          )}
+          )} */}
         </div>
+        <TabelSupervisor activeTab={activeTab}/>
       </div>
     </LayoutWrapper>
   );
