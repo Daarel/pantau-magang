@@ -1,27 +1,27 @@
-import type { FC, ReactNode } from "react";
+import type { FC } from "react";
+import { IconType } from "react-icons";
 
 interface StatCardProps {
-  icon?: ReactNode;
+  Icon: IconType;
   title: string;
   value: string | number;
-  subtitle?: string;
-  subtitleColor?: string;
+  contentColor: string;
 }
 
 const StatCard: FC<StatCardProps> = ({
-  icon,
+  Icon,
   title,
   value,
-  subtitle,
-  subtitleColor,
+  contentColor,
 }) => {
   return (
     <>
-      <div className='p-3 bg-blue-100 rounded-lg'>{icon}</div>
+      <div className='p-3 bg-blue-100 rounded-lg'>
+        <Icon className={`h-6 w-6 ${contentColor}`} />
+      </div>
       <div className='ml-4'>
         <p className='text-sm text-gray-600'>{title}</p>
         <p className='text-2xl font-bold text-gray-900'>{value}</p>
-        <p className={`text-sm ${subtitleColor}`}>{subtitle}</p>
       </div>
     </>
   );

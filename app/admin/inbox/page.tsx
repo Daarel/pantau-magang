@@ -1,14 +1,13 @@
-// src/components/AttendanceHistory.tsx
 "use client";
 import React, { useEffect, useState } from "react";
-import { Download, Clock, MapPin, Calendar } from "lucide-react";
+import { Clock, MapPin, Calendar } from "lucide-react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { getAttendanceHistory } from "@/lib/attendance";
 import { supabase } from "@/lib/supabaseClient";
 
 import { AttendanceRecord } from "@/lib/attendance";
 
-export default function Attendance() {
+export default function AdminSupervisor() {
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -63,20 +62,16 @@ export default function Attendance() {
         {/* Header */}
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-2xl font-bold'>Attendance History</h1>
+            <h1 className='text-2xl font-bold'>Inbox</h1>
             <p className='text-gray-500'>
-              Track your attendance records and patterns
+              Lihat anak magang yang mengirim surat
             </p>
           </div>
-          <button className='flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700'>
-            <Download size={18} />
-            Export PDF
-          </button>
         </div>
 
         {/* Tabs */}
         <div className='flex gap-6 border-b mt-6'>
-          {["All Records", "Present", "Late", "Absent"].map((tab) => (
+          {["Semua Surat"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
