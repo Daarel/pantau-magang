@@ -1,8 +1,8 @@
-import { FiHome, FiCalendar, } from "react-icons/fi";
-import { GoClock } from "react-icons/go";
+import { FaUser, FaUserTie, FaInbox } from "react-icons/fa";
+import { FiCalendar } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { BsHouse } from 'react-icons/bs';
-import { AiOutlineClockCircle } from 'react-icons/ai';
+import { BsHouse } from "react-icons/bs";
+import { AiOutlineClockCircle } from "react-icons/ai";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -13,29 +13,26 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 
 const menuByRole = {
   intern: [
     { title: "Dashboard", path: "/intern/dashboard", icon: BsHouse },
-    { title: "Attendance", path: "/intern/attendance", icon: AiOutlineClockCircle },
+    { title: "Attendance", path: "/intern/attendance", icon: AiOutlineClockCircle,},
     { title: "History", path: "/intern/history", icon: FiCalendar },
     { title: "Record", path: "/intern/record", icon: IoDocumentTextOutline },
   ],
   supervisor: [
     { title: "Dashboard", path: "/supervisor/dashboard", icon: BsHouse },
-    { title: "Attendance", path: "/supervisor/attendance", icon: AiOutlineClockCircle },
+    { title: "Attendance", path: "/supervisor/attendance", icon: AiOutlineClockCircle,},
     { title: "Reports", path: "/supervisor/reports", icon: FiCalendar },
   ],
   admin: [
     { title: "Dashboard", path: "/admin/dashboard", icon: BsHouse },
-    { title: "Attendance", path: "/admin/attendance", icon: GoClock },
-    { title: "Schedule", path: "/admin/schedule", icon: FiCalendar },
-    { title: "Leave Requests", path: "/admin/leave-request", icon: IoDocumentTextOutline },
-    { title: "Users", path: "/admin/users", icon: FiHome },
-    { title: "Reports", path: "/admin/reports", icon: GoClock },
-    { title: "Settings", path: "/admin/settings", icon: GoClock },
+    { title: "User", path: "/admin/user", icon: FaUser },
+    { title: "Supervisor", path: "/admin/supervisor", icon: FaUserTie },
+    { title: "Inbox", path: "/admin/inbox", icon: FaInbox },
   ],
 };
 
@@ -58,7 +55,7 @@ export function AppSidebar() {
   }, []);
 
   return (
-    <Sidebar className="pt-18">
+    <Sidebar className='pt-18'>
       <SidebarContent>
         {/* <SidebarGroup className="mt-12"> */}
         <SidebarGroup>
@@ -82,13 +79,11 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={isActive}
-                      className="flex items-center gap-3 pl-5 py-2 rounded-md transition-colors"
+                      className='flex items-center gap-3 pl-5 py-2 rounded-md transition-colors'
                     >
                       <Link href={item.path}>
-                        <item.icon
-                          className='h-9 w-9'
-                        />
-                       {item.title}
+                        <item.icon className='h-9 w-9' />
+                        {item.title}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
