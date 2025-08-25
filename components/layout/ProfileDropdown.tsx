@@ -24,7 +24,7 @@ export default function ProfileDropDown({ username, role }: profileDropDown) {
   const handleNavigate = (page: string) => {
     switch (page) {
       case "profile":
-        router.push("/");
+        router.push("/profile");
         break;
       case "logout":
         logoutUser();
