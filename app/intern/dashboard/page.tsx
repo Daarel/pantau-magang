@@ -20,7 +20,7 @@ export default function InternDashboard() {
             <h1 className='h1 text-white pr-0 xl:pr-2'>Selamat Datang,</h1>
             <h1 className='h1 text-white'>Dika Arnanda Putra!</h1>
           </div>
-          <h5 className='h5 mb-2 text-white'>Thursday, August 14th, 2025</h5>
+          <h5 className='h5 mb-2 text-white'>Kamis, 14 Agustus 2025</h5>
           <h5 className='h5 mb-2 text-white'>13:18:15</h5>
         </div>
 
@@ -41,36 +41,36 @@ export default function InternDashboard() {
         {/* 3. Summary */}
         <div className='flex flex-col w-full gap-4 sm:flex-row'>
           {/* Schedule */}
-          <div className='flex w-full sm:w-2/5 p-4 items-center justify-center sm:justify-evenly border-2 rounded-md gap-4'>
+          <div className='flex w-full sm:w-1/3 p-4 items-center justify-center sm:justify-evenly border-2 rounded-md gap-4'>
             <div>
               <FiCalendar className='text-blue-600 bg-blue-200 p-3 w-11 lg:w-13 h-11 lg:h-13 rounded-md' />
             </div>
             <div className='flex flex-col gap-1'>
-              <h1 className='text-sm lg:text-lg font-semibold text-black/50'>Schedule</h1>
+              <h1 className='text-sm lg:text-lg font-semibold text-black/50'>Jadwal</h1>
               <div className='flex gap-4'>
                 <div className='flex flex-col justify-center'>
                   <h1 className='h5 md:h3 font-bold'>08:00</h1>
-                  <h1 className='text-xs sm:h6 font-semibold text-blue-600'>Start Time</h1>
+                  <h1 className='text-xs sm:h6 font-semibold text-blue-600'>Masuk</h1>
                 </div>
                 <div className='flex flex-col justify-center'>
                   <h1 className='h5 md:h3 font-bold'>15:00</h1>
-                  <h1 className='text-xs sm:h6 font-semibold text-blue-600'>End Time</h1>
+                  <h1 className='text-xs sm:h6 font-semibold text-blue-600'>Pulang</h1>
                 </div>
               </div>
             </div>
           </div>
 
           {/* This Month & Leave Request */}
-          <div className='flex w-full sm:w-3/5 gap-2 sm:gap-4'>
+          <div className='flex w-full sm:w-2/3 gap-2 sm:gap-4'>
           {/* This Month */}
             <div className='flex w-1/2 p-4 items-center justify-center sm:justify-evenly border-2 rounded-md gap-4'>
               <div>
                 <GoClock className='text-green-600 bg-green-200 p-3 w-11 lg:w-13 h-11 lg:h-13 rounded-md' />
               </div>
               <div className='flex flex-col gap-1'>
-                <h1 className='text-sm lg:text-lg font-semibold text-black/50'>This Month</h1>
+                <h1 className='text-sm lg:text-lg font-semibold text-black/50'>Bulan Ini</h1>
                 <h1 className='h5 sm:h3 font-bold'>22/23</h1>
-                <h1 className='text-xs sm:h6 font-semibold text-green-600'>Days Present</h1>
+                <h1 className='text-xs sm:h6 font-semibold text-green-600'>Kehadiran</h1>
               </div>
             </div>
 
@@ -80,9 +80,9 @@ export default function InternDashboard() {
                 <IoDocumentTextOutline className='text-[#CA8A04] bg-[#FEF9C3] p-3 w-11 lg:w-13 h-11 lg:h-13 rounded-md' />
               </div>
               <div className='flex flex-col gap-1'>
-                <h1 className='text-sm lg:text-lg font-semibold text-black/50'>Leave Request</h1>
-                <h1 className='h5 sm:h3 font-bold'>1</h1>
-                <h1 className='text-xs sm:h6 font-semibold text-[#CA8A04]'>Pending</h1>
+                <h1 className='text-sm lg:text-lg font-semibold text-black/50'>Dispensasi</h1>
+                <h1 className='h5 sm:h3 font-bold'>2</h1>
+                <h1 className='text-xs sm:h6 font-semibold text-[#CA8A04]'>Disetujui</h1>
               </div>
             </div>
           </div>

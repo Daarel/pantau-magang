@@ -49,7 +49,7 @@ export default function PieChart() {
         <AiOutlinePieChart className="w-6 h-6 text-blue-500" />
         <h3 className="h4 font-semibold">Persentase Kehadiran</h3>
       </div>
-      <div className="flex items-center gap-5 md:gap-10">
+      <div className="flex items-center gap-5 md:gap-7 lg:gap-10">
         {/* Legend manual di kiri */}
         <div className="flex flex-col gap-3">
           {labels.map((label, idx) => (
