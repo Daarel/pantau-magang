@@ -5,6 +5,8 @@ import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { getAttendanceHistory } from "@/lib/attendance";
 import { supabase } from "@/lib/supabaseClient";
 
+import TablePage from "@/app/supervisor-status/page";
+
 import { AttendanceRecord } from "@/lib/attendance";
 
 export default function AdminSupervisor() {
@@ -13,48 +15,48 @@ export default function AdminSupervisor() {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("All Records");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setErrorMsg("");
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     setErrorMsg("");
 
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+  //     try {
+  //       const {
+  //         data: { session },
+  //       } = await supabase.auth.getSession();
 
-        const userId = session?.user?.id;
+  //       const userId = session?.user?.id;
 
-        if (!userId) {
-          setLoading(false);
-          return;
-        }
+  //       if (!userId) {
+  //         setLoading(false);
+  //         return;
+  //       }
 
-        const records: AttendanceRecord[] | null = await getAttendanceHistory(
-          userId
-        );
-        setAttendanceData(records || []);
-      } catch (error: unknown) {
-        console.error("Get attendance history error:", error);
-        if (error instanceof Error) {
-          setErrorMsg(error.message);
-        } else {
-          setErrorMsg("Gagal memuat data absensi");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       const records: AttendanceRecord[] | null = await getAttendanceHistory(
+  //         userId
+  //       );
+  //       setAttendanceData(records || []);
+  //     } catch (error: unknown) {
+  //       console.error("Get attendance history error:", error);
+  //       if (error instanceof Error) {
+  //         setErrorMsg(error.message);
+  //       } else {
+  //         setErrorMsg("Gagal memuat data absensi");
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  const filteredData =
-    activeTab === "All Records"
-      ? attendanceData
-      : attendanceData.filter(
-          (record) => record.status?.toLowerCase() === activeTab.toLowerCase()
-        );
+  // const filteredData =
+  //   activeTab === "All Records"
+  //     ? attendanceData
+  //     : attendanceData.filter(
+  //         (record) => record.status?.toLowerCase() === activeTab.toLowerCase()
+  //       );
 
   return (
     <LayoutWrapper>
@@ -92,7 +94,7 @@ export default function AdminSupervisor() {
 
         {/* Content */}
         <div className='mt-6 space-y-4'>
-          {loading ? (
+          {/* {loading ? (
             <div className='text-center text-gray-500 mt-10'>
               Loading attendance records...
             </div>
@@ -139,8 +141,9 @@ export default function AdminSupervisor() {
             <div className='text-center text-gray-500 mt-10'>
               No attendance records found
             </div>
-          )}
+          )} */}
         </div>
+        <TablePage />
       </div>
     </LayoutWrapper>
   );

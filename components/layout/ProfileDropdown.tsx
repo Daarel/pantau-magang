@@ -40,7 +40,7 @@ export default function ProfileDropDown({ username, role }: profileDropDown) {
         <DropdownMenuTrigger asChild>
           <Avatar className='cursor-pointer'>
             <AvatarImage src='https://i.pravatar.cc/100' alt='Profile' />
-            <AvatarFallback>MM</AvatarFallback>
+            <AvatarFallback>D</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-56' align='end'>
