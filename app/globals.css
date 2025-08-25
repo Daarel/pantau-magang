@@ -185,3 +185,7 @@
     @apply font-bold;
   }
 }
+
+@layer utilities {
+
+}
