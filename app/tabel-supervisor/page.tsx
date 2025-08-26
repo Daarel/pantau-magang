@@ -85,6 +85,22 @@ function getData(): Attendance[] {
       check_in_time: "-:-", 
       check_out_time: "-:-",
     },
+
+    { 
+      name: "Ucok",
+      status: "Alfa", 
+      location: "N/a",
+      date: "2024-06-04", 
+      check_in_time: "-:-", 
+      check_out_time: "-:-" },
+
+    { 
+      name: "Abeng",
+      status: "Sakit", 
+      location: "N/a",
+      date: "2024-06-05", 
+      check_in_time: "-:-", 
+      check_out_time: "-:-" },
   ]
 }
 
