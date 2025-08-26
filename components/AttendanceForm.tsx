@@ -6,7 +6,7 @@ import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -33,39 +33,217 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { AttendanceRecord } from "../components/types/Attendance"
+import { AttendanceRecord } from "../components/types/attendance"
 
 import { RiArrowDropDownLine } from 'react-icons/ri';
+import { MapPinIcon } from "lucide-react"
+import { PhotoUpload } from "@/components/PhotoUpload";
 
 // Schema validasi
 const FormSchema = z.object({
+  imageUrl: z.string().optional(),
   dob: z.date({
-    required_error: "Tanggal harus diisi.",
+    message: "Tanggal harus diisi.",
   }),
   status: z.string({
-    required_error: "Status harus diisi.",
+    message: "Status harus diisi.",
   }),
+  description: z.string().optional(),
+  location: z.object({
+    latitude: z.number().optional(),
+    longitude: z.number().optional(),
+    address: z.string().optional(),
+    approved: z.boolean().default(false),
+  }).optional(),
 })
+
+// Koordinat kantor (contoh: Jakarta)
+const OFFICE_COORDINATES = {
+  // -6.240408297324362, 106.76737910412956
+  latitude: -6.240408297324362,
+  longitude: 106.76737910412956,
+  radius: 0.0025 // Radius dalam derajat (sekitar 250 meter)
+}
+
+// Tipe untuk lokasi user
+interface UserLocation {
+  latitude: number;
+  longitude: number;
+  address: string;
+}
 
 export function AttendanceForm() {
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([])
+  const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error' | 'approved'>('idle')
+  const [userLocation, setUserLocation] = useState<UserLocation  | null>(null)
+  const [currentDate, setCurrentDate] = useState<Date>(new Date())
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      status: "Hadir", // Nilai default untuk status
+      status: "Hadir", 
+      description: "",
+      dob: currentDate
     },
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+    // Fungsi untuk mendapatkan lokasi user
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation tidak didukung oleh browser Anda")
+      return
+    }
+
+    setLocationStatus('fetching')
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords
+        setUserLocation({ latitude, longitude, address: "Sedang mendapatkan alamat..." })
+        
+        try {
+          // Reverse geocoding untuk mendapatkan alamat dari koordinat
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          )
+          const data = await response.json()
+          const address = data.display_name || "Alamat tidak ditemukan"
+          
+          setUserLocation({ latitude, longitude, address })
+          setLocationStatus('success')
+          
+          // Cek apakah lokasi user berada dalam radius kantor
+          const isWithinRadius = checkIfWithinRadius(
+            latitude, 
+            longitude, 
+            OFFICE_COORDINATES.latitude, 
+            OFFICE_COORDINATES.longitude, 
+            OFFICE_COORDINATES.radius
+          )
+          
+          if (isWithinRadius) {
+            setLocationStatus('approved')
+            form.setValue('location', {
+              latitude,
+              longitude,
+              address,
+              approved: true,
+            })
+            toast.success("Lokasi disetujui! Anda berada di area kantor.")
+          } else {
+            form.setValue('location', {
+              latitude,
+              longitude,
+              address,
+              approved: false,
+            })
+            toast.error("Lokasi tidak sesuai. Anda berada di luar area kantor.")
+          }
+        } catch (error) {
+          console.error("Error getting address:", error)
+          setLocationStatus('error')
+          toast.error("Gagal mendapatkan alamat")
+        }
+      },
+      (error) => {
+        console.error("Error getting location:", error)
+        setLocationStatus('error')
+        toast.error("Gagal mendapatkan lokasi")
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000
+      }
+    )
+  }
+
+  // Fungsi untuk mengecek apakah lokasi user berada dalam radius yang ditentukan
+  const checkIfWithinRadius = (
+    lat1: number, 
+    lon1: number, 
+    lat2: number, 
+    lon2: number, 
+    radius: number
+  ): boolean => {
+    // Rumus Haversine untuk menghitung jarak antara dua titik koordinat
+    const R = 6371 // Radius bumi dalam km
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLon = (lon2 - lon1) * Math.PI / 180
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+    const distance = R * c // Jarak dalam km
+    
+    // Konversi radius dari derajat ke km (approx 1 derajat = 111 km)
+    const radiusInKm = radius * 111
+    return distance <= radiusInKm
+  }
+
+  useEffect(() => {
+    console.log("Data kehadiran yang tersimpan:", attendanceRecords);
+  }, [attendanceRecords]);
+
+  const handlePhotoChange = (file: File | null, previewUrl: string | null) => {
+    setPhotoFile(file);
+    setPhotoUrl(previewUrl);
+  };
+
+  // Fungsi untuk mengupload foto (simulasi)
+  const uploadPhoto = async (file: File): Promise<string> => {
+    // Simulasi upload - dalam implementasi nyata, ini akan mengupload ke server
+    // return new Promise((resolve) => {
+    //   setTimeout(() => {
+    //     // Di aplikasi nyata, ini akan mengembalikan URL dari server
+    //     // Untuk demo, kita menggunakan placeholder URL
+    //     resolve("https://example.com/path-to-uploaded-image.jpg");
+    //   }, 1000);
+    // });
+    return new Promise((resolve) => {
+      // Untuk demo, kita menggunakan URL objek untuk gambar yang diunggah
+      const objectUrl = URL.createObjectURL(file);
+      resolve(objectUrl);
+    });
+  };
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (data.status === "Hadir" && (!data.location || !data.location.approved)) {
+      toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
+      return
+    }
+
+    // let imageUrl = "https://example.com/path-to-user-image.jpg"; // Default
+    let imageUrl = ""; // Default
+
+    if (photoFile) {
+      try {
+        toast.loading("Mengupload foto...");
+        imageUrl = await uploadPhoto(photoFile);
+        toast.dismiss();
+      } catch (error) {
+        toast.error("Gagal mengupload foto");
+        console.error("Upload error:", error);
+      }
+    }
+
     const newRecord: AttendanceRecord = {
       id: 2022071014,
       date: data.dob,
       status: data.status,
-      imageUrl: "https://example.com/path-to-user-image.jpg",
-      location: "Jakarta, Indonesia",
-      description: "Keterangan tambahan jika diperlukan",
+      latitude: userLocation?.latitude || 0,
+      longitude: userLocation?.longitude || 0,
+      location: userLocation?.address || "Lokasi tidak tersedia",
+      address: userLocation?.address || "Lokasi tidak tersedia",
+      // imageUrl: "https://example.com/path-to-user-image.jpg",
+      imageUrl: imageUrl,
+      description: data.description || "-",
     }
+
+    console.log("Data baru yang akan disimpan:", newRecord);
 
     setAttendanceRecords(prev => [...prev, newRecord])
 
@@ -78,7 +256,9 @@ export function AttendanceForm() {
                 id: newRecord.id,
                 tanggal: format(newRecord.date, "PPP"),
                 status: newRecord.status,
-                image: newRecord.imageUrl,
+                lokasi: newRecord.location,
+                foto: newRecord.imageUrl ? "Tersedia" : "Tidak tersedia",
+                foto2: newRecord.imageUrl,
               },
               null,
               2
@@ -90,104 +270,208 @@ export function AttendanceForm() {
 
     // Reset form setelah submit
     form.reset()
+    setLocationStatus('idle')
+    setUserLocation(null)
+    setPhotoFile(null)
+    setPhotoUrl(null)
+    localStorage.removeItem('attendancePhoto');
   }
 
+   // Dapatkan status lokasi untuk ditampilkan di UI
+  const getLocationButtonText = () => {
+    switch (locationStatus) {
+      case 'idle':
+        return "Tetapkan Lokasi"
+      case 'fetching':
+        return "Mendapatkan lokasi..."
+      case 'success':
+        return "Lokasi tidak disetujui"
+      case 'error':
+        return "Gagal mendapatkan lokasi"
+      case 'approved':
+        return "Lokasi disetujui"
+      default:
+        return "Tetapkan Lokasi"
+    }
+  }
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <div className="flex items-center justify-between gap-2">
-                <FormControl>
-                  <Input 
-                    placeholder="Isi Kehadiran" 
-                    value={field.value}
-                    onChange={field.onChange}
-                    className="flex-1"
-                  />
-                </FormControl>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="h-9 w-9">
-                      <RiArrowDropDownLine className="w-5 h-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Pilih Status</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => form.setValue("status", "Hadir")}
-                    >
-                      Hadir
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => form.setValue("status", "Sakit")}
-                    >
-                      Sakit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => form.setValue("status", "Izin")}
-                    >
-                      Izin
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Foto */}
+        <div className="flex flex-col md:flex-row items-center justify-around gap-6 md:gap-7 lg:gap-15 border-2 p-6 rounded-md">
+          <FormItem>
+            {/* <FormLabel>Foto</FormLabel> */}
+            <PhotoUpload onPhotoChange={handlePhotoChange} />
+            <FormMessage />
+          </FormItem>
 
-        {/* Tanggal */}
-        <FormField
-          control={form.control}
-          name="dob"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Tanggal</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
+          <div className="flex flex-col w-full md:w-1/2 space-y-6">
+            {/* Status */}
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Status</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value || "Pilih status"}
+                          <RiArrowDropDownLine className="ml-2 h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-2" align="end">
+                      <div className="flex flex-col space-y-2">
+                        <h4 className="text-sm">Pilih Status</h4>
+                        <div className="border-b my-1" />
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => {
+                              form.setValue("status", "Hadir");
+                              form.clearErrors("status");
+                            }}
+                          >
+                            Hadir
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => {
+                              form.setValue("status", "Sakit");
+                              form.clearErrors("status");
+                            }}
+                          >
+                            Sakit
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="justify-start"
+                            onClick={() => {
+                              form.setValue("status", "Izin");
+                              form.clearErrors("status");
+                            }}
+                          >
+                            Izin
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Tanggal */}
+            <FormField
+              control={form.control}
+              name="dob"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Tanggal</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Tetapkan tanggal</span>
+                          )}
+                          <CalendarIcon className="ml-2 h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Tombol untuk menangkap lokasi - hanya ditampilkan jika status Hadir */}
+            {form.watch("status") === "Hadir" && (
+              <FormItem>
+                <FormLabel>Lokasi</FormLabel>
+                <div className="flex flex-col space-y-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={getCurrentLocation}
+                    disabled={locationStatus === 'fetching'}
+                    className={cn(
+                      "w-full justify-between",
+                      locationStatus === 'approved' && "bg-green-50 text-green-700 border-green-200",
+                      locationStatus === 'success' && "bg-red-50 text-red-700 border-red-200"
+                    )}
+                  >
+                    <span className="font-normal text-black/60">{getLocationButtonText()}</span>
+                    <MapPinIcon className="h-4 w-4 opacity-50" />
+                  </Button>
+                  
+                  {/* {userLocation && (
+                    <div className="text-sm text-muted-foreground p-2 bg-slate-50 rounded-md">
+                      <p>Lat: {userLocation.latitude.toFixed(6)}</p>
+                      <p>Lng: {userLocation.longitude.toFixed(6)}</p>
+                      <p>Alamat: {userLocation.address}</p>
+                    </div>
+                  )} */}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+
+            {/* Keterangan */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Keterangan</FormLabel>
                   <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Tetapkan tanggal</span>
-                      )}
-                      <CalendarIcon className="ml-2 h-4 w-4 opacity-50" />
-                    </Button>
+                    <Input 
+                      placeholder="Tambahkan keterangan (opsional)" 
+                      {...field}
+                    />
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <Button type="submit" className="w-full">
-          Submit
-        </Button>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={form.watch("status") === "Hadir" && locationStatus !== 'approved'}
+            >
+              Submit
+            </Button>
+          </div>
+        </div>
       </form>
     </Form>
   )
