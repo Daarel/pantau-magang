@@ -104,7 +104,11 @@ function getData(): Attendance[] {
   ]
 }
 
-export default function TablePage({ activeTab }: { activeTab: string }) {
+interface TablePageProps {
+  activeTab: string;
+}
+
+export default function TablePage({ activeTab }: TablePageProps) {
   const data = getData()
 
 // Filter sesuai tab aktif
