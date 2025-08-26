@@ -6,7 +6,7 @@ import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -33,38 +33,168 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { AttendanceRecord } from "../components/types/Attendance"
+import { AttendanceRecord } from "../components/types/attendance"
 
 import { RiArrowDropDownLine } from 'react-icons/ri';
+import { MapPinIcon } from "lucide-react"
 
 // Schema validasi
 const FormSchema = z.object({
   dob: z.date({
-    required_error: "Tanggal harus diisi.",
+    message: "Tanggal harus diisi.",
   }),
   status: z.string({
-    required_error: "Status harus diisi.",
+    message: "Status harus diisi.",
   }),
+  description: z.string().optional(),
+  location: z.object({
+    latitude: z.number().optional(),
+    longitude: z.number().optional(),
+    address: z.string().optional(),
+    approved: z.boolean().default(false),
+  }).optional(),
 })
+
+// Koordinat kantor (contoh: Jakarta)
+const OFFICE_COORDINATES = {
+  // -6.240408297324362, 106.76737910412956
+  latitude: -6.240408297324362,
+  longitude: 106.76737910412956,
+  radius: 0.0025 // Radius dalam derajat (sekitar 250 meter)
+}
+
+// Tipe untuk lokasi user
+interface UserLocation {
+  latitude: number;
+  longitude: number;
+  address: string;
+}
 
 export function AttendanceForm() {
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([])
+  const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error' | 'approved'>('idle')
+  const [userLocation, setUserLocation] = useState<UserLocation  | null>(null)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      status: "Hadir", // Nilai default untuk status
+      status: "Hadir", 
+      description: "",
     },
   })
 
+    // Fungsi untuk mendapatkan lokasi user
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation tidak didukung oleh browser Anda")
+      return
+    }
+
+    setLocationStatus('fetching')
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords
+        setUserLocation({ latitude, longitude, address: "Sedang mendapatkan alamat..." })
+        
+        try {
+          // Reverse geocoding untuk mendapatkan alamat dari koordinat
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          )
+          const data = await response.json()
+          const address = data.display_name || "Alamat tidak ditemukan"
+          
+          setUserLocation({ latitude, longitude, address })
+          setLocationStatus('success')
+          
+          // Cek apakah lokasi user berada dalam radius kantor
+          const isWithinRadius = checkIfWithinRadius(
+            latitude, 
+            longitude, 
+            OFFICE_COORDINATES.latitude, 
+            OFFICE_COORDINATES.longitude, 
+            OFFICE_COORDINATES.radius
+          )
+          
+          if (isWithinRadius) {
+            setLocationStatus('approved')
+            form.setValue('location', {
+              latitude,
+              longitude,
+              address,
+              approved: true,
+            })
+            toast.success("Lokasi disetujui! Anda berada di area kantor.")
+          } else {
+            form.setValue('location', {
+              latitude,
+              longitude,
+              address,
+              approved: false,
+            })
+            toast.error("Lokasi tidak sesuai. Anda berada di luar area kantor.")
+          }
+        } catch (error) {
+          console.error("Error getting address:", error)
+          setLocationStatus('error')
+          toast.error("Gagal mendapatkan alamat")
+        }
+      },
+      (error) => {
+        console.error("Error getting location:", error)
+        setLocationStatus('error')
+        toast.error("Gagal mendapatkan lokasi")
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000
+      }
+    )
+  }
+
+  // Fungsi untuk mengecek apakah lokasi user berada dalam radius yang ditentukan
+  const checkIfWithinRadius = (
+    lat1: number, 
+    lon1: number, 
+    lat2: number, 
+    lon2: number, 
+    radius: number
+  ): boolean => {
+    // Rumus Haversine untuk menghitung jarak antara dua titik koordinat
+    const R = 6371 // Radius bumi dalam km
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLon = (lon2 - lon1) * Math.PI / 180
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+    const distance = R * c // Jarak dalam km
+    
+    // Konversi radius dari derajat ke km (approx 1 derajat = 111 km)
+    const radiusInKm = radius * 111
+    return distance <= radiusInKm
+  }
+
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (data.status === "Hadir" && (!data.location || !data.location.approved)) {
+      toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
+      return
+    }
+
     const newRecord: AttendanceRecord = {
       id: 2022071014,
       date: data.dob,
       status: data.status,
+      latitude: userLocation?.latitude || 0,
+      longitude: userLocation?.longitude || 0,
+      location: userLocation?.address || "Lokasi tidak tersedia",
+      address: userLocation?.address || "Lokasi tidak tersedia",
       imageUrl: "https://example.com/path-to-user-image.jpg",
-      location: "Jakarta, Indonesia",
-      description: "Keterangan tambahan jika diperlukan",
+      description: data.description || "Tidak ada keterangan",
     }
 
     setAttendanceRecords(prev => [...prev, newRecord])
@@ -78,7 +208,7 @@ export function AttendanceForm() {
                 id: newRecord.id,
                 tanggal: format(newRecord.date, "PPP"),
                 status: newRecord.status,
-                image: newRecord.imageUrl,
+                lokasi: newRecord.location,
               },
               null,
               2
@@ -90,53 +220,90 @@ export function AttendanceForm() {
 
     // Reset form setelah submit
     form.reset()
+    setLocationStatus('idle')
+    setUserLocation(null)
   }
 
+   // Dapatkan status lokasi untuk ditampilkan di UI
+  const getLocationButtonText = () => {
+    switch (locationStatus) {
+      case 'idle':
+        return "Tetapkan Lokasi"
+      case 'fetching':
+        return "Mendapatkan lokasi..."
+      case 'success':
+        return "Lokasi tidak disetujui"
+      case 'error':
+        return "Gagal mendapatkan lokasi"
+      case 'approved':
+        return "Lokasi disetujui"
+      default:
+        return "Tetapkan Lokasi"
+    }
+  }
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Status */}
         <FormField
           control={form.control}
           name="status"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel>Status</FormLabel>
-              <div className="flex items-center justify-between gap-2">
-                <FormControl>
-                  <Input 
-                    placeholder="Isi Kehadiran" 
-                    value={field.value}
-                    onChange={field.onChange}
-                    className="flex-1"
-                  />
-                </FormControl>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon" className="h-9 w-9">
-                      <RiArrowDropDownLine className="w-5 h-5" />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full pl-3 text-left font-normal justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value || "Pilih status"}
+                      <RiArrowDropDownLine className="ml-2 h-4 w-4 opacity-50" />
                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Pilih Status</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => form.setValue("status", "Hadir")}
-                    >
-                      Hadir
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => form.setValue("status", "Sakit")}
-                    >
-                      Sakit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => form.setValue("status", "Izin")}
-                    >
-                      Izin
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-2" align="end">
+                  <div className="flex flex-col space-y-2">
+                    <h4 className="text-sm">Pilih Status</h4>
+                    <div className="border-b my-1" />
+                      <Button
+                        variant="ghost"
+                        className="justify-start"
+                        onClick={() => {
+                          form.setValue("status", "Hadir");
+                          form.clearErrors("status");
+                        }}
+                      >
+                        Hadir
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="justify-start"
+                        onClick={() => {
+                          form.setValue("status", "Sakit");
+                          form.clearErrors("status");
+                        }}
+                      >
+                        Sakit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="justify-start"
+                        onClick={() => {
+                          form.setValue("status", "Izin");
+                          form.clearErrors("status");
+                        }}
+                      >
+                        Izin
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
@@ -184,8 +351,60 @@ export function AttendanceForm() {
             </FormItem>
           )}
         />
+
+        {/* Tombol untuk menangkap lokasi - hanya ditampilkan jika status Hadir */}
+        {form.watch("status") === "Hadir" && (
+          <FormItem>
+            <FormLabel>Lokasi</FormLabel>
+            <div className="flex flex-col space-y-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={getCurrentLocation}
+                disabled={locationStatus === 'fetching'}
+                className={cn(
+                  "w-full justify-between",
+                  locationStatus === 'approved' && "bg-green-50 text-green-700 border-green-200",
+                  locationStatus === 'success' && "bg-red-50 text-red-700 border-red-200"
+                )}
+              >
+                <span>{getLocationButtonText()}</span>
+                <MapPinIcon className="h-4 w-4 opacity-50" />
+              </Button>
+              
+              {/* {userLocation && (
+                <div className="text-sm text-muted-foreground p-2 bg-slate-50 rounded-md">
+                  <p>Lat: {userLocation.latitude.toFixed(6)}</p>
+                  <p>Lng: {userLocation.longitude.toFixed(6)}</p>
+                  <p>Alamat: {userLocation.address}</p>
+                </div>
+              )} */}
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+
+        {/* Keterangan */}
+        {/* <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Keterangan</FormLabel>
+                <FormControl>
+                  <Input type="description" placeholder="Email" />
+                  <CalendarIcon className="ml-2 h-4 w-4 opacity-50" />
+                </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
         
-        <Button type="submit" className="w-full">
+        <Button 
+          type="submit" 
+          className="w-full"
+          disabled={form.watch("status") === "Hadir" && locationStatus !== 'approved'}
+        >
           Submit
         </Button>
       </form>
