@@ -50,7 +50,7 @@ export default function Profile() {
   return (
     <LayoutWrapper>
       <h1 className='title_header text-black'>Profil</h1>
-      <h2>Informasi lengkap tentang saya</h2>
+      <p className='text-gray-500'>Informasi tentang saya</p>
       <div className='flex justify-center items-center flex-col'>
         <Card>
           <CardContent className='flex flex-col justify-center items-center'>

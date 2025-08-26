@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/Card";
@@ -12,6 +12,7 @@ import { FiAlertTriangle } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
+  const router = useRouter();
   // Mock data
   const user = {
     full_name: "Mia Melita",
@@ -155,18 +156,22 @@ export default function AdminDashboard() {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className='flex flex-col gap-10'>
-            <Button asChild variant='outline' className='p-10'>
-              <Link href='/admin/user'>
-                <FaUsers className='h-8 w-8 text-blue-600' />
-                <span className='text-sm'>Add User</span>
-              </Link>
+            <Button
+              variant='outline'
+              className='p-10'
+              onClick={() => router.push("/admin/user?modal=open")}
+            >
+              <FaUsers className='h-8 w-8 text-blue-600' />
+              <span className='text-sm'>Add User</span>
             </Button>
 
-            <Button asChild variant='outline' className='p-10'>
-              <Link href='/admin/supervisor'>
-                <AiFillFileText className='h-8 w-8 text-green-600' />
-                <span className='text-sm'>Add Supervisor</span>
-              </Link>
+            <Button
+              variant='outline'
+              className='p-10'
+              onClick={() => router.push("/admin/supervisor?modal=open")}
+            >
+              <AiFillFileText className='h-8 w-8 text-green-600' />
+              <span className='text-sm'>Add Supervisor</span>
             </Button>
           </CardContent>
         </Card>
