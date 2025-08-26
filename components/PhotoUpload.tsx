@@ -78,10 +78,11 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
       />
       
       {previewUrl ? (
-        <div className="flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2">
+        <div className="flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 overflow-hidden">
           <img
             src={previewUrl}
             alt="Preview"
+            className='w-full h-full object-cover'
           />
           <Button
             variant="destructive"
@@ -95,7 +96,7 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
       ) : (
         <Button
           variant="outline"
-          className="flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[400px] w-[200px] lg:w-[400px] rounded-md mb-2 bg-gray-200"
+          className="flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 bg-gray-200"
           onClick={handleClick}
         >
           <TbCameraPlus className="w-4 h-4" />

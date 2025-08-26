@@ -196,22 +196,28 @@ export function AttendanceForm() {
   // Fungsi untuk mengupload foto (simulasi)
   const uploadPhoto = async (file: File): Promise<string> => {
     // Simulasi upload - dalam implementasi nyata, ini akan mengupload ke server
+    // return new Promise((resolve) => {
+    //   setTimeout(() => {
+    //     // Di aplikasi nyata, ini akan mengembalikan URL dari server
+    //     // Untuk demo, kita menggunakan placeholder URL
+    //     resolve("https://example.com/path-to-uploaded-image.jpg");
+    //   }, 1000);
+    // });
     return new Promise((resolve) => {
-      setTimeout(() => {
-        // Di aplikasi nyata, ini akan mengembalikan URL dari server
-        // Untuk demo, kita menggunakan placeholder URL
-        resolve("https://example.com/path-to-uploaded-image.jpg");
-      }, 1000);
+      // Untuk demo, kita menggunakan URL objek untuk gambar yang diunggah
+      const objectUrl = URL.createObjectURL(file);
+      resolve(objectUrl);
     });
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    if (data.status === "Hadir" && (!data.location || !data.location.approved || !data.imageUrl)) {
+    if (data.status === "Hadir" && (!data.location || !data.location.approved)) {
       toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
       return
     }
 
-    let imageUrl = "https://example.com/path-to-user-image.jpg"; // Default
+    // let imageUrl = "https://example.com/path-to-user-image.jpg"; // Default
+    let imageUrl = ""; // Default
 
     if (photoFile) {
       try {
@@ -232,7 +238,8 @@ export function AttendanceForm() {
       longitude: userLocation?.longitude || 0,
       location: userLocation?.address || "Lokasi tidak tersedia",
       address: userLocation?.address || "Lokasi tidak tersedia",
-      imageUrl: "https://example.com/path-to-user-image.jpg",
+      // imageUrl: "https://example.com/path-to-user-image.jpg",
+      imageUrl: imageUrl,
       description: data.description || "-",
     }
 
@@ -250,6 +257,8 @@ export function AttendanceForm() {
                 tanggal: format(newRecord.date, "PPP"),
                 status: newRecord.status,
                 lokasi: newRecord.location,
+                foto: newRecord.imageUrl ? "Tersedia" : "Tidak tersedia",
+                foto2: newRecord.imageUrl,
               },
               null,
               2
@@ -421,7 +430,7 @@ export function AttendanceForm() {
                       locationStatus === 'success' && "bg-red-50 text-red-700 border-red-200"
                     )}
                   >
-                    <span>{getLocationButtonText()}</span>
+                    <span className="font-normal text-black/60">{getLocationButtonText()}</span>
                     <MapPinIcon className="h-4 w-4 opacity-50" />
                   </Button>
                   
