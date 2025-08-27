@@ -25,19 +25,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { AttendanceRecord } from "../components/types/attendance"
 
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import { MapPinIcon } from "lucide-react"
 import { PhotoUpload } from "@/components/PhotoUpload";
+
+const locationSchema = z.object({
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  address: z.string().optional(),
+  approved: z.boolean().optional(),
+});
 
 // Schema validasi
 const FormSchema = z.object({
@@ -49,15 +48,10 @@ const FormSchema = z.object({
     message: "Status harus diisi.",
   }),
   description: z.string().optional(),
-  location: z.object({
-    latitude: z.number().optional(),
-    longitude: z.number().optional(),
-    address: z.string().optional(),
-    approved: z.boolean().default(false),
-  }).optional(),
+  location: locationSchema.optional(),
 })
 
-// Koordinat kantor (contoh: Jakarta)
+// Koordinat kantor
 const OFFICE_COORDINATES = {
   // -6.240408297324362, 106.76737910412956
   latitude: -6.240408297324362,
@@ -65,7 +59,6 @@ const OFFICE_COORDINATES = {
   radius: 0.0025 // Radius dalam derajat (sekitar 250 meter)
 }
 
-// Tipe untuk lokasi user
 interface UserLocation {
   latitude: number;
   longitude: number;
@@ -85,7 +78,8 @@ export function AttendanceForm() {
     defaultValues: {
       status: "Hadir", 
       description: "",
-      dob: currentDate
+      dob: currentDate,
+      location: undefined,
     },
   })
 
@@ -195,14 +189,6 @@ export function AttendanceForm() {
 
   // Fungsi untuk mengupload foto (simulasi)
   const uploadPhoto = async (file: File): Promise<string> => {
-    // Simulasi upload - dalam implementasi nyata, ini akan mengupload ke server
-    // return new Promise((resolve) => {
-    //   setTimeout(() => {
-    //     // Di aplikasi nyata, ini akan mengembalikan URL dari server
-    //     // Untuk demo, kita menggunakan placeholder URL
-    //     resolve("https://example.com/path-to-uploaded-image.jpg");
-    //   }, 1000);
-    // });
     return new Promise((resolve) => {
       // Untuk demo, kita menggunakan URL objek untuk gambar yang diunggah
       const objectUrl = URL.createObjectURL(file);
@@ -211,7 +197,9 @@ export function AttendanceForm() {
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    if (data.status === "Hadir" && (!data.location || !data.location.approved)) {
+    const isApproved = data.location?.approved ?? false;
+
+    if (data.status === "Hadir" && (!data.location || !isApproved)) {
       toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
       return
     }
@@ -269,12 +257,16 @@ export function AttendanceForm() {
     })
 
     // Reset form setelah submit
-    form.reset()
+    form.reset({
+      status: "Hadir",
+      description: "",
+      dob: new Date(),
+      location: undefined
+    })
     setLocationStatus('idle')
     setUserLocation(null)
     setPhotoFile(null)
     setPhotoUrl(null)
-    localStorage.removeItem('attendancePhoto');
   }
 
    // Dapatkan status lokasi untuk ditampilkan di UI
