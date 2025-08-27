@@ -29,7 +29,7 @@ export const LocationButton = ({
         className={cn(
           "w-full justify-between",
           locationStatus === 'approved' && "bg-green-50 text-green-700 border-green-200",
-          locationStatus === 'success' && "bg-red-50 text-red-700 border-red-200"
+          locationStatus === 'success' && "bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
         )}
       >
         <span className="font-normal text-black/60">{getLocationButtonText()}</span>

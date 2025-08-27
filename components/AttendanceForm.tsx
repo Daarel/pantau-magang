@@ -26,12 +26,11 @@ import {
 import { AttendanceRecord } from "../components/types/attendance"
 // Icons
 import { RiArrowDropDownLine } from 'react-icons/ri';
-import { BiMap } from 'react-icons/bi';
-import { PhotoUpload } from "@/components/PhotoUpload";
-import { StatusDropdown } from "./FStatusDropdown"
+import { PhotoUpload } from "./PhotoUpload";
+import { FileUpload } from "./FileUpload"
 import { LocationButton } from "./FLocationButton"
-import { getCurrentLocation, checkIfWithinRadius, OfficeCoordinates, UserLocation } from "../lib/helper/geolocation.helpers"
-import { uploadPhoto } from "../lib/helper/photo.helpers"
+import { getCurrentLocation, UserLocation } from "../lib/helper/geolocation.helpers"
+import { uploadPhoto, uploadFile } from "../lib/helper/upload.helpers"
 
 const locationSchema = z.object({
   latitude: z.number().optional(),
@@ -51,7 +50,15 @@ const FormSchema = z.object({
   }),
   description: z.string().optional(),
   location: locationSchema.optional(),
-})
+}).superRefine((data, ctx) => {
+  if ((data.status === "Izin" || data.status === "Sakit") && (!data.description || data.description.trim() === "")) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["description"],
+      message: "Keterangan wajib diisi untuk status Izin atau Sakit",
+    });
+  }
+});
 
 // Koordinat kantor
 const OFFICE_COORDINATES = {
@@ -68,6 +75,8 @@ export function AttendanceForm() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [fileFile, setFileFile] = useState<File | null>(null)
+  const [fileUrl, setFileUrl] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -98,6 +107,11 @@ export function AttendanceForm() {
     setPhotoUrl(previewUrl);
   };
 
+  const handleFileChange = (file: File | null, fileUrl: string | null) => {
+    setFileFile(file);
+    setFileUrl(fileUrl);
+  };
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const isApproved = data.location?.approved ?? false;
 
@@ -108,6 +122,8 @@ export function AttendanceForm() {
 
     // let imageUrl = "https://example.com/path-to-user-image.jpg"; // Default
     let imageUrl = ""; // Default
+    let attachmentUrl = "";
+    let attachmentType = "none";
 
     if (photoFile) {
       try {
@@ -116,6 +132,16 @@ export function AttendanceForm() {
         toast.dismiss();
       } catch (error) {
         toast.error("Gagal mengupload foto");
+        console.error("Upload error:", error);
+      }
+    } else if ((data.status === "Izin" || data.status === "Sakit") && fileFile) {
+      try {
+        toast.loading("Mengupload file...");
+        attachmentUrl = await uploadFile(fileFile);
+        attachmentType = "file";
+        toast.dismiss();
+      } catch (error) {
+        toast.error("Gagal mengupload file");
         console.error("Upload error:", error);
       }
     }
@@ -160,7 +186,7 @@ export function AttendanceForm() {
 
     // Reset form setelah submit
     form.reset({
-      status: "Hadir",
+      ...form.getValues(),
       description: "",
       dob: new Date(),
       location: undefined
@@ -189,8 +215,11 @@ export function AttendanceForm() {
         {/* Foto */}
         <div className="flex flex-col md:flex-row items-center justify-around gap-6 md:gap-7 lg:gap-15 border-2 p-6 rounded-md">
           <FormItem>
-            {/* <FormLabel>Foto</FormLabel> */}
-            <PhotoUpload onPhotoChange={handlePhotoChange} />
+            {form.watch('status') === 'Hadir' ? (
+              <PhotoUpload onPhotoChange={handlePhotoChange} />
+            ) : (
+              <FileUpload onFileChange={handleFileChange} />
+            )}
             <FormMessage />
           </FormItem>
 
@@ -303,17 +332,19 @@ export function AttendanceForm() {
             />
 
             {/* Tombol untuk menangkap lokasi - hanya ditampilkan jika status Hadir */}
-            <FormItem>
-              <FormLabel>Lokasi</FormLabel>
-              <LocationButton
-                onClick={handleGetLocation}
-                disabled={locationStatus === 'fetching'}
-                status={form.watch("status")}
-                locationStatus={locationStatus}
-                getLocationButtonText={getLocationButtonText}
-              />
-              <FormMessage />
-            </FormItem>
+            {form.watch('status') === 'Hadir' && (
+              <FormItem>
+                <FormLabel>Lokasi</FormLabel>
+                <LocationButton
+                  onClick={handleGetLocation}
+                  disabled={locationStatus === 'fetching'}
+                  status={form.watch("status")}
+                  locationStatus={locationStatus}
+                  getLocationButtonText={getLocationButtonText}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
 
             {/* Keterangan */}
             <FormField
@@ -328,14 +359,18 @@ export function AttendanceForm() {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
             <Button 
               type="submit" 
               className="w-full"
-              disabled={form.watch("status") === "Hadir" && locationStatus !== 'approved'}
+              disabled={
+                (form.watch("status") === "Hadir" && locationStatus !== "approved") ||
+                ((form.watch("status") === "Izin" || form.watch("status") === "Sakit") &&
+                  ((form.watch("description") ?? "").trim() === ""))
+              }
             >
               Submit
             </Button>
