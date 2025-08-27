@@ -18,8 +18,8 @@ const DataTableHeader: FC<DataTableHeaderProps> = ({
   return (
     <div className='flex items-center justify-between'>
       <div>
-        <h1 className='text-2xl font-bold'>{title}</h1>
-        <p className='text-gray-500'>{subtitle}</p>
+        <h1 className='text-2xl max-sm:text-lg font-bold'>{title}</h1>
+        <p className='text-gray-500 max-sm:text-xs'>{subtitle}</p>
       </div>
       <Button
         onClick={onAdd}
