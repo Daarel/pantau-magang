@@ -7,7 +7,6 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import { IconType } from "react-icons";
-import { DataColumn } from "./dummy";
 
 type InputType = "text" | "number" | "date";
 
@@ -94,95 +93,6 @@ const internModalInput: ModalField[] = [
     placeholder: "Masukkan tanggal selesai magang",
     type: "date",
     Icon: FaCalendarAlt,
-  },
-];
-
-// Untuk data intern table di admin/user
-export const columns: ColumnDef<DataColumn>[] = [
-  {
-    accessorKey: "nomorInduk",
-    header: "Nomor Induk",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("nomorInduk")}</div>
-    ),
-  },
-  {
-    accessorKey: "namaLengkap",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nama Lengkap
-          <LuArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className='lowercase'>{row.getValue("namaLengkap")}</div>
-    ),
-  },
-  {
-    accessorKey: "password",
-    header: "Password",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("password")}</div>
-    ),
-  },
-  {
-    accessorKey: "gedung",
-    header: "Gedung",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("gedung")}</div>
-    ),
-  },
-  {
-    accessorKey: "pembimbing",
-    header: "Pembimbing",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("pembimbing")}</div>
-    ),
-  },
-  {
-    accessorKey: "mulaiMagang",
-    header: "Mulai Magang",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("mulaiMagang")}</div>
-    ),
-  },
-  {
-    accessorKey: "selesaiMagang",
-    header: "Selesai Magang",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("selesaiMagang")}</div>
-    ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: () => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
-              <RiMoreFill />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem>
-              <RiEdit2Line />
-              <span>Edit</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RiDeleteBin6Fill className="text-red-500"/>
-              <span className="text-red-500">Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
   },
 ];
 

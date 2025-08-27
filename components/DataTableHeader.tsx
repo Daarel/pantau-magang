@@ -2,14 +2,14 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { FC } from "react";
 
-interface TablePageHeaderProps {
+interface DataTableHeaderProps {
   title: string;
   subtitle: string;
   label: string;
   onAdd: () => void;
 }
 
-const TablePageHeader: FC<TablePageHeaderProps> = ({
+const DataTableHeader: FC<DataTableHeaderProps> = ({
   title,
   subtitle,
   label,
@@ -32,4 +32,4 @@ const TablePageHeader: FC<TablePageHeaderProps> = ({
   );
 };
 
-export default TablePageHeader;
+export default DataTableHeader;

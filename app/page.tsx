@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import LoginForm from "@/components/forms/LoginForm";
+import LoginForm from "@/components/LoginForm";
 
 type UserRole = "intern" | "supervisor" | "admin";
 
