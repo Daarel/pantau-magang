@@ -1,5 +1,4 @@
 "use client"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
@@ -7,7 +6,6 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useState, useEffect } from "react"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -26,10 +24,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { AttendanceRecord } from "../components/types/attendance"
-
+// Icons
 import { RiArrowDropDownLine } from 'react-icons/ri';
-import { MapPinIcon } from "lucide-react"
+import { BiMap } from 'react-icons/bi';
 import { PhotoUpload } from "@/components/PhotoUpload";
+import { StatusDropdown } from "./FStatusDropdown"
+import { LocationButton } from "./FLocationButton"
+import { getCurrentLocation, checkIfWithinRadius, OfficeCoordinates, UserLocation } from "../lib/helper/geolocation.helpers"
+import { uploadPhoto } from "../lib/helper/photo.helpers"
 
 const locationSchema = z.object({
   latitude: z.number().optional(),
@@ -59,12 +61,6 @@ const OFFICE_COORDINATES = {
   radius: 0.0025 // Radius dalam derajat (sekitar 250 meter)
 }
 
-interface UserLocation {
-  latitude: number;
-  longitude: number;
-  address: string;
-}
-
 export function AttendanceForm() {
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([])
   const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error' | 'approved'>('idle')
@@ -79,103 +75,18 @@ export function AttendanceForm() {
       status: "Hadir", 
       description: "",
       dob: currentDate,
-      location: undefined,
+      location: {},
     },
   })
 
-    // Fungsi untuk mendapatkan lokasi user
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation tidak didukung oleh browser Anda")
-      return
-    }
-
-    setLocationStatus('fetching')
-    
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords
-        setUserLocation({ latitude, longitude, address: "Sedang mendapatkan alamat..." })
-        
-        try {
-          // Reverse geocoding untuk mendapatkan alamat dari koordinat
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-          )
-          const data = await response.json()
-          const address = data.display_name || "Alamat tidak ditemukan"
-          
-          setUserLocation({ latitude, longitude, address })
-          setLocationStatus('success')
-          
-          // Cek apakah lokasi user berada dalam radius kantor
-          const isWithinRadius = checkIfWithinRadius(
-            latitude, 
-            longitude, 
-            OFFICE_COORDINATES.latitude, 
-            OFFICE_COORDINATES.longitude, 
-            OFFICE_COORDINATES.radius
-          )
-          
-          if (isWithinRadius) {
-            setLocationStatus('approved')
-            form.setValue('location', {
-              latitude,
-              longitude,
-              address,
-              approved: true,
-            })
-            toast.success("Lokasi disetujui! Anda berada di area kantor.")
-          } else {
-            form.setValue('location', {
-              latitude,
-              longitude,
-              address,
-              approved: false,
-            })
-            toast.error("Lokasi tidak sesuai. Anda berada di luar area kantor.")
-          }
-        } catch (error) {
-          console.error("Error getting address:", error)
-          setLocationStatus('error')
-          toast.error("Gagal mendapatkan alamat")
-        }
-      },
-      (error) => {
-        console.error("Error getting location:", error)
-        setLocationStatus('error')
-        toast.error("Gagal mendapatkan lokasi")
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000
-      }
+  // Fungsi untuk mendapatkan lokasi user
+  const handleGetLocation = () => {
+    getCurrentLocation(
+      OFFICE_COORDINATES,
+      setUserLocation,
+      setLocationStatus,
+      (location) => form.setValue('location', location)
     )
-  }
-
-  // Fungsi untuk mengecek apakah lokasi user berada dalam radius yang ditentukan
-  const checkIfWithinRadius = (
-    lat1: number, 
-    lon1: number, 
-    lat2: number, 
-    lon2: number, 
-    radius: number
-  ): boolean => {
-    // Rumus Haversine untuk menghitung jarak antara dua titik koordinat
-    const R = 6371 // Radius bumi dalam km
-    const dLat = (lat2 - lat1) * Math.PI / 180
-    const dLon = (lon2 - lon1) * Math.PI / 180
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-    const distance = R * c // Jarak dalam km
-    
-    // Konversi radius dari derajat ke km (approx 1 derajat = 111 km)
-    const radiusInKm = radius * 111
-    return distance <= radiusInKm
   }
 
   useEffect(() => {
@@ -185,15 +96,6 @@ export function AttendanceForm() {
   const handlePhotoChange = (file: File | null, previewUrl: string | null) => {
     setPhotoFile(file);
     setPhotoUrl(previewUrl);
-  };
-
-  // Fungsi untuk mengupload foto (simulasi)
-  const uploadPhoto = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      // Untuk demo, kita menggunakan URL objek untuk gambar yang diunggah
-      const objectUrl = URL.createObjectURL(file);
-      resolve(objectUrl);
-    });
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -272,18 +174,12 @@ export function AttendanceForm() {
    // Dapatkan status lokasi untuk ditampilkan di UI
   const getLocationButtonText = () => {
     switch (locationStatus) {
-      case 'idle':
-        return "Tetapkan Lokasi"
-      case 'fetching':
-        return "Mendapatkan lokasi..."
-      case 'success':
-        return "Lokasi tidak disetujui"
-      case 'error':
-        return "Gagal mendapatkan lokasi"
-      case 'approved':
-        return "Lokasi disetujui"
-      default:
-        return "Tetapkan Lokasi"
+      case 'idle': return "Tetapkan Lokasi"
+      case 'fetching': return "Mendapatkan lokasi..."
+      case 'success': return "Lokasi tidak disetujui"
+      case 'error': return "Gagal mendapatkan lokasi"
+      case 'approved': return "Lokasi disetujui"
+      default: return "Tetapkan Lokasi"
     }
   }
   
@@ -407,36 +303,17 @@ export function AttendanceForm() {
             />
 
             {/* Tombol untuk menangkap lokasi - hanya ditampilkan jika status Hadir */}
-            {form.watch("status") === "Hadir" && (
-              <FormItem>
-                <FormLabel>Lokasi</FormLabel>
-                <div className="flex flex-col space-y-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={getCurrentLocation}
-                    disabled={locationStatus === 'fetching'}
-                    className={cn(
-                      "w-full justify-between",
-                      locationStatus === 'approved' && "bg-green-50 text-green-700 border-green-200",
-                      locationStatus === 'success' && "bg-red-50 text-red-700 border-red-200"
-                    )}
-                  >
-                    <span className="font-normal text-black/60">{getLocationButtonText()}</span>
-                    <MapPinIcon className="h-4 w-4 opacity-50" />
-                  </Button>
-                  
-                  {/* {userLocation && (
-                    <div className="text-sm text-muted-foreground p-2 bg-slate-50 rounded-md">
-                      <p>Lat: {userLocation.latitude.toFixed(6)}</p>
-                      <p>Lng: {userLocation.longitude.toFixed(6)}</p>
-                      <p>Alamat: {userLocation.address}</p>
-                    </div>
-                  )} */}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
+            <FormItem>
+              <FormLabel>Lokasi</FormLabel>
+              <LocationButton
+                onClick={handleGetLocation}
+                disabled={locationStatus === 'fetching'}
+                status={form.watch("status")}
+                locationStatus={locationStatus}
+                getLocationButtonText={getLocationButtonText}
+              />
+              <FormMessage />
+            </FormItem>
 
             {/* Keterangan */}
             <FormField
