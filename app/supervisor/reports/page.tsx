@@ -1,154 +1,140 @@
-'use client'
 
-import LayoutWrapper from '@/components/layout/LayoutWrapper'
-import { Card, CardContent } from '@/components/Card'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Calendar28 } from '@/components/ui/date-picker'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { FiUpload } from "react-icons/fi";
-import { BiSolidXCircle } from "react-icons/bi";
-import { useState } from 'react'
+// src/components/AttendanceHistory.tsx
+"use client";
+import React, { useEffect, useState } from "react";
+import { Download, Clock, MapPin, Calendar } from "lucide-react";
+import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import { getAttendanceHistory } from "@/lib/attendance";
+import { supabase } from "@/lib/supabaseClient";
+import TabelSupervisor from "@/app/tabel-supervisor/page";
+import { AttendanceRecord } from "@/lib/attendance";
 
-// Import notif components
-import Loader from '@/components/ui/loader'
-import Success from '@/components/ui/success'
-import Error from '@/components/ui/error'
+export default function Attendance() {
+  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string>("Semua Daftar");
 
-export default function SupervisorReports() {
-  const [file, setFile] = useState<File | null>(null)
-  const [status, setStatus] = useState<string>("")
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState(false)
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     setErrorMsg("");
 
-  const handleConfirm = () => {
-    // Validasi input wajib
-    if (!file || !status) {
-      setError(true)
-      setTimeout(() => setError(false), 3000)
-      return
-    }
+  //     try {
+  //       const {
+  //         data: { session },
+  //       } = await supabase.auth.getSession();
 
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      setSuccess(true)
-      setTimeout(() => setSuccess(false), 3000)
-    }, 2000)
-  }
+  //       const userId = session?.user?.id;
+
+  //       if (!userId) {
+  //         setLoading(false);
+  //         return;
+  //       }
+
+  //       const records: AttendanceRecord[] | null = await getAttendanceHistory(userId);
+  //       setAttendanceData(records || []);
+  //     } catch (error: unknown) {
+  //       console.error("Get attendance history error:", error);
+  //       if (error instanceof Error) {
+  //         setErrorMsg(error.message);
+  //       } else {
+  //         setErrorMsg("Gagal memuat data absensi");
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  // const filteredData =
+  //   activeTab === "Semua Daftar"
+  //     ? attendanceData
+  //     : attendanceData.filter(
+  //         (record) =>
+  //           record.status?.toLowerCase() === activeTab.toLowerCase()
+  //       );
 
   return (
     <LayoutWrapper>
-      {/* Loader di tengah layar */}
-      {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/20 z-50">
-          <Loader />
-        </div>
-      )}
-
-      {/* Success/Error agak turun di atas */}
-      <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50">
-        {success && <Success />}
-        {error && <Error />}
-      </div>
-
-      <h1 className="text-xl font-semibold mb-4">Pengajuan Laporan</h1>
-
-      <Card className="p-4 bg-[#F8F6F6]">
-        <CardContent className="grid md:grid-cols-2 gap-6">
-          {/* Upload File */}
-          <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-md p-6 bg-gray-50 w-full">
-            {!file ? (
-              <label
-                htmlFor="fileUpload"
-                className="flex flex-col items-center cursor-pointer"
-              >
-                <FiUpload className="h-8 w-8 text-gray-500 mb-2" />
-                <span className="text-blue-600">Add File</span>
-                <input
-                  id="fileUpload"
-                  type="file"
-                  className="hidden"
-                  onChange={(e) => {
-                    const selectedFile = e.target.files?.[0] || null
-                    if (selectedFile) {
-                      if (selectedFile.size > 5 * 1024 * 1024) { // cek ukuran > 5MB
-                        setError(true)
-                        setTimeout(() => setError(false), 3000)
-                        e.target.value = "" // reset input
-                        setFile(null)
-                        return
-                      }
-                      setFile(selectedFile)
-                    }
-                  }}
-                />
-              </label>
-            ) : (
-              <div className="flex items-center justify-between w-full px-4 py-2 bg-white rounded-md shadow">
-                <div className="flex flex-col text-sm">
-                  <span className="font-medium text-gray-700">{file.name}</span>
-                  <span className="text-xs text-gray-500">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </span>
-                </div>
-                <button
-                  onClick={() => setFile(null)}
-                  className="ml-3 text-red-500 hover:text-red-700"
-                >
-                  <BiSolidXCircle className="h-5 w-5 cursor-pointer" />
-                </button>
-              </div>
-            )}
-            <p className="text-xs text-gray-500 mt-2">
-              ⓘ Ukuran File Maksimal 5 MB
+      <div className="min-h-screen bg-gray-50 p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Konfirmasi Perizinan</h1>
+            <p className="text-gray-500">
+              Daftar laporan perizinan magang yang perlu dikonfirmasi
             </p>
           </div>
-
-          {/* Form */}
-          <div className="space-y-4">
-            {/* Status */}
-            <div>
-              <Label>Status <span className="text-red-500">*</span></Label>
-              <Select onValueChange={(val) => setStatus(val)}>
-                <SelectTrigger className="w-full bg-gray-50 mt-2">
-                  <SelectValue placeholder="Pilih status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="sakit">Sakit</SelectItem>
-                  <SelectItem value="izin">Izin</SelectItem>
-                  <SelectItem value="alfa">Alfa</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Tanggal */}
-            <div>
-              <div className="relative">
-                  <Calendar28 />
-              </div>
-            </div>
-
-            {/* Keterangan */}
-            <div>
-              <Label>Keterangan</Label>
-              <Textarea placeholder="Tuliskan keterangan di sini..." className='bg-gray-50 mt-2'/>
-            </div>
-          </div>
-        </CardContent>
-
-        {/* Button Konfirmasi */}
-        <div className="flex justify-center mt-4">
-          <Button
-            onClick={handleConfirm}
-            className="w-1/3 bg-green-500 hover:bg-green-600 text-white rounded-full"
-          >
-            Konfirmasi
-          </Button>
+          {/* <button className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">
+            <Download size={18} />
+            Export PDF
+          </button> */}
         </div>
-      </Card>
+
+        {/* Tabs */}
+        <div className="flex gap-6 border-b mt-6">
+          {["Semua Daftar", "Sakit", "Izin"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-2 cursor-pointer ${
+                activeTab === tab
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-500 hover:text-blue-600"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="mt-6 space-y-4">
+          {/* {loading ? (
+            <div className="text-center text-gray-500 mt-10">
+              Loading attendance records...
+            </div>
+          ) : errorMsg ? (
+            <div className="text-center text-red-500 mt-10">{errorMsg}</div>
+          ) : filteredData.length > 0 ? (
+            filteredData.map((record, index) => (
+              <div
+                key={index}
+                className="bg-white p-4 rounded-lg shadow-sm border"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={18} className="text-gray-500" />
+                    <span className="font-semibold">{record.date}</span>
+                  </div>
+                  <span
+                    className={`px-3 py-1 text-sm rounded-full ${
+                      record.status === "present"
+                        ? "bg-green-100 text-green-800"
+                        : record.status === "late"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {record.status}
+                  </span>
+                </div>
+
+                
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500 mt-10">
+              No attendance records found
+            </div>
+          )} */}
+        </div>
+        <TabelSupervisor activeTab={activeTab} type={"reports"}/>
+      </div>
     </LayoutWrapper>
-  )
+  );
 }
+

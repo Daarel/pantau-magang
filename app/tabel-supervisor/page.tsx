@@ -1,5 +1,5 @@
 
-import { columns, Attendance } from "./columns"
+import { columns, reportColumns, Attendance, Report} from "./columns"
 import { DataTable } from "./data-table"
 
 function getData(): Attendance[] {
@@ -8,7 +8,7 @@ function getData(): Attendance[] {
     { 
       name: "Andi",
       status: "Hadir",
-      location: "-6.237768730275225, 106.76718123226024",
+      keterangan: "-",
       date: "2024-06-01", 
       check_in_time: "08:00", 
       check_out_time: "08:00",
@@ -16,7 +16,7 @@ function getData(): Attendance[] {
     { 
       name: "Budi",
       status: "Hadir", 
-      location: "-6.237768730275225, 106.76718123226024",
+      keterangan: "-",
       date: "2024-06-01",   
       check_in_time: "08:05", 
       check_out_time: "08:05",
@@ -24,7 +24,7 @@ function getData(): Attendance[] {
     { 
       name: "Citra",
       status: "Hadir",
-      location: "-6.237768730275225, 106.76718123226024",
+      keterangan: "-",
       date: "2024-06-01",  
       check_in_time: "08:30", 
       check_out_time: "08:30",
@@ -32,7 +32,7 @@ function getData(): Attendance[] {
     { 
       name: "Dewi",
       status: "Hadir", 
-      location: "-6.237768730275225, 106.76718123226024",
+      keterangan: "-",
       date: "2024-06-01", 
       check_in_time: "08:10", 
       check_out_time: "08:10",
@@ -40,7 +40,7 @@ function getData(): Attendance[] {
     { 
       name: "Eka",
       status: "Hadir", 
-      location: "-6.237768730275225, 106.76718123226024",
+      keterangan: "-",
       date: "2024-06-01", 
       check_in_time: "08:15", 
       check_out_time: "08:15",
@@ -48,7 +48,7 @@ function getData(): Attendance[] {
     { 
       name: "Fajar",
       status: "Sakit", 
-      location: "N/a",
+      keterangan: "-",
       date: "2024-06-01", 
       check_in_time: "-:-", 
       check_out_time: "-:-" },
@@ -56,7 +56,7 @@ function getData(): Attendance[] {
       { 
       name: "Gina",
       status: "Hadir", 
-      location: "-6.237768730275225, 106.76718123226024",
+      keterangan: "-",
       date: "2024-06-01", 
       check_in_time: "08:20", 
       check_out_time: "08:20",
@@ -64,7 +64,7 @@ function getData(): Attendance[] {
     { 
       name: "Hari",
       status: "Hadir",
-      location: "-6.237768730275225, 106.76718123226024",
+      keterangan: "-",
       date: "2024-06-01",  
       check_in_time: "08:25", 
       check_out_time: "08:25",
@@ -72,7 +72,7 @@ function getData(): Attendance[] {
     { 
       name: "Intan",
       status: "Alfa", 
-      location: "N/a",
+      keterangan: "-",
       date: "2024-06-01", 
       check_in_time: "-:-", 
       check_out_time: "-:-" },
@@ -80,7 +80,7 @@ function getData(): Attendance[] {
       { 
       name: "Joko",
       status: "Izin",
-      location: "N/a",
+      keterangan: "-",
       date: "2024-06-01",  
       check_in_time: "-:-", 
       check_out_time: "-:-",
@@ -89,7 +89,7 @@ function getData(): Attendance[] {
     { 
       name: "Ucok",
       status: "Alfa", 
-      location: "N/a",
+      keterangan: "-",
       date: "2024-06-04", 
       check_in_time: "-:-", 
       check_out_time: "-:-" },
@@ -97,31 +97,115 @@ function getData(): Attendance[] {
     { 
       name: "Abeng",
       status: "Sakit", 
-      location: "N/a",
+      keterangan: "-",
       date: "2024-06-05", 
       check_in_time: "-:-", 
       check_out_time: "-:-" },
+
   ]
 }
 
-export default function TablePage({ activeTab }: { activeTab: string }) {
-  const data = getData()
+function getReportData(): Report[] {
+  // Fetch data from your API here.
+  return [
+    { 
+      file: "report_andi.pdf",
+      name: "Andi",
+      status: "Izin",
+      keterangan: "Izin ke kampus",
+    },
 
-// Filter sesuai tab aktif
+    { 
+      file: "report_sandi.pdf",
+      name: "Sandi",
+      status: "Sakit",
+      keterangan: "Izin Sakit",
+    },
+
+    { 
+      file: "report_andi.pdf",
+      name: "Andi",
+      status: "Sakit",
+      keterangan: "Masih Sakit",
+    },
+
+    { 
+      file: "report_sandi.pdf",
+      name: "Sandi",
+      status: "Sakit",
+      keterangan: "Ketularan Sakit",
+    },
+
+    { 
+      file: "report_dono.pdf",
+      name: "Dono",
+      status: "Izin",
+      keterangan: "Main ke luar kota",
+    },
+
+    { 
+      file: "report_dono.pdf",
+      name: "Dono",
+      status: "Sakit",
+      keterangan: "Demam tinggi",
+    },
+
+    { 
+      file: "report_sandi.pdf",
+      name: "Sandi",
+      status: "Izin",
+      keterangan: "Tidak ada keterangan",
+    },
+
+    { 
+      file: "report_vior.pdf",
+      name: "Vior",
+      status: "Izin",
+      keterangan: "Nikah",
+    },
+  ]
+}
+
+type TablePageProps =
+  | { activeTab: string; type: "attendance" }
+  | { activeTab: string; type: "reports" }
+
+export default function TablePage(props: TablePageProps) {
+  const { activeTab, type } = props
+
+  const data = type === "reports" ? getReportData() : getData()
+
+  // Filter sesuai tab aktif
   const filteredData =
     activeTab === "Semua Daftar"
       ? data
-      : data.filter((item) => item.status === activeTab)
+      : type === "attendance"
+        ? (data as Attendance[]).filter((item) => item.status === activeTab)
+        : (data as Report[]).filter((item) => item.status === activeTab)
 
-  return (
-    <div className="w-full">
-      <DataTable 
-        columns={columns} 
-        data={filteredData} 
-        enableFilter={false}
-        enableColumnVisibility={false}
-        // pageSize={5}
-      />
-    </div>
-  )
+  if (type === "reports") {
+    return (
+      <div className="w-full">
+        <DataTable
+          columns={reportColumns}
+          data={filteredData as Report[]}
+          enableFilter={false}
+          enableColumnVisibility={false}
+          // pageSize={5}
+        />
+      </div>
+    )
+  } else {
+    return (
+      <div className="w-full">
+        <DataTable
+          columns={columns}
+          data={filteredData as Attendance[]}
+          enableFilter={false}
+          enableColumnVisibility={false}
+          // pageSize={5}
+        />
+      </div>
+    )
+  }
 }

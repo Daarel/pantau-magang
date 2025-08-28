@@ -132,7 +132,7 @@ export default function Attendance() {
             </div>
           )} */}
         </div>
-        <TabelSupervisor activeTab={activeTab}/>
+        <TabelSupervisor activeTab={activeTab} type={"attendance"}/>
       </div>
     </LayoutWrapper>
   );
