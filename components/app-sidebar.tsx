@@ -63,7 +63,7 @@ export function AppSidebar() {
   }, []);
 
   return (
-    <Sidebar className='pt-18'>
+    <Sidebar>
       <SidebarContent>
         {/* <SidebarGroup className="mt-12"> */}
         <SidebarGroup>

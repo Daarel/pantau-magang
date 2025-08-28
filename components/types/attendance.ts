@@ -4,8 +4,8 @@ export type AttendanceRecord = {
   date: Date;
   latitude: number;
   longitude: number;
-  location: string;
   address: string;
+  location: string;
   imageUrl: string; // simpan URL string di database
   description: string;
 };

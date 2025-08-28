@@ -104,9 +104,9 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
         </Button>
       )}
       
-      <div className="flex items-center gap-1 text-black/40">
+      <div className="flex items-center gap-1 text-sm text-black/40">
         <AiOutlineInfoCircle className="w-4 h-4" />
-        <h6 className="h6">Ukuran foto maks. 3 MB</h6>
+        <h6>Ukuran foto maks. 3 MB</h6>
       </div>
     </div>
   );
