@@ -16,7 +16,7 @@ export default function NotFound() {
           halaman sudah dipindahkan.
         </p>
         <Link href='/' className="flex flex-row justify-center items-center gap-2 hover:text-blue-500">
-          <span>Balik ke halaman login</span><FaArrowRight />
+          <span>kembali ke halaman login</span><FaArrowRight />
         </Link>
       </CardContent>
     </Card>
