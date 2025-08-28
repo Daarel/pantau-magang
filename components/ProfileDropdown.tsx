@@ -1,4 +1,3 @@
-
 import { useRouter } from "next/navigation";
 import { logoutUser } from "@/lib/client/auth";
 

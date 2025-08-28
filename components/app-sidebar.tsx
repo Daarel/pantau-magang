@@ -64,20 +64,9 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
-        {/* <SidebarGroup className="mt-12"> */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {/* {menuByRole[role].map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.path}>
-                      <item.icon className="h-9 w-9"/> 
-                      {item.title}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))} */}
               {menuByRole[role].map((item) => {
                 const isActive = pathname.startsWith(item.path);
 

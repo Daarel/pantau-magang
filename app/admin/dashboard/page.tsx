@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 
-import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/Card";
 import StatCard from "@/components/StatCard";
 
@@ -72,17 +71,21 @@ export default function AdminDashboard() {
   };
 
   return (
-    <LayoutWrapper>
+    <>
       <div className=' space-y-2 mb-7 bg-[#9929EA] h-48 p-8 rounded-lg'>
-        <h1 className='title_header max-sm:text-3xl'>Selamat Datang, Ibu {user.full_name}!</h1>
-        <h2 className='text-white text-2xl max-sm:text-lg'>Kamis, 14 Agustus 2025</h2>
+        <h1 className='title_header max-sm:text-3xl'>
+          Selamat Datang, Ibu {user.full_name}!
+        </h1>
+        <h2 className='text-white text-2xl max-sm:text-lg'>
+          Kamis, 14 Agustus 2025
+        </h2>
         <p className='text-white text-lg max-sm:text-sm'>13:18:15</p>
       </div>
 
       <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 sm:grid-cols-4'>
         <Card>
           <CardContent className='flex items-center p-6 max-sm:p-1'>
-            <StatCard 
+            <StatCard
               Icon={FaUsers}
               title='Total Users'
               value={stats.totalUsers}
@@ -176,6 +179,6 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-    </LayoutWrapper>
+    </>
   );
 }
