@@ -1,4 +1,4 @@
-import { FaUser, FaUserTie, FaInbox } from "react-icons/fa";
+import { FaUser, FaUserTie } from "react-icons/fa";
 import { FiCalendar } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BsHouse } from "react-icons/bs";
@@ -35,7 +35,6 @@ const menuByRole = {
       icon: AiOutlineClockCircle,
     },
     { title: "Reports", path: "/supervisor/reports", icon: FiCalendar },
-    { title: "Inbox", path: "/admin/inbox", icon: FaInbox },
   ],
   admin: [
     { title: "Dashboard", path: "/admin/dashboard", icon: BsHouse },
