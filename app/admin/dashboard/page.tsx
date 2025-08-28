@@ -79,10 +79,10 @@ export default function AdminDashboard() {
         <p className='text-white text-lg max-sm:text-sm'>13:18:15</p>
       </div>
 
-      <div className='grid grid-cols-4 md:grid-cols-2 max-sm:grid-cols-2 gap-6 sm:grid-cols-2'>
+      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 sm:grid-cols-4'>
         <Card>
           <CardContent className='flex items-center p-6 max-sm:p-1'>
-            <StatCard
+            <StatCard 
               Icon={FaUsers}
               title='Total Users'
               value={stats.totalUsers}
