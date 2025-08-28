@@ -6,9 +6,9 @@ import { CiLock } from "react-icons/ci";
 import { FaRegUser } from "react-icons/fa";
 import Image from "next/image";
 import LogoESDM from "@/public/logo.png";
-import { Card, CardContent, CardTitle, CardHeader } from "../Card";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Card, CardContent, CardTitle, CardHeader } from "./Card";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 import { loginUser } from "@/lib/client/auth";
 import type { FC } from "react";
 import type { User } from "@/app/page";
@@ -55,7 +55,7 @@ const LoginForm: FC<LoginFormProps> = ({ onLogin }) => {
               width={150}
               height={150}
               priority
-              className="h-auto w-auto"
+              className='h-auto w-auto'
             />
           </div>
           <CardTitle className='text-2xl text-gray-900'>

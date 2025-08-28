@@ -74,15 +74,15 @@ export default function AdminDashboard() {
   return (
     <LayoutWrapper>
       <div className=' space-y-2 mb-7 bg-[#9929EA] h-48 p-8 rounded-lg'>
-        <h1 className='title_header'>Selamat Datang, Ibu {user.full_name}!</h1>
-        <h2 className='text-white text-2xl'>Kamis, 14 Agustus 2025</h2>
-        <p className='text-white text-lg'>13:18:15</p>
+        <h1 className='title_header max-sm:text-3xl'>Selamat Datang, Ibu {user.full_name}!</h1>
+        <h2 className='text-white text-2xl max-sm:text-lg'>Kamis, 14 Agustus 2025</h2>
+        <p className='text-white text-lg max-sm:text-sm'>13:18:15</p>
       </div>
 
-      <div className='grid grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:grid-cols-2'>
+      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 sm:grid-cols-4'>
         <Card>
-          <CardContent className='flex items-center p-6'>
-            <StatCard
+          <CardContent className='flex items-center p-6 max-sm:p-1'>
+            <StatCard 
               Icon={FaUsers}
               title='Total Users'
               value={stats.totalUsers}
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
         </Card>
 
         <Card>
-          <CardContent className='flex items-center p-6'>
+          <CardContent className='flex items-center p-6 max-sm:p-1'>
             <StatCard
               Icon={FaBuilding}
               title='Active Interns'
@@ -103,7 +103,7 @@ export default function AdminDashboard() {
         </Card>
 
         <Card>
-          <CardContent className='flex items-center p-6'>
+          <CardContent className='flex items-center p-6 max-sm:p-1'>
             <StatCard
               Icon={AiFillFileText}
               title='Pending Requests'
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
         </Card>
 
         <Card>
-          <CardContent className='flex items-center p-6'>
+          <CardContent className='flex items-center p-6 max-sm:p-0'>
             <StatCard
               Icon={FaUsers}
               title='Supervisors'
@@ -125,8 +125,8 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className='flex flex-row mt-5 justify-center gap-6 items-center '>
-        <Card className='w-1/2 max-h-[320px] h-[320px]'>
+      <div className='flex flex-row mt-5 justify-center gap-6 items-center max-sm:flex-col'>
+        <Card className='w-1/2 max-sm:w-full h-auto max-h-auto'>
           <CardHeader>
             <CardTitle>Recent Activities</CardTitle>
           </CardHeader>
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className='w-1/2 h-[320px] max-h-[320px]'>
+        <Card className='w-1/2 max-sm:w-full h-auto max-h-auto'>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>

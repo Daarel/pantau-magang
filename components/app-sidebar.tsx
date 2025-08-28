@@ -1,4 +1,4 @@
-import { FaUser, FaUserTie, FaInbox } from "react-icons/fa";
+import { FaUser, FaUserTie } from "react-icons/fa";
 import { FiCalendar } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BsHouse } from "react-icons/bs";
@@ -19,20 +19,27 @@ import { useEffect, useState } from "react";
 const menuByRole = {
   intern: [
     { title: "Dashboard", path: "/intern/dashboard", icon: BsHouse },
-    { title: "Attendance", path: "/intern/attendance", icon: AiOutlineClockCircle,},
+    {
+      title: "Attendance",
+      path: "/intern/attendance",
+      icon: AiOutlineClockCircle,
+    },
     { title: "History", path: "/intern/history", icon: FiCalendar },
     { title: "Record", path: "/intern/record", icon: IoDocumentTextOutline },
   ],
   supervisor: [
     { title: "Dashboard", path: "/supervisor/dashboard", icon: BsHouse },
-    { title: "Attendance", path: "/supervisor/attendance", icon: AiOutlineClockCircle,},
+    {
+      title: "Attendance",
+      path: "/supervisor/attendance",
+      icon: AiOutlineClockCircle,
+    },
     { title: "Reports", path: "/supervisor/reports", icon: FiCalendar },
   ],
   admin: [
     { title: "Dashboard", path: "/admin/dashboard", icon: BsHouse },
     { title: "User", path: "/admin/user", icon: FaUser },
     { title: "Supervisor", path: "/admin/supervisor", icon: FaUserTie },
-    { title: "Inbox", path: "/admin/inbox", icon: FaInbox },
   ],
 };
 

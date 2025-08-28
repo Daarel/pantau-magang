@@ -18,6 +18,7 @@ type ModalField = {
   Icon: IconType;
 };
 
+// Untuk input modal di admin/supervisor
 const supervisorModalInput: ModalField[] = [
   {
     name: "nama",
@@ -46,6 +47,7 @@ const supervisorModalInput: ModalField[] = [
   },
 ];
 
+// Untuk input modal di admin/user
 const internModalInput: ModalField[] = [
   {
     name: "nama",
@@ -82,14 +84,17 @@ const internModalInput: ModalField[] = [
     name: "mulaiMagang",
     label: "Mulai Magang",
     placeholder: "Masukkan tanggal masuk magang",
+    type: "date",
     Icon: FaCalendarAlt,
   },
   {
     name: "selesaiMagang",
     label: "Selesai Magang",
     placeholder: "Masukkan tanggal selesai magang",
+    type: "date",
     Icon: FaCalendarAlt,
   },
 ];
+
 
 export { supervisorModalInput, internModalInput };
