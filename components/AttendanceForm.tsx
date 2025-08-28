@@ -1,5 +1,4 @@
 "use client"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
@@ -7,7 +6,6 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useState, useEffect } from "react"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -25,19 +23,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { AttendanceRecord } from "../components/types/attendance"
-
+// Icons
 import { RiArrowDropDownLine } from 'react-icons/ri';
-import { MapPinIcon } from "lucide-react"
-import { PhotoUpload } from "@/components/PhotoUpload";
+import { PhotoUpload } from "./PhotoUpload";
+import { FileUpload } from "./FileUpload"
+import { LocationButton } from "./FLocationButton"
+import { getCurrentLocation, UserLocation } from "../lib/helper/geolocation.helpers"
+import { uploadPhoto, uploadFile } from "../lib/helper/upload.helpers"
+
+const locationSchema = z.object({
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  address: z.string().optional(),
+  approved: z.boolean().optional(),
+});
 
 // Schema validasi
 const FormSchema = z.object({
@@ -49,27 +49,23 @@ const FormSchema = z.object({
     message: "Status harus diisi.",
   }),
   description: z.string().optional(),
-  location: z.object({
-    latitude: z.number().optional(),
-    longitude: z.number().optional(),
-    address: z.string().optional(),
-    approved: z.boolean().default(false),
-  }).optional(),
-})
+  location: locationSchema.optional(),
+}).superRefine((data, ctx) => {
+  if ((data.status === "Izin" || data.status === "Sakit") && (!data.description || data.description.trim() === "")) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["description"],
+      message: "Keterangan wajib diisi untuk status Izin atau Sakit",
+    });
+  }
+});
 
-// Koordinat kantor (contoh: Jakarta)
+// Koordinat kantor
 const OFFICE_COORDINATES = {
   // -6.240408297324362, 106.76737910412956
   latitude: -6.240408297324362,
   longitude: 106.76737910412956,
   radius: 0.0025 // Radius dalam derajat (sekitar 250 meter)
-}
-
-// Tipe untuk lokasi user
-interface UserLocation {
-  latitude: number;
-  longitude: number;
-  address: string;
 }
 
 export function AttendanceForm() {
@@ -79,109 +75,27 @@ export function AttendanceForm() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [fileFile, setFileFile] = useState<File | null>(null)
+  const [fileUrl, setFileUrl] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       status: "Hadir", 
       description: "",
-      dob: currentDate
+      dob: currentDate,
+      location: {},
     },
   })
 
-    // Fungsi untuk mendapatkan lokasi user
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation tidak didukung oleh browser Anda")
-      return
-    }
-
-    setLocationStatus('fetching')
-    
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords
-        setUserLocation({ latitude, longitude, address: "Sedang mendapatkan alamat..." })
-        
-        try {
-          // Reverse geocoding untuk mendapatkan alamat dari koordinat
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-          )
-          const data = await response.json()
-          const address = data.display_name || "Alamat tidak ditemukan"
-          
-          setUserLocation({ latitude, longitude, address })
-          setLocationStatus('success')
-          
-          // Cek apakah lokasi user berada dalam radius kantor
-          const isWithinRadius = checkIfWithinRadius(
-            latitude, 
-            longitude, 
-            OFFICE_COORDINATES.latitude, 
-            OFFICE_COORDINATES.longitude, 
-            OFFICE_COORDINATES.radius
-          )
-          
-          if (isWithinRadius) {
-            setLocationStatus('approved')
-            form.setValue('location', {
-              latitude,
-              longitude,
-              address,
-              approved: true,
-            })
-            toast.success("Lokasi disetujui! Anda berada di area kantor.")
-          } else {
-            form.setValue('location', {
-              latitude,
-              longitude,
-              address,
-              approved: false,
-            })
-            toast.error("Lokasi tidak sesuai. Anda berada di luar area kantor.")
-          }
-        } catch (error) {
-          console.error("Error getting address:", error)
-          setLocationStatus('error')
-          toast.error("Gagal mendapatkan alamat")
-        }
-      },
-      (error) => {
-        console.error("Error getting location:", error)
-        setLocationStatus('error')
-        toast.error("Gagal mendapatkan lokasi")
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000
-      }
+  // Fungsi untuk mendapatkan lokasi user
+  const handleGetLocation = () => {
+    getCurrentLocation(
+      OFFICE_COORDINATES,
+      setUserLocation,
+      setLocationStatus,
+      (location) => form.setValue('location', location)
     )
-  }
-
-  // Fungsi untuk mengecek apakah lokasi user berada dalam radius yang ditentukan
-  const checkIfWithinRadius = (
-    lat1: number, 
-    lon1: number, 
-    lat2: number, 
-    lon2: number, 
-    radius: number
-  ): boolean => {
-    // Rumus Haversine untuk menghitung jarak antara dua titik koordinat
-    const R = 6371 // Radius bumi dalam km
-    const dLat = (lat2 - lat1) * Math.PI / 180
-    const dLon = (lon2 - lon1) * Math.PI / 180
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-    const distance = R * c // Jarak dalam km
-    
-    // Konversi radius dari derajat ke km (approx 1 derajat = 111 km)
-    const radiusInKm = radius * 111
-    return distance <= radiusInKm
   }
 
   useEffect(() => {
@@ -193,31 +107,23 @@ export function AttendanceForm() {
     setPhotoUrl(previewUrl);
   };
 
-  // Fungsi untuk mengupload foto (simulasi)
-  const uploadPhoto = async (file: File): Promise<string> => {
-    // Simulasi upload - dalam implementasi nyata, ini akan mengupload ke server
-    // return new Promise((resolve) => {
-    //   setTimeout(() => {
-    //     // Di aplikasi nyata, ini akan mengembalikan URL dari server
-    //     // Untuk demo, kita menggunakan placeholder URL
-    //     resolve("https://example.com/path-to-uploaded-image.jpg");
-    //   }, 1000);
-    // });
-    return new Promise((resolve) => {
-      // Untuk demo, kita menggunakan URL objek untuk gambar yang diunggah
-      const objectUrl = URL.createObjectURL(file);
-      resolve(objectUrl);
-    });
+  const handleFileChange = (file: File | null, fileUrl: string | null) => {
+    setFileFile(file);
+    setFileUrl(fileUrl);
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    if (data.status === "Hadir" && (!data.location || !data.location.approved)) {
+    const isApproved = data.location?.approved ?? false;
+
+    if (data.status === "Hadir" && (!data.location || !isApproved)) {
       toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
       return
     }
 
     // let imageUrl = "https://example.com/path-to-user-image.jpg"; // Default
     let imageUrl = ""; // Default
+    let attachmentUrl = "";
+    let attachmentType = "none";
 
     if (photoFile) {
       try {
@@ -226,6 +132,16 @@ export function AttendanceForm() {
         toast.dismiss();
       } catch (error) {
         toast.error("Gagal mengupload foto");
+        console.error("Upload error:", error);
+      }
+    } else if ((data.status === "Izin" || data.status === "Sakit") && fileFile) {
+      try {
+        toast.loading("Mengupload file...");
+        attachmentUrl = await uploadFile(fileFile);
+        attachmentType = "file";
+        toast.dismiss();
+      } catch (error) {
+        toast.error("Gagal mengupload file");
         console.error("Upload error:", error);
       }
     }
@@ -269,29 +185,27 @@ export function AttendanceForm() {
     })
 
     // Reset form setelah submit
-    form.reset()
+    form.reset({
+      ...form.getValues(),
+      description: "",
+      dob: new Date(),
+      location: undefined
+    })
     setLocationStatus('idle')
     setUserLocation(null)
     setPhotoFile(null)
     setPhotoUrl(null)
-    localStorage.removeItem('attendancePhoto');
   }
 
    // Dapatkan status lokasi untuk ditampilkan di UI
   const getLocationButtonText = () => {
     switch (locationStatus) {
-      case 'idle':
-        return "Tetapkan Lokasi"
-      case 'fetching':
-        return "Mendapatkan lokasi..."
-      case 'success':
-        return "Lokasi tidak disetujui"
-      case 'error':
-        return "Gagal mendapatkan lokasi"
-      case 'approved':
-        return "Lokasi disetujui"
-      default:
-        return "Tetapkan Lokasi"
+      case 'idle': return "Tetapkan Lokasi"
+      case 'fetching': return "Mendapatkan lokasi..."
+      case 'success': return "Lokasi tidak disetujui"
+      case 'error': return "Gagal mendapatkan lokasi"
+      case 'approved': return "Lokasi disetujui"
+      default: return "Tetapkan Lokasi"
     }
   }
   
@@ -301,8 +215,11 @@ export function AttendanceForm() {
         {/* Foto */}
         <div className="flex flex-col md:flex-row items-center justify-around gap-6 md:gap-7 lg:gap-15 border-2 p-6 rounded-md">
           <FormItem>
-            {/* <FormLabel>Foto</FormLabel> */}
-            <PhotoUpload onPhotoChange={handlePhotoChange} />
+            {form.watch('status') === 'Hadir' ? (
+              <PhotoUpload onPhotoChange={handlePhotoChange} />
+            ) : (
+              <FileUpload onFileChange={handleFileChange} />
+            )}
             <FormMessage />
           </FormItem>
 
@@ -415,33 +332,16 @@ export function AttendanceForm() {
             />
 
             {/* Tombol untuk menangkap lokasi - hanya ditampilkan jika status Hadir */}
-            {form.watch("status") === "Hadir" && (
+            {form.watch('status') === 'Hadir' && (
               <FormItem>
                 <FormLabel>Lokasi</FormLabel>
-                <div className="flex flex-col space-y-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={getCurrentLocation}
-                    disabled={locationStatus === 'fetching'}
-                    className={cn(
-                      "w-full justify-between",
-                      locationStatus === 'approved' && "bg-green-50 text-green-700 border-green-200",
-                      locationStatus === 'success' && "bg-red-50 text-red-700 border-red-200"
-                    )}
-                  >
-                    <span className="font-normal text-black/60">{getLocationButtonText()}</span>
-                    <MapPinIcon className="h-4 w-4 opacity-50" />
-                  </Button>
-                  
-                  {/* {userLocation && (
-                    <div className="text-sm text-muted-foreground p-2 bg-slate-50 rounded-md">
-                      <p>Lat: {userLocation.latitude.toFixed(6)}</p>
-                      <p>Lng: {userLocation.longitude.toFixed(6)}</p>
-                      <p>Alamat: {userLocation.address}</p>
-                    </div>
-                  )} */}
-                </div>
+                <LocationButton
+                  onClick={handleGetLocation}
+                  disabled={locationStatus === 'fetching'}
+                  status={form.watch("status")}
+                  locationStatus={locationStatus}
+                  getLocationButtonText={getLocationButtonText}
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -459,14 +359,18 @@ export function AttendanceForm() {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
             <Button 
               type="submit" 
               className="w-full"
-              disabled={form.watch("status") === "Hadir" && locationStatus !== 'approved'}
+              disabled={
+                (form.watch("status") === "Hadir" && locationStatus !== "approved") ||
+                ((form.watch("status") === "Izin" || form.watch("status") === "Sakit") &&
+                  ((form.watch("description") ?? "").trim() === ""))
+              }
             >
               Submit
             </Button>
