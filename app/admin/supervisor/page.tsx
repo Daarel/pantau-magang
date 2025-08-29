@@ -12,7 +12,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import { supervisorModalInput } from "@/const";
@@ -127,7 +127,7 @@ export default function AdminSupervisor() {
   const handleSubmit = () => {};
 
   return (
-    <>
+    <Suspense fallback={<div>Loading supervisor</div>}>
       <div className='min-h-screen bg-gray-50 p-6'>
         <TablePageHeader
           title='Daftar Supervisor'
@@ -144,6 +144,6 @@ export default function AdminSupervisor() {
           onSubmit={handleSubmit}
         />
       </div>
-    </>
+    </Suspense>
   );
 }
