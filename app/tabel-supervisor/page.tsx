@@ -167,13 +167,13 @@ function getReportData(): Report[] {
 }
 
 type TablePageProps =
-  | { activeTab: string; type: "attendance" }
+  | { activeTab: string; type: "attendance"; serverData: Attendance[] }
   | { activeTab: string; type: "reports" }
 
 export default function TablePage(props: TablePageProps) {
   const { activeTab, type } = props
 
-  const data = type === "reports" ? getReportData() : getData()
+  const data = type === "reports" ? getReportData() : (props.serverData?.length ? props.serverData : getData())
 
   // Filter sesuai tab aktif
   const filteredData =

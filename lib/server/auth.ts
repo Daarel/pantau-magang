@@ -1,10 +1,16 @@
 // src/lib/server/auth.ts
 import { cookies } from 'next/headers';
 
+type SessionData = {
+  id: string;
+  role: 'intern' | 'supervisor' | 'admin';
+  // add other session properties if needed
+};
+
 export async function auth(): Promise<SessionData | null> {
   try {
     const cookieStore = cookies(); // Tidak perlu await
-    const sessionCookie = cookieStore.get('session')?.value;
+    const sessionCookie = (await cookieStore).get('session')?.value;
     
     if (!sessionCookie) return null;
     

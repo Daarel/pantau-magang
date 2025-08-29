@@ -1,7 +1,7 @@
 import { columns, Attendance } from "./columns"
 import { DataTable } from "./data-table"
 
-async function getData(): Promise<Attendance[]> {
+function getData(): Attendance[] {
   // Fetch data from your API here.
   return [
     { 
@@ -77,8 +77,8 @@ async function getData(): Promise<Attendance[]> {
   ]
 }
 
-export default async function TablePage() {
-  const data = await getData()
+export default function TablePage() {
+  const data =  getData()
 
   return (
     <div className="w-full">
