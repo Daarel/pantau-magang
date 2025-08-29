@@ -219,11 +219,13 @@ export function FileUpload({ onFileChange }: FileUploadProps) {
       ) : (
         <Button
           variant="outline"
-          className="flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 bg-gray-200"
+          className="flex flex-col justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 bg-gray-200"
           onClick={handleClick}
         >
-          <TbFileUpload className="w-6 h-6" />
-          <span className="text-sm">Unggah File</span>
+          <div className='flex gap-1 items-center'>
+            <TbFileUpload className="w-6 h-6" />
+            <span className="text-sm">Unggah File</span>
+          </div>
           <span className="text-xs text-gray-500">(PDF, DOC, JPG, dll)</span>
         </Button>
       )}

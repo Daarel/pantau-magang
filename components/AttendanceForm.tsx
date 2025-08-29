@@ -122,20 +122,20 @@ export function AttendanceForm() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const isApproved = data.location?.approved ?? false;
 
-    if (data.status === "Hadir" && (!data.location || !isApproved)) {
-      toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
-      return
-    }
-    if (data.status === "Hadir") {
-      if (!photoFile) {
-        toast.error("Foto wajib diunggah untuk status Hadir");
-        return;
-      }
-      // if (!isApproved) {
-      //   toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir");
-      //   return;
-      // }
-    }
+    // if (data.status === "Hadir" && (!data.location || !isApproved)) {
+    //   toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
+    //   return
+    // }
+    // if (data.status === "Hadir") {
+    //   if (!photoFile) {
+    //     toast.error("Foto wajib diunggah untuk status Hadir");
+    //     return;
+    //   }
+    //   if (!isApproved) {
+    //     toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir");
+    //     return;
+    //   }
+    // }
 
     if ((data.status === "Izin" || data.status === "Sakit") && (!data.description || data.description.trim() === "")) {
       toast.error("Keterangan wajib diisi untuk status Izin atau Sakit");
@@ -160,7 +160,7 @@ export function AttendanceForm() {
     
     if ((data.status === "Izin" || data.status === "Sakit") && fileFile) {
       try {
-        toast.loading("Mengupload file...");
+        // toast.loading("Mengupload file...");
         attachmentUrl = await uploadFile(fileFile);
         attachmentType = "file";
         toast.dismiss();
@@ -330,7 +330,7 @@ export function AttendanceForm() {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, "dd-MM-yyyy")
                           ) : (
                             <span>Tetapkan tanggal</span>
                           )}
@@ -401,7 +401,7 @@ export function AttendanceForm() {
                 // ((form.watch('status') === 'Izin' || form.watch('status') === 'Sakit') 
                 //   ? !form.watch('description')?.trim() || !form.watch('dob')
                 //   : true)
-                (form.watch("status") === "Hadir" && locationStatus !== "approved" && !photoFile) ||
+                (form.watch("status") === "Hadir" && (locationStatus !== "approved" && form.watch("imageUrl") == null)) ||
                 ((form.watch("status") === "Izin" || form.watch("status") === "Sakit") &&
                   ((form.watch("description") ?? "").trim() === ""))
               }
