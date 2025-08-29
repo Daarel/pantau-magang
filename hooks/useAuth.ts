@@ -1,13 +1,13 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { getCurrentUser, logoutUser } from '@/app/lib/server/auth'
+// 'use client'
+// import { useState, useEffect } from 'react'
+// import { getCurrentUser, logoutUser } from '@/lib/server/auth'
 
-export default function useAuth() {
-  const [user, setUser] = useState(null)
+// export default function useAuth() {
+//   const [user, setUser] = useState(null)
 
-  useEffect(() => {
-    setUser(getCurrentUser())
-  }, [])
+//   useEffect(() => {
+//     setUser(getCurrentUser())
+//   }, [])
 
-  return { user, logout: logoutUser }
-}
+//   return { user, logout: logoutUser }
+// }
