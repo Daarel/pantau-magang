@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import TabelSupervisor from "@/app/tabel-supervisor/page";
+// import TabelSupervisor from "@/app/tabel-supervisor/page";
 
 
 export default function ReportClient() {
@@ -38,7 +38,7 @@ export default function ReportClient() {
 
       {/* Content */}
       <div className="mt-6 space-y-4">
-        <TabelSupervisor activeTab={activeTab} type="reports" />
+        {/* <TabelSupervisor activeTab={activeTab} type="reports" /> */}
       </div>
     </div>
   );
