@@ -9,6 +9,7 @@ import { FaUsers, FaBuilding, FaRegCheckCircle } from "react-icons/fa";
 import { AiFillFileText } from "react-icons/ai";
 import { FiAlertTriangle } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -72,14 +73,24 @@ export default function AdminDashboard() {
 
   return (
     <>
-      <div className=' space-y-2 mb-7 bg-[#9929EA] h-48 p-8 rounded-lg'>
-        <h1 className='title_header max-sm:text-3xl'>
-          Selamat Datang, Ibu {user.full_name}!
-        </h1>
-        <h2 className='text-white text-2xl max-sm:text-lg'>
-          Kamis, 14 Agustus 2025
-        </h2>
-        <p className='text-white text-lg max-sm:text-sm'>13:18:15</p>
+      <div className='relative space-y-2 mb-7 bg-purple-500 h-48 p-8 rounded-lg overflow-hidden'>
+        <Image
+          src='/overlayBuilding.jpeg'
+          alt='Overlay'
+          fill
+          priority
+          className='absolute inset-0 object-cover opacity-25 z-0'
+        />
+
+        <div className='relative z-10'>
+          <h1 className='title_header max-sm:text-3xl'>
+            Selamat Datang, Ibu {user.full_name}!
+          </h1>
+          <h2 className='text-white text-2xl max-sm:text-lg'>
+            Kamis, 14 Agustus 2025
+          </h2>
+          <p className='text-white text-lg max-sm:text-sm'>13:18:15</p>
+        </div>
       </div>
 
       <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 sm:grid-cols-4'>

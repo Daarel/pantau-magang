@@ -79,7 +79,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0); */
   /* Ubah accent untuk hover */
   --sidebar-accent: oklch(0.967 0.017 256.6); /* ≈ bg-blue-100 (#DBEAFE) */
-  --sidebar-accent-foreground: oklch(0.623 0.214 263.1); /* ≈ text-blue-600 (#2563EB) */
+  --sidebar-accent-foreground: oklch(
+    0.623 0.214 263.1
+  ); /* ≈ text-blue-600 (#2563EB) */
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
@@ -115,7 +117,9 @@
   /* --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0); */
   --sidebar-accent: oklch(0.343 0.044 254.6); /* ≈ bg-blue-900 (#1E3A8A) */
-  --sidebar-accent-foreground: oklch(0.828 0.123 259.6); /* ≈ text-blue-300 (#93C5FD) */
+  --sidebar-accent-foreground: oklch(
+    0.828 0.123 259.6
+  ); /* ≈ text-blue-300 (#93C5FD) */
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
@@ -151,7 +155,7 @@
     @apply text-[36px] xl:text-[40px] font-semibold;
   }
   .h2 {
-  @apply text-[30px] xl:text-[38px];
+    @apply text-[30px] xl:text-[38px];
   }
   .h3 {
     @apply text-[24px] xl:text-[32px];
@@ -164,11 +168,6 @@
   }
   .h6 {
     @apply text-[14px] lg:text-[16px];
-  }
-
-  /* Title */
-  .title_header {
-    @apply text-4xl font-medium text-white mb-2;
   }
 
   /* Overview */
@@ -184,29 +183,35 @@
   .overview_number {
     @apply font-bold;
   }
+
+  /* global datepicker and spinner for input */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 8px;
+    cursor: pointer;
+  }
+
+  input[type="date"] {
+    position: relative;
+    padding-right: 30px;
+  }
 }
 
-/* nanti gua jadiin tailwind, sekarang gini dlu */
-
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  appearance: none;
-  margin: 0;
-}
-
-input[type=number] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  position: absolute;
-  right: 8px;   /* geser ke ujung kanan */
-  cursor: pointer;
-}
-
-input[type="date"] {
-  position: relative;
-  padding-right: 30px; /* kasih ruang supaya teks tidak ketimpa icon */
+@layer utilities {
+  /* Title */
+  .title_header {
+    @apply text-4xl font-medium text-white mb-2;
+  }
 }
