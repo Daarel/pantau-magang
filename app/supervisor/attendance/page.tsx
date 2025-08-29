@@ -3,7 +3,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Download, Clock, MapPin, Calendar } from "lucide-react";
-import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { getAttendanceHistory } from "@/lib/attendance";
 import { supabase } from "@/lib/supabaseClient";
 import TabelSupervisor from "@/app/tabel-supervisor/page";
@@ -58,7 +57,7 @@ export default function Attendance() {
   //       );
 
   return (
-    <LayoutWrapper>
+    <>
       <div className="min-h-screen bg-gray-50 p-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -134,7 +133,7 @@ export default function Attendance() {
         </div>
         <TabelSupervisor activeTab={activeTab} type={"attendance"}/>
       </div>
-    </LayoutWrapper>
+    </>
   );
 }
 

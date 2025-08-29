@@ -10,15 +10,15 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
-import { adminMenu } from "@/const/index";
+import { supervisorMenu } from "@/const/index";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
-interface AdminLayoutProps {
+interface SupervisorLayoutProps {
   children: ReactNode;
 }
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
   const pathname = usePathname();
 
   return (
@@ -28,7 +28,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className='flex flex-1 overflow-auto'>
           <Sidebar>
             <SidebarMenu className='mt-16 max-sm:mt-5'>
-              {adminMenu.map((menu) => {
+              {supervisorMenu.map((menu) => {
                 const isActive = pathname.startsWith(menu.path);
 
                 return (

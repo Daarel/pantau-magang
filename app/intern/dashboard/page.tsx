@@ -1,5 +1,4 @@
 'use client'
-import LayoutWrapper from '@/components/layout/LayoutWrapper'
 // Icons
 import { GoClock } from "react-icons/go";
 import { FiCalendar, } from "react-icons/fi";
@@ -12,7 +11,7 @@ import '../../globals.css'
 
 export default function InternDashboard() {
   return (
-    <LayoutWrapper>
+    <>
       <div className='flex flex-col items-center min-h-screen gap-4'>
         {/* 1. Name, date, time */}
         <div className='bg-blue-500 w-full p-4 rounded-md'>
@@ -88,6 +87,6 @@ export default function InternDashboard() {
           </div>
         </div>
       </div>
-    </LayoutWrapper>
+    </>
   )
 }

@@ -1,5 +1,4 @@
 'use client'
-import LayoutWrapper from '@/components/layout/LayoutWrapper'
 
 // Icons
 import { GoClock, GoPeople } from "react-icons/go";
@@ -14,7 +13,7 @@ import '../../globals.css'
 
 export default function SupervisorDashboard() {
   return (
-    <LayoutWrapper>
+    <>
       <div className='flex flex-col items-center min-h-screen w-full gap-4'>
         {/* 1. Header */}
         <div className='bg-[#16A049] w-full p-7 rounded-md'>
@@ -80,6 +79,6 @@ export default function SupervisorDashboard() {
         {/* Today's Intern Status */}
         <TodayInternStatus />
       </div>
-    </LayoutWrapper>
+    </>
   )
 }

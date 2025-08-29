@@ -17,7 +17,6 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import { supervisorModalInput } from "@/const";
 import DataTable from "@/components/DataTable";
-import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 
@@ -128,7 +127,7 @@ export default function AdminSupervisor() {
   const handleSubmit = () => {};
 
   return (
-    <LayoutWrapper>
+    <>
       <div className='min-h-screen bg-gray-50 p-6'>
         <TablePageHeader
           title='Daftar Supervisor'
@@ -145,6 +144,6 @@ export default function AdminSupervisor() {
           onSubmit={handleSubmit}
         />
       </div>
-    </LayoutWrapper>
+    </>
   );
 }
