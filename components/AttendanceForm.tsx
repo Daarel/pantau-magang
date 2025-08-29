@@ -23,7 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { AttendanceRecord } from "../components/types/attendance"
+import { AttendanceRecord } from "../types/attendance"
 // Icons
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import { PhotoUpload } from "./PhotoUpload";

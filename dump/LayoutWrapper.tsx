@@ -1,6 +1,6 @@
 "use client";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/dump/app-sidebar";
 import Navbar from "@/components/Navbar";
 import { FC, ReactNode } from "react";
 
