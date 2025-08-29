@@ -38,6 +38,8 @@ export const checkIfWithinRadius = (
 type FormLocation = {
   latitude: number;
   longitude: number;
+  address: string;
+  approved: boolean;
 };
 
 export const getCurrentLocation = async (
