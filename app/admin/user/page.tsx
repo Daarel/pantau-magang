@@ -17,7 +17,6 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import { internModalInput } from "@/const";
 import DataTable from "@/components/DataTable";
-import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 
@@ -149,7 +148,7 @@ export default function AdminUser() {
   const handleSubmit = () => {};
 
   return (
-    <LayoutWrapper>
+    <>
       <div className='min-h-screen bg-gray-50 p-6'>
         <TablePageHeader
           title='Daftar Anak Magang'
@@ -166,6 +165,6 @@ export default function AdminUser() {
           onSubmit={handleSubmit}
         />
       </div>
-    </LayoutWrapper>
+    </>
   );
 }

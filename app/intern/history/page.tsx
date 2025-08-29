@@ -2,7 +2,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Download, Clock, MapPin, Calendar } from "lucide-react";
-import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { getAttendanceHistory } from "@/lib/attendance";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -58,7 +57,7 @@ export default function InternHistory() {
         );
 
   return (
-    <LayoutWrapper>
+    <>
       <div className='min-h-screen bg-gray-50 p-6'>
         {/* Header */}
         <div className='flex items-center justify-between'>
@@ -143,6 +142,6 @@ export default function InternHistory() {
           )}
         </div>
       </div>
-    </LayoutWrapper>
+    </>
   );
 }

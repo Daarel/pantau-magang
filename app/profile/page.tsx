@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/Card";
-import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import LayoutWrapper from "@/dump/LayoutWrapper";
 import Image from "next/image";
 
 import placeholder from "@/public/landscape-placeholder.svg";

@@ -1,7 +1,6 @@
 // src/components/AttendanceHistory.tsx
 "use client";
 import React, { useEffect, useState } from "react";
-import LayoutWrapper from "@/components/layout/LayoutWrapper";
 // Components
 import { AttendanceForm } from "@/components/AttendanceForm";
 import { Button } from "@/components/ui/button"
@@ -11,7 +10,7 @@ import { TbCameraPlus } from 'react-icons/tb';
 
 export default function Attendance() {
   return (
-    <LayoutWrapper>
+    <>
       <div className='flex flex-col min-h-screen gap-4'>
         {/* Header */}
         <div className='flex items-center justify-between gap-4'>
@@ -25,6 +24,6 @@ export default function Attendance() {
         {/* Foto & Form Konfirmasi Kehadiran */}
         <AttendanceForm />
       </div>
-    </LayoutWrapper>
+    </>
   );
 }

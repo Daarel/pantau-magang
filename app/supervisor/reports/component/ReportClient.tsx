@@ -3,9 +3,8 @@
 import { useState } from "react";
 import TabelSupervisor from "@/app/tabel-supervisor/page";
 
-type Props = {};
 
-export default function ReportClient({}: Props) {
+export default function ReportClient() {
   const [activeTab, setActiveTab] = useState("Semua Daftar");
 
   return (

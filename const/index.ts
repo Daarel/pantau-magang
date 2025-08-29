@@ -6,7 +6,12 @@ import {
   FaLock,
   FaCalendarAlt,
 } from "react-icons/fa";
-import { IconType } from "react-icons";
+import { FiCalendar } from "react-icons/fi";
+import { IoDocumentTextOutline } from "react-icons/io5";
+import { BsHouse } from "react-icons/bs";
+import { AiOutlineClockCircle } from "react-icons/ai";
+
+import type { IconType } from "react-icons";
 
 type InputType = "text" | "number" | "date";
 
@@ -96,5 +101,46 @@ const internModalInput: ModalField[] = [
   },
 ];
 
+type MenuByRole = {
+  title: string;
+  path: string;
+  Icon: IconType;
+};
 
-export { supervisorModalInput, internModalInput };
+// untuk menu sidebar intern
+const internMenu: MenuByRole[] = [
+  { title: "Dashboard", path: "/intern/dashboard", Icon: BsHouse },
+  {
+    title: "Attendance",
+    path: "/intern/attendance",
+    Icon: AiOutlineClockCircle,
+  },
+  { title: "History", path: "/intern/history", Icon: FiCalendar },
+  { title: "Record", path: "/intern/record", Icon: IoDocumentTextOutline },
+];
+
+// untuk menu sidebar supervisor
+const supervisorMenu: MenuByRole[] = [
+  { title: "Dashboard", path: "/supervisor/dashboard", Icon: BsHouse },
+  {
+    title: "Attendance",
+    path: "/supervisor/attendance",
+    Icon: AiOutlineClockCircle,
+  },
+  { title: "Reports", path: "/supervisor/reports", Icon: FiCalendar },
+];
+
+// untuk menu sidebar admin
+const adminMenu: MenuByRole[] = [
+  { title: "Dashboard", path: "/admin/dashboard", Icon: BsHouse },
+  { title: "User", path: "/admin/user", Icon: FaUser },
+  { title: "Supervisor", path: "/admin/supervisor", Icon: FaUserTie },
+];
+
+export {
+  supervisorModalInput,
+  internModalInput,
+  internMenu,
+  supervisorMenu,
+  adminMenu,
+};
