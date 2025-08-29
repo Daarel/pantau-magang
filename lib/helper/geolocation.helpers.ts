@@ -38,7 +38,7 @@ export const checkIfWithinRadius = (
 type FormLocation = {
   latitude: number;
   longitude: number;
-  address: string;
+  address: unknown;
   approved: boolean;
 };
 
