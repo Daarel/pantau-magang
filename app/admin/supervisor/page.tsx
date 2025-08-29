@@ -20,7 +20,7 @@ import DataTable from "@/components/DataTable";
 import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 
-export const columns: ColumnDef<DataColumn>[] = [
+const columns: ColumnDef<DataColumn>[] = [
   {
     accessorKey: "nomorInduk",
     header: "Nomor Induk",
