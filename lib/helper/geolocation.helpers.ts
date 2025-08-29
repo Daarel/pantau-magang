@@ -1,5 +1,18 @@
 import { toast } from "sonner";
 
+export interface AddressObject {
+  house_number?: string;
+  road?: string;
+  suburb?: string;
+  city?: string;
+  county?: string;
+  state?: string;
+  postcode?: string;
+  country?: string;
+  country_code?: string;
+  [key: string]: string | undefined; // biar fleksibel kalau ada field lain
+}
+
 export interface OfficeCoordinates {
   latitude: number;
   longitude: number;
@@ -35,10 +48,12 @@ export const checkIfWithinRadius = (
   return distance <= radiusInKm;
 };
 
+
+
 type FormLocation = {
   latitude: number;
   longitude: number;
-  address: unknown;
+  address: string | undefined;
   approved: boolean;
 };
 
