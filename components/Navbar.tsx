@@ -13,7 +13,7 @@ export default function Navbar() {
   return (
     <nav className='z-50 w-full border-b bg-white py-2 shadow-sm flex justify-between px-6 items-center'>
       <div className='flex items-center gap-3'>
-        <div className='sm:hidden'>
+        <div className='md:hidden'>
           <SidebarTrigger />
         </div>
         <Image
