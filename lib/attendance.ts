@@ -1,7 +1,7 @@
-import { supabase } from './supabaseClient';
-import QRCode from 'qrcode';
-import { format } from 'date-fns';
-import { ReactNode } from 'react';
+import { supabase } from "./supabaseClient";
+import QRCode from "qrcode";
+import { format } from "date-fns";
+import { ReactNode } from "react";
 
 export interface AttendanceRecord {
   checkOut: string | null;
@@ -14,7 +14,7 @@ export interface AttendanceRecord {
   check_out_time?: string;
   check_in_location?: { lat: number; lng: number; address: string };
   check_out_location?: { lat: number; lng: number; address: string };
-  status: 'hadir' | 'izin' | 'sakit' | 'alfa';
+  status: "hadir" | "izin" | "sakit" | "alfa";
   notes?: string;
 }
 
@@ -24,20 +24,24 @@ export async function generateQRCode(data: string): Promise<string> {
       width: 256,
       margin: 2,
       color: {
-        dark: '#3B82F6',
-        light: '#FFFFFF'
-      }
+        dark: "#3B82F6",
+        light: "#FFFFFF",
+      },
     });
   } catch (error) {
-    console.error('QR Code generation error:', error);
+    console.error("QR Code generation error:", error);
     throw error;
   }
 }
 
-export async function getCurrentLocation(): Promise<{ lat: number; lng: number; address: string }> {
+export async function getCurrentLocation(): Promise<{
+  lat: number;
+  lng: number;
+  address: string;
+}> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject(new Error('Geolocation is not supported'));
+      reject(new Error("Geolocation is not supported"));
       return;
     }
 
@@ -45,10 +49,10 @@ export async function getCurrentLocation(): Promise<{ lat: number; lng: number; 
       async (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        
+
         // Mock address for now - in production, you'd use a geocoding service
-        const address =`${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-        
+        const address = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
         resolve({ lat, lng, address });
       },
       (error) => {
@@ -57,7 +61,7 @@ export async function getCurrentLocation(): Promise<{ lat: number; lng: number; 
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 300000
+        maximumAge: 300000,
       }
     );
   });
@@ -65,77 +69,75 @@ export async function getCurrentLocation(): Promise<{ lat: number; lng: number; 
 
 export async function checkIn(userId: string): Promise<boolean> {
   try {
-    const today = format(new Date(), 'yyyy-MM-dd');
+    const today = format(new Date(), "yyyy-MM-dd");
     const location = await getCurrentLocation();
 
     // Check if already checked in today
     const { data: existing } = await supabase
-      .from('attendance')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('date', today)
+      .from("attendance")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("date", today)
       .single();
 
     if (existing && existing.check_in_time) {
-      throw new Error('Already checked in today');
+      throw new Error("Already checked in today");
     }
 
     const checkInTime = new Date().toISOString();
-    const status = new Date().getHours() > 8 ? 'late' : 'present';
+    const status = new Date().getHours() > 8 ? "alfa" : "hadir";
 
     if (existing) {
       // Update existing record
       const { error } = await supabase
-        .from('attendance')
+        .from("attendance")
         .update({
           check_in_time: checkInTime,
           check_in_location: location,
           status: status,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .eq('id', existing.id);
+        .eq("id", existing.id);
 
       if (error) throw error;
     } else {
       // Create new record
-      const { error } = await supabase
-        .from('attendance')
-        .insert({
-          user_id: userId,
-          date: today,
-          check_in_time: checkInTime,
-          check_in_location: location,
-          status: status
-        });
+      const { error } = await supabase.from("attendance").insert({
+        user_id: userId,
+        date: today,
+        check_in_time: checkInTime,
+        check_in_location: location,
+        status: status,
+      });
 
       if (error) throw error;
     }
 
     return true;
   } catch (error) {
-    console.error('Check-in error:', error);
+    console.error("Check-in error:", error);
     return false;
   }
 }
 
 export async function checkOut(userId: string): Promise<boolean> {
   try {
-    const today = format(new Date(), 'yyyy-MM-dd');
+    const today = format(new Date(), "yyyy-MM-dd");
     const location = await getCurrentLocation();
 
     const { data: existing } = await supabase
-      .from('attendance')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('date', today)
+      .from("attendance")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("date", today)
       .single();
 
     if (!existing || !existing.check_in_time) {
-      throw new Error('Must check in first');
+      throw new Error("Must check in first");
     }
 
     if (existing.check_out_time) {
-      throw new Error('Already checked out today');
+      throw new Error("Already checked out today");
     }
 
     const checkOutTime = new Date().toISOString();
@@ -143,62 +145,67 @@ export async function checkOut(userId: string): Promise<boolean> {
 
     // Check if leaving early (before 5 PM)
     if (new Date().getHours() < 17) {
-      status = 'early_leave';
+      status = "early_leave";
     }
 
     const { error } = await supabase
-      .from('attendance')
+      .from("attendance")
       .update({
         check_out_time: checkOutTime,
         check_out_location: location,
         status: status,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('id', existing.id);
+      .eq("id", existing.id);
 
     if (error) throw error;
     return true;
   } catch (error) {
-    console.error('Check-out error:', error);
+    console.error("Check-out error:", error);
     return false;
   }
 }
 
-export async function getTodayAttendance(userId: string): Promise<AttendanceRecord | null> {
+export async function getTodayAttendance(
+  userId: string
+): Promise<AttendanceRecord | null> {
   try {
-    const today = format(new Date(), 'yyyy-MM-dd');
-    
+    const today = format(new Date(), "yyyy-MM-dd");
+
     const { data, error } = await supabase
-      .from('attendance')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('date', today)
+      .from("attendance")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("date", today)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== "PGRST116") {
       throw error;
     }
 
     return data;
   } catch (error) {
-    console.error('Get today attendance error:', error);
+    console.error("Get today attendance error:", error);
     return null;
   }
 }
 
-export async function getAttendanceHistory(userId: string, limit = 30): Promise<AttendanceRecord[]> {
+export async function getAttendanceHistory(
+  userId: string,
+  limit = 30
+): Promise<AttendanceRecord[]> {
   try {
     const { data, error } = await supabase
-      .from('attendance')
-      .select('*')
-      .eq('user_id', userId)
-      .order('date', { ascending: false })
+      .from("attendance")
+      .select("*")
+      .eq("user_id", userId)
+      .order("date", { ascending: false })
       .limit(limit);
 
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Get attendance history error:', error);
+    console.error("Get attendance history error:", error);
     return [];
   }
 }

@@ -111,9 +111,9 @@ export default function InternHistory() {
                   </div>
                   <span
                     className={`px-3 py-1 text-sm rounded-full ${
-                      record.status === "present"
+                      record.status === "hadir"
                         ? "bg-green-100 text-green-800"
-                        : record.status === "late"
+                        : record.status === "alfa"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-red-100 text-red-800"
                     }`}
