@@ -28,7 +28,7 @@ export const LocationButton = ({
         disabled={disabled}
         className={cn(
           "w-full justify-between",
-          locationStatus === 'approved' && "bg-green-50 text-green-700 border-green-200",
+          locationStatus === 'approved' && "bg-green-100 text-green-700 border-green-200 hover:bg-green-200",
           locationStatus === 'success' && "bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
         )}
       >

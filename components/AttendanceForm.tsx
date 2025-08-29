@@ -5,11 +5,13 @@ import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import { useRouter } from 'next/navigation';
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
+import { Toaster } from "@/components/ui/sonner"
 import {
   Form,
   FormControl,
@@ -26,11 +28,13 @@ import {
 import { AttendanceRecord } from "../components/types/attendance"
 // Icons
 import { RiArrowDropDownLine } from 'react-icons/ri';
+import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { PhotoUpload } from "./PhotoUpload";
 import { FileUpload } from "./FileUpload"
 import { LocationButton } from "./FLocationButton"
 import { getCurrentLocation, UserLocation } from "../lib/helper/geolocation.helpers"
 import { uploadPhoto, uploadFile } from "../lib/helper/upload.helpers"
+import { truncate } from "fs/promises"
 
 const locationSchema = z.object({
   latitude: z.number().optional(),
@@ -77,15 +81,18 @@ export function AttendanceForm() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [fileFile, setFileFile] = useState<File | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
+  const router = useRouter();
+  
+  const defaultValuesRef = useRef({
+    status: "Hadir",
+    description: "",
+    dob: new Date(),
+    location: {},
+  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      status: "Hadir", 
-      description: "",
-      dob: currentDate,
-      location: {},
-    },
+    defaultValues: defaultValuesRef.current
   })
 
   // Fungsi untuk mendapatkan lokasi user
@@ -102,12 +109,12 @@ export function AttendanceForm() {
     console.log("Data kehadiran yang tersimpan:", attendanceRecords);
   }, [attendanceRecords]);
 
-  const handlePhotoChange = (file: File | null, previewUrl: string | null) => {
+  const handlePhotoChange = (file: File | null) => {
     setPhotoFile(file);
-    setPhotoUrl(previewUrl);
+    // setPhotoUrl(previewUrl);
   };
 
-  const handleFileChange = (file: File | null, fileUrl: string | null) => {
+  const handleFileChange = (file: File | null) => {
     setFileFile(file);
     setFileUrl(fileUrl);
   };
@@ -119,6 +126,21 @@ export function AttendanceForm() {
       toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
       return
     }
+    if (data.status === "Hadir") {
+      if (!photoFile) {
+        toast.error("Foto wajib diunggah untuk status Hadir");
+        return;
+      }
+      // if (!isApproved) {
+      //   toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir");
+      //   return;
+      // }
+    }
+
+    if ((data.status === "Izin" || data.status === "Sakit") && (!data.description || data.description.trim() === "")) {
+      toast.error("Keterangan wajib diisi untuk status Izin atau Sakit");
+      return;
+    }
 
     // let imageUrl = "https://example.com/path-to-user-image.jpg"; // Default
     let imageUrl = ""; // Default
@@ -127,14 +149,16 @@ export function AttendanceForm() {
 
     if (photoFile) {
       try {
-        toast.loading("Mengupload foto...");
+        // toast.loading("Mengupload foto...");
         imageUrl = await uploadPhoto(photoFile);
         toast.dismiss();
       } catch (error) {
         toast.error("Gagal mengupload foto");
         console.error("Upload error:", error);
       }
-    } else if ((data.status === "Izin" || data.status === "Sakit") && fileFile) {
+    } 
+    
+    if ((data.status === "Izin" || data.status === "Sakit") && fileFile) {
       try {
         toast.loading("Mengupload file...");
         attachmentUrl = await uploadFile(fileFile);
@@ -154,7 +178,6 @@ export function AttendanceForm() {
       longitude: userLocation?.longitude || 0,
       location: userLocation?.address || "Lokasi tidak tersedia",
       address: userLocation?.address || "Lokasi tidak tersedia",
-      // imageUrl: "https://example.com/path-to-user-image.jpg",
       imageUrl: imageUrl,
       description: data.description || "-",
     }
@@ -163,38 +186,39 @@ export function AttendanceForm() {
 
     setAttendanceRecords(prev => [...prev, newRecord])
 
-    toast("Data kehadiran berhasil disimpan", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">
-            {JSON.stringify(
-              {
-                id: newRecord.id,
-                tanggal: format(newRecord.date, "PPP"),
-                status: newRecord.status,
-                lokasi: newRecord.location,
-                foto: newRecord.imageUrl ? "Tersedia" : "Tidak tersedia",
-                foto2: newRecord.imageUrl,
-              },
-              null,
-              2
-            )}
-          </code>
-        </pre>
-      ),
-    })
+    // toast("Data kehadiran berhasil disimpan", {
+    //   description: (
+    //     <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
+    //       <code className="text-white">
+    //         {JSON.stringify(
+    //           {
+    //             id: newRecord.id,
+    //             tanggal: format(newRecord.date, "PPP"),
+    //             status: newRecord.status,
+    //             lokasi: newRecord.location,
+    //             foto: newRecord.imageUrl ? "Tersedia" : "Tidak tersedia",
+    //             foto2: newRecord.imageUrl,
+    //           },
+    //           null,
+    //           2
+    //         )}
+    //       </code>
+    //     </pre>
+    //   ),
+    // })
 
     // Reset form setelah submit
     form.reset({
-      ...form.getValues(),
-      description: "",
+      status: form.getValues("status"), 
+      description: form.getValues("description"),
       dob: new Date(),
       location: undefined
     })
+    // form.reset(undefined, { keepValues: false }); 
     setLocationStatus('idle')
     setUserLocation(null)
     setPhotoFile(null)
-    setPhotoUrl(null)
+    setFileFile(null)
   }
 
    // Dapatkan status lokasi untuk ditampilkan di UI
@@ -334,7 +358,13 @@ export function AttendanceForm() {
             {/* Tombol untuk menangkap lokasi - hanya ditampilkan jika status Hadir */}
             {form.watch('status') === 'Hadir' && (
               <FormItem>
-                <FormLabel>Lokasi</FormLabel>
+                <FormLabel>
+                  Lokasi
+                  <span className="text-[11px] text-gray-500 flex items-center gap-0.5">
+                    <AiOutlineInfoCircle className="w-3 h-3" />
+                    Pastikan Anda berada di area LEMIGAS
+                  </span>
+                </FormLabel>
                 <LocationButton
                   onClick={handleGetLocation}
                   disabled={locationStatus === 'fetching'}
@@ -355,11 +385,11 @@ export function AttendanceForm() {
                   <FormLabel>Keterangan</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Tambahkan keterangan (opsional)" 
+                      placeholder="Tambahkan keterangan" 
                       {...field}
                     />
                   </FormControl>
-                  {/* <FormMessage /> */}
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -367,7 +397,11 @@ export function AttendanceForm() {
               type="submit" 
               className="w-full"
               disabled={
-                (form.watch("status") === "Hadir" && locationStatus !== "approved") ||
+                // (form.watch('status') === "Hadir" && !photoFile || locationStatus !== 'approved' || !form.watch('dob')) ||  
+                // ((form.watch('status') === 'Izin' || form.watch('status') === 'Sakit') 
+                //   ? !form.watch('description')?.trim() || !form.watch('dob')
+                //   : true)
+                (form.watch("status") === "Hadir" && locationStatus !== "approved" && !photoFile) ||
                 ((form.watch("status") === "Izin" || form.watch("status") === "Sakit") &&
                   ((form.watch("description") ?? "").trim() === ""))
               }
@@ -377,6 +411,7 @@ export function AttendanceForm() {
           </div>
         </div>
       </form>
+      <Toaster className="" />
     </Form>
   )
 }

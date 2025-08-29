@@ -8,7 +8,7 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { toast } from "sonner";
 
 interface PhotoUploadProps {
-  onPhotoChange: (file: File | null, previewUrl: string | null) => void;
+  onPhotoChange: (file: File | null) => void;
 }
 
 export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
@@ -16,14 +16,13 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load saved photo from localStorage on component mount
-  useEffect(() => {
-    const savedPhoto = localStorage.getItem('attendancePhoto');
-    if (savedPhoto) {
-      setPreviewUrl(savedPhoto);
-      onPhotoChange(null, savedPhoto);
-    }
-  }, [onPhotoChange]);
+  // useEffect(() => {
+  //   const savedPhoto = localStorage.getItem('attendancePhoto');
+  //   if (savedPhoto) {
+  //     setPreviewUrl(savedPhoto);
+  //     onPhotoChange(null, savedPhoto);
+  //   }
+  // }, [onPhotoChange]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -42,17 +41,19 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
       }
       
       setSelectedFile(file);
-      
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        setPreviewUrl(result);
-        onPhotoChange(file, result);
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      onPhotoChange(file);
+      // const reader = new FileReader();
+      // reader.onload = () => {
+      //   const result = reader.result as string;
+      //   setPreviewUrl(result);
+      //   onPhotoChange(file, result);
         
-        // Save to localStorage
-        localStorage.setItem('attendancePhoto', result);
-      };
-      reader.readAsDataURL(file);
+      //   // Save to localStorage
+      //   // localStorage.setItem('attendancePhoto', result);
+      // };
+      // reader.readAsDataURL(file);
     }
   };
 
@@ -63,8 +64,7 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
   const removePhoto = () => {
     setPreviewUrl(null);
     setSelectedFile(null);
-    onPhotoChange(null, null);
-    localStorage.removeItem('attendancePhoto');
+    onPhotoChange(null);
   };
 
   return (
