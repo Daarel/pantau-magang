@@ -5,7 +5,7 @@ import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge"
 // Components
 import { Button } from "@/components/ui/button";
-import InternDashboard from '@/app/intern/dashboard/page';
+import { CheckOutModal } from "@/components/CheckOutModal"
 
 export default function TodaysAttendance() {
   const router = useRouter();
@@ -33,13 +33,16 @@ export default function TodaysAttendance() {
           <h1 className='font-semibold'>--:--:--</h1>
         </div>
       </div>
+      {/* Button Check In */}
       <Button 
         size='icon' 
         className='w-full bg-green-200 hover:bg-green-300 border-green-700 active:bg-green-400 transition-colors duration-100 shadow'
         onClick={() => router.push('/intern/attendance')}
       >
-        <h5 className='text-black font-bold'>Silakan Check In</h5>
+        <h5 className='text-black/80 font-bold'>Silakan Absen Masuk</h5>
       </Button>
+      {/* Button Check Out */}
+      <CheckOutModal />
     </div>
   )
 }

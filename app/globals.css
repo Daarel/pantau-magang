@@ -212,6 +212,6 @@
 @layer utilities {
   /* Title */
   .title_header {
-    @apply text-4xl font-medium text-white mb-2;
+    @apply text-3xl md:text-4xl font-medium text-white mb-2;
   }
 }
