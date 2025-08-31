@@ -9,7 +9,7 @@ ChartJS.register(Title, Tooltip, ArcElement);
 
 export default function PieChart() {
   // Data random
-  const labels = ["Hadir", "Alfa", "Sakit"];
+  const labels = ["Hadir", "Alfa", "Sakit/Izin"];
   const dataValues = labels.map(() => Math.floor(Math.random() * 100) + 10); // nilai random 10-110
 
   const data = {
@@ -49,7 +49,7 @@ export default function PieChart() {
         <AiOutlinePieChart className="w-6 h-6 text-blue-500" />
         <h3 className="h4 font-semibold">Persentase Kehadiran</h3>
       </div>
-      <div className="flex items-center gap-5 md:gap-7 lg:gap-10">
+      <div className="flex items-center gap-3 md:gap-5 lg:gap-20">
         {/* Legend manual di kiri */}
         <div className="flex flex-col gap-3">
           {labels.map((label, idx) => (

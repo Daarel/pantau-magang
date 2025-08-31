@@ -1,11 +1,14 @@
 import React from 'react'
+import { useRouter } from 'next/navigation';
 // Icons
 import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge"
 // Components
 import { Button } from "@/components/ui/button";
+import InternDashboard from '@/app/intern/dashboard/page';
 
 export default function TodaysAttendance() {
+  const router = useRouter();
   return (
     <div className='flex flex-col w-full md:w-1/2 border-2 gap-6 py-4 px-5 rounded-md'>
       {/* Header */}
@@ -30,8 +33,12 @@ export default function TodaysAttendance() {
           <h1 className='font-semibold'>--:--:--</h1>
         </div>
       </div>
-      <Button variant='ghost' size='icon' className='w-full '>
-        <h5 className='text-black/70 font-bold'>Anda sudah presensi</h5>
+      <Button 
+        size='icon' 
+        className='w-full bg-green-200 hover:bg-green-300 border-green-700 active:bg-green-400 transition-colors duration-100 shadow'
+        onClick={() => router.push('/intern/attendance')}
+      >
+        <h5 className='text-black font-bold'>Silakan Check In</h5>
       </Button>
     </div>
   )
