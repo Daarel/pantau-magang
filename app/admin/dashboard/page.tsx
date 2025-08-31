@@ -61,18 +61,25 @@ export default function AdminDashboard() {
       time: "1 hour ago",
       type: "attendance",
     },
+    {
+      id: 5,
+      action: "New supervisor assigned",
+      user: "Dr. Sarah Wil",
+      time: "1 hour ago",
+      type: "attendance",
+    },
   ];
 
   const getActivityIcon = (type: ActivityType) => {
     switch (type) {
       case "user":
-        return <FaUsers className='h-4 w-4 text-blue-600' />;
+        return <FaUsers className='h-6 w-6 text-blue-600' />;
       case "approval":
-        return <FaRegCheckCircle className='h-4 w-4 text-green-600' />;
+        return <FaRegCheckCircle className='h-6 w-6 text-green-600' />;
       case "attendance":
-        return <AiFillFileText className='h-4 w-4 text-yellow-600' />;
+        return <AiFillFileText className='h-6 w-6 text-yellow-600' />;
       default:
-        return <FiAlertTriangle className='h-4 w-4 text-gray-600' />;
+        return <FiAlertTriangle className='h-6 w-6 text-gray-600' />;
     }
   };
 
@@ -98,9 +105,9 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6'>
+      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 max-md:grid-cols-2'>
         <Card>
-          <CardContent className='flex items-center p-6 max-sm:p-1'>
+          <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
             <StatCard
               Icon={FaUsers}
               title='Total Users'
@@ -109,9 +116,8 @@ export default function AdminDashboard() {
             />
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className='flex items-center p-6 max-sm:p-1'>
+          <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
             <StatCard
               Icon={FaBuilding}
               title='Active Interns'
@@ -120,9 +126,8 @@ export default function AdminDashboard() {
             />
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className='flex items-center p-6 max-sm:p-1'>
+          <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
             <StatCard
               Icon={AiFillFileText}
               title='Pending Requests'
@@ -131,9 +136,8 @@ export default function AdminDashboard() {
             />
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className='flex items-center p-6 max-sm:p-0'>
+          <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
             <StatCard
               Icon={FaUsers}
               title='Supervisors'
@@ -145,23 +149,24 @@ export default function AdminDashboard() {
       </div>
 
       <div className='flex flex-row mt-5 justify-center gap-6 items-center max-sm:flex-col'>
-        <Card className='w-1/2 max-sm:w-full h-auto max-h-auto'>
+        <Card className='w-1/2 max-sm:w-full h-[350px]'>
           <CardHeader>
             <CardTitle>Recent Activities</CardTitle>
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
-              <ul>
+              <ul className="flex flex-col gap-3 max-sm:gap-5">
                 {recentActivities.map((activity) => (
-                  <li key={activity.id} className='flex items-start space-x-3'>
-                    <div className='flex-shrink-0 mt-1'>
-                      {getActivityIcon(activity.type)}
-                    </div>
-                    <div className='flex-1 min-w-0'>
-                      <p className='text-sm font-medium text-gray-900'>
+                  <li
+                    key={activity.id}
+                    className='flex justify-start items-center gap-5'
+                  >
+                    <div>{getActivityIcon(activity.type)}</div>
+                    <div>
+                      <p className='text-md max-sm:text-sm font-medium text-gray-900'>
                         {activity.action}
                       </p>
-                      <p className='text-sm text-gray-600'>
+                      <p className='text-sm max-sm:text-xs text-gray-600'>
                         {activity.user} • {activity.time}
                       </p>
                     </div>
@@ -172,11 +177,11 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className='w-1/2 max-sm:w-full h-auto max-h-auto'>
+        <Card className='w-1/2 max-sm:w-full h-[350px]'>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className='flex flex-col gap-10'>
+          <CardContent className='flex flex-col gap-3'>
             <NavigationButton
               variant='outline'
               className='p-10'
@@ -185,7 +190,6 @@ export default function AdminDashboard() {
               <FaUsers className='h-8 w-8 text-blue-600' />
               <span className='text-sm'>Add User</span>
             </NavigationButton>
-
             <NavigationButton
               variant='outline'
               className='p-10'
