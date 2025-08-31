@@ -13,7 +13,8 @@ import Image from "next/image";
 export default function InternDashboard() {
   return (
     <>
-      <div className='relative bg-blue-500 space-y-2 mb-7 h-48 p-8 rounded-lg overflow-hidden'>
+      {/* 1. Informasi nama, tanggal, dan waktu */}
+      <div className='relative bg-blue-500 space-y-2 mb-4 h-48 p-4 lg:p-8 rounded-lg overflow-hidden'>
         <Image
           src='/overlayBuilding.jpeg'
           alt='Overlay'
@@ -34,7 +35,7 @@ export default function InternDashboard() {
       </div>
 
       {/* 2. Today attendance, Piechart */}
-      <div className='flex flex-col md:flex-row w-full gap-3'>
+      <div className='flex flex-col md:flex-row w-full gap-4 mb-4'>
         {/* Attendance */}
         <TodaysAttendance />
 
@@ -93,7 +94,7 @@ export default function InternDashboard() {
             </div>
           </div>
 
-          {/* Leave Request */}
+          {/* Dispensasi */}
           <div className='flex w-1/2 p-4 border-2 items-center justify-center sm:justify-evenly rounded-md gap-4'>
             <div>
               <IoDocumentTextOutline className='text-[#CA8A04] bg-[#FEF9C3] p-3 w-11 lg:w-13 h-11 lg:h-13 rounded-md' />
