@@ -6,6 +6,7 @@ import { AiFillFileText } from "react-icons/ai";
 import { FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
 import NavigationButton from "../../../components/NavigationButton";
+import DashboardClock from "@/components/DashboardClock";
 
 type ActivityType = "user" | "approval" | "attendance" | "alert";
 
@@ -98,10 +99,7 @@ export default function AdminDashboard() {
           <h1 className='title_header max-sm:text-3xl'>
             Selamat Datang, Ibu {user.full_name}!
           </h1>
-          <h2 className='text-white text-2xl max-sm:text-lg'>
-            Kamis, 14 Agustus 2025
-          </h2>
-          <p className='text-white text-lg max-sm:text-sm'>13:18:15</p>
+        <DashboardClock />
         </div>
       </div>
 
