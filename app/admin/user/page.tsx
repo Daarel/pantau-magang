@@ -12,7 +12,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import { internModalInput } from "@/const";
@@ -148,7 +148,7 @@ export default function AdminUser() {
   const handleSubmit = () => {};
 
   return (
-    <Suspense fallback={<div>Loading supervisor</div>}>
+    <>
       <div className='min-h-screen bg-gray-50 p-6'>
         <TablePageHeader
           title='Daftar Anak Magang'
@@ -165,6 +165,6 @@ export default function AdminUser() {
           onSubmit={handleSubmit}
         />
       </div>
-    </Suspense>
+    </>
   );
 }
