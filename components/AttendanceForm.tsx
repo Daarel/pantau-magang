@@ -330,7 +330,7 @@ export function AttendanceForm() {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "dd-MM-yyyy")
+                            format(field.value, "dd/MM/yyyy")
                           ) : (
                             <span>Tetapkan tanggal</span>
                           )}
@@ -395,7 +395,7 @@ export function AttendanceForm() {
             />
             <Button 
               type="submit" 
-              className="w-full"
+              className="w-full active:bg-black/90 transition-colors duration-100 shadow"
               disabled={
                 // (form.watch('status') === "Hadir" && !photoFile || locationStatus !== 'approved' || !form.watch('dob')) ||  
                 // ((form.watch('status') === 'Izin' || form.watch('status') === 'Sakit') 
