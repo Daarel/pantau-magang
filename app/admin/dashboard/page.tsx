@@ -1,18 +1,23 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/Card";
 import StatCard from "@/components/StatCard";
 
 import { FaUsers, FaBuilding, FaRegCheckCircle } from "react-icons/fa";
 import { AiFillFileText } from "react-icons/ai";
 import { FiAlertTriangle } from "react-icons/fi";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import NavigationButton from "../../../components/NavigationButton";
+
+type ActivityType = "user" | "approval" | "attendance" | "alert";
+
+type recentActivities = {
+  id: number;
+  user: string;
+  action: string;
+  time: string;
+  type: ActivityType;
+};
 
 export default function AdminDashboard() {
-  const router = useRouter();
   // Mock data
   const user = {
     full_name: "Mia Melita",
@@ -27,7 +32,7 @@ export default function AdminDashboard() {
     systemAlerts: 3,
   };
 
-  const recentActivities = [
+  const recentActivities: recentActivities[] = [
     {
       id: 1,
       action: "New intern registered",
@@ -58,7 +63,7 @@ export default function AdminDashboard() {
     },
   ];
 
-  const getActivityIcon = (type: string) => {
+  const getActivityIcon = (type: ActivityType) => {
     switch (type) {
       case "user":
         return <FaUsers className='h-4 w-4 text-blue-600' />;
@@ -93,7 +98,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 sm:grid-cols-4'>
+      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6'>
         <Card>
           <CardContent className='flex items-center p-6 max-sm:p-1'>
             <StatCard
@@ -146,21 +151,23 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
-              {recentActivities.map((activity) => (
-                <li key={activity.id} className='flex items-start space-x-3'>
-                  <div className='flex-shrink-0 mt-1'>
-                    {getActivityIcon(activity.type)}
-                  </div>
-                  <div className='flex-1 min-w-0'>
-                    <p className='text-sm font-medium text-gray-900'>
-                      {activity.action}
-                    </p>
-                    <p className='text-sm text-gray-600'>
-                      {activity.user} • {activity.time}
-                    </p>
-                  </div>
-                </li>
-              ))}
+              <ul>
+                {recentActivities.map((activity) => (
+                  <li key={activity.id} className='flex items-start space-x-3'>
+                    <div className='flex-shrink-0 mt-1'>
+                      {getActivityIcon(activity.type)}
+                    </div>
+                    <div className='flex-1 min-w-0'>
+                      <p className='text-sm font-medium text-gray-900'>
+                        {activity.action}
+                      </p>
+                      <p className='text-sm text-gray-600'>
+                        {activity.user} • {activity.time}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </CardContent>
         </Card>
@@ -170,23 +177,23 @@ export default function AdminDashboard() {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className='flex flex-col gap-10'>
-            <Button
+            <NavigationButton
               variant='outline'
               className='p-10'
-              onClick={() => router.push("/admin/user?modal=open")}
+              href='/admin/user?modal=open'
             >
               <FaUsers className='h-8 w-8 text-blue-600' />
               <span className='text-sm'>Add User</span>
-            </Button>
+            </NavigationButton>
 
-            <Button
+            <NavigationButton
               variant='outline'
               className='p-10'
-              onClick={() => router.push("/admin/supervisor?modal=open")}
+              href='/admin/supervisor?modal=open'
             >
               <AiFillFileText className='h-8 w-8 text-green-600' />
               <span className='text-sm'>Add Supervisor</span>
-            </Button>
+            </NavigationButton>
           </CardContent>
         </Card>
       </div>
