@@ -259,6 +259,7 @@ export function AttendanceForm() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
+                          type="button"
                           variant={"outline"}
                           className={cn(
                             "w-full pl-3 text-left font-normal justify-between",
@@ -275,6 +276,7 @@ export function AttendanceForm() {
                         <h4 className="text-sm">Pilih Status</h4>
                         <div className="border-b my-1" />
                           <Button
+                            type="button"
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
@@ -285,6 +287,7 @@ export function AttendanceForm() {
                             Hadir
                           </Button>
                           <Button
+                            type="button"
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
@@ -295,6 +298,7 @@ export function AttendanceForm() {
                             Sakit
                           </Button>
                           <Button
+                            type="button"
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
@@ -323,6 +327,7 @@ export function AttendanceForm() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
+                          type="button"
                           variant={"outline"}
                           className={cn(
                             "w-full pl-3 text-left font-normal justify-between",
@@ -397,10 +402,6 @@ export function AttendanceForm() {
               type="submit" 
               className="w-full active:bg-black/90 transition-colors duration-100 shadow"
               disabled={
-                // (form.watch('status') === "Hadir" && !photoFile || locationStatus !== 'approved' || !form.watch('dob')) ||  
-                // ((form.watch('status') === 'Izin' || form.watch('status') === 'Sakit') 
-                //   ? !form.watch('description')?.trim() || !form.watch('dob')
-                //   : true)
                 (form.watch("status") === "Hadir" && (locationStatus !== "approved" && form.watch("imageUrl") == null)) ||
                 ((form.watch("status") === "Izin" || form.watch("status") === "Sakit") &&
                   ((form.watch("description") ?? "").trim() === ""))
