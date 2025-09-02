@@ -2,36 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTableColumnHeader } from "@/components/data-table-column-header"
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Attendance = {
-  name: string
-  institution: string
-  status: "Present" | "Late" | "Permit" | "Absent"
-  check_in_time: string
-  check_out_time: string
-}
+import { AttendanceIntern } from "@/types/attendance"
+import { formatDate, formatTime, truncateText, statusColor } from "@/lib/utils"
 
 // Header name
-export const columns: ColumnDef<Attendance>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <DataTableColumnHeader column={column} title="Name" />
-      )
-    },
-  },
-  {
-    accessorKey: "institution",
-    // Sorting by institution name
-    header: ({ column }) => {
-      return (
-        <DataTableColumnHeader column={column} title="Institution" />
-      )
-    },
-  },
+export const columns: ColumnDef<AttendanceIntern>[] = [
   {
     accessorKey: "status",
     header: ({ column }) => {
@@ -39,49 +14,89 @@ export const columns: ColumnDef<Attendance>[] = [
         <DataTableColumnHeader column={column} title="Status" />
       )
     },
-    // Tambahkan cell rendering dengan styling kondisional
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
-      
-      // Tentukan kelas CSS berdasarkan status
-      let statusClass = "";
-      switch (status) {
-        case "Present":
-          statusClass = "bg-green-100 text-green-800";
-          break;
-        case "Late":
-          statusClass = "bg-yellow-100 text-yellow-800";
-          break;
-        case "Permit":
-          statusClass = "bg-blue-100 text-blue-800";
-          break;
-        case "Absent":
-          statusClass = "bg-red-100 text-red-800";
-          break;
-        default:
-          statusClass = "bg-gray-100 text-gray-800";
-      }
-      
+      const statusInfo = statusColor(status);
       return (
-        <div className={`w-full py-1 rounded-full text-center font-medium ${statusClass}`}>
-          {status}
-        </div>
-      );
+      <div className={`w-full py-1 rounded-full text-center font-medium ${statusInfo.class}`}>
+        {statusInfo.text}
+      </div>
+    );
+    },
+  },
+  {
+    accessorKey: "date",
+    header: ({ column }) => {
+      return (
+        <DataTableColumnHeader column={column} title="Tanggal" />
+      )
+    },
+    cell: ({ row }) => {
+      const dateString = row.getValue("date") as string;
+      return <div>{formatDate(dateString)}</div>;
+    },
+  },
+  {
+    accessorKey: "notes",
+    // Sorting by institution name
+    header: ({ column }) => {
+      return (
+        <DataTableColumnHeader column={column} title="Keterangan" />
+      )
+    },
+    cell: ({ row }) => {
+      const notes = row.getValue("notes") as string;
+      return <div title={notes}>{truncateText(notes, 15)}</div>;
     },
   },
   {
     accessorKey: "check_in_time",
     header: ({ column }) => {
       return (
-        <DataTableColumnHeader column={column} title="Check In" />
+        <DataTableColumnHeader column={column} title="Masuk" />
       )
+    },
+    cell: ({ row }) => {
+      const checkInTime = row.getValue("check_in_time") as string | null;
+      return <div>{formatTime(checkInTime)}</div>;
     },
   },
   {
     accessorKey: "check_out_time",
     header: ({ column }) => {
       return (
-        <DataTableColumnHeader column={column} title="Check Out" />
+        <DataTableColumnHeader column={column} title="Pulang" />
+      )
+    },
+    cell: ({ row }) => {
+      const checkOutTime = row.getValue("check_out_time") as string | null;
+      return <div>{formatTime(checkOutTime)}</div>;
+    },
+  },
+  {
+    accessorKey: "file_url",
+    header: ({ column }) => {
+      return (
+        <DataTableColumnHeader column={column} title="Lampiran" />
+      )
+    },
+    cell: ({ row }) => {
+      const fileUrl = row.getValue("file_url") as string;
+      return (
+        <div>
+          {fileUrl && fileUrl !== "-" ? (
+            <a 
+              href={fileUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              Lihat
+            </a>
+          ) : (
+            "-"
+          )}
+        </div>
       )
     },
   },
