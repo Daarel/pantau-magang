@@ -5,7 +5,7 @@ import { Download, Clock, MapPin, Calendar } from "lucide-react";
 import { getAttendanceHistory } from "@/lib/attendance";
 import { supabase } from "@/lib/supabaseClient";
 import { AttendanceRecord } from "@/lib/attendance";
-import InternTable from "@/app/today-intern-status/page"
+import InternTable from "@/components/today-intern-status/page"
 
 export default function InternHistory() {
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
