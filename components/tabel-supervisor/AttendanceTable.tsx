@@ -167,13 +167,20 @@ function getReportData(): Report[] {
 
 }
 
-export function AttendanceTable() {
+export function AttendanceTable({ activeTab }: { activeTab: string }) {
   const attendanceData = getData()
+
+  // Filter data sesuai tab
+  const filteredData =
+    activeTab === "Semua Daftar"
+      ? attendanceData
+      : attendanceData.filter((item) => item.status === activeTab)
+
   return (
     <div className="w-full">
       <DataTable
         columns={columns}
-        data={attendanceData}
+        data={filteredData}
         enableFilter={false}
         enableColumnVisibility={false}
       />
@@ -182,13 +189,20 @@ export function AttendanceTable() {
 }
 
 // Komponen khusus Report
-export function ReportTable() {
+export function ReportTable({ activeTab }: { activeTab: string }) {
   const reportData = getReportData()
+
+    // Filter data sesuai tab
+  const filteredData =
+    activeTab === "Semua Daftar"
+      ? reportData
+      : reportData.filter((item) => item.status === activeTab)
+
   return (
     <div className="w-full">
       <DataTable
         columns={reportColumns}
-        data={reportData}
+        data={filteredData}
         enableFilter={false}
         enableColumnVisibility={false}
       />

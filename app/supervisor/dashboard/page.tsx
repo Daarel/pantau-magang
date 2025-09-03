@@ -2,7 +2,7 @@ import { GoClock, GoPeople } from "react-icons/go";
 import { FiTrendingUp } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 
-import TodayInternStatus from '@/app/today-intern-status/page';
+import TodayInternStatus from '@/components/today-intern-status/page';
 import { auth } from '@/lib/server/auth'; 
 import '../../globals.css';
 import Image from 'next/image';
