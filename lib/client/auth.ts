@@ -20,11 +20,11 @@ export async function loginUser(nomorInduk: number, password: string) {
     return { error: "Nomor Induk tidak ditemukan" };
   }
 
-  // const passwordMatch = await bcrypt.compare(password, user.password);
-  // if (!passwordMatch) {
-  //   console.error("DEBUG: Password salah");
-  //   return { error: "Password salah" };
-  // }
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch) {
+    console.error("DEBUG: Password salah");
+    return { error: "Password salah" };
+  }
 
   // ✅ Simpan full user di localStorage (untuk client)
   const clientSafeUser = {
@@ -75,7 +75,7 @@ export async function logoutUser() {
   }
 }
 
-// export async function hashPassword(password: string): Promise<string> {
-//   const salt = await bcrypt.genSalt(10);
-//   return bcrypt.hash(password, salt);
-// }
+export async function hashPassword(password: string): Promise<string> {
+const salt = await bcrypt.genSalt(10);
+return bcrypt.hash(password, salt);
+} 
