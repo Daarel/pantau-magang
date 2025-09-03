@@ -130,7 +130,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 max-md:grid-cols-2'>
+      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-5 max-md:grid-cols-2'>
         {statCards.map((card, i) => (
           <Card key={i}>
             <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
