@@ -9,7 +9,7 @@ import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
 import { dataColumnIntern, type DataColumn } from "@/const/dummy";
 
 import DataTable from "@/components/DataTable";
-import CustomDialog from "@/components/CustomDialog";
+import FormDialog from "@/components/FormDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 import { internModalInput } from "@/const";
 import { Button } from "@/components/ui/button";
@@ -158,7 +158,7 @@ export default function AdminUser() {
         onAdd={handleToggleModal}
       />
       <DataTable data={dataColumnIntern} columns={columns} />
-      <CustomDialog
+      <FormDialog
         open={open}
         onOpenChange={handleOpenChange}
         title='Tambah User'

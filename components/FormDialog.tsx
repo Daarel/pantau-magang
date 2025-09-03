@@ -21,7 +21,7 @@ interface FieldConfig {
   iconClassName?: string;
 }
 
-interface CustomDialogProps {
+interface FormDialogProps {
   fields: FieldConfig[];
   open: boolean;
   title: string;
@@ -29,7 +29,7 @@ interface CustomDialogProps {
   onSubmit: (data: Record<string, string>) => void;
 }
 
-const CustomDialog: FC<CustomDialogProps> = ({
+const FormDialog: FC<FormDialogProps> = ({
   open,
   title,
   fields,
@@ -83,4 +83,4 @@ const CustomDialog: FC<CustomDialogProps> = ({
   );
 };
 
-export default CustomDialog;
+export default FormDialog;

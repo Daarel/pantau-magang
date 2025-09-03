@@ -33,23 +33,23 @@ const supervisorModalInput: ModalField[] = [
     Icon: FaUser,
   },
   {
-    name: "nomorIndukPerusahaan",
+    name: "nomorInduk",
     label: "NIP",
     placeholder: "Masukkan nomor induk perusahaan",
     type: "number",
     Icon: FaIdCardAlt,
   },
   {
-    name: "gedung",
-    label: "Gedung",
-    placeholder: "Masukkan gedung",
-    Icon: FaBuilding,
-  },
-  {
     name: "password",
     label: "Password",
     placeholder: "Masukkan password",
     Icon: FaLock,
+  },
+  {
+    name: "gedung",
+    label: "Gedung",
+    placeholder: "Masukkan gedung",
+    Icon: FaBuilding,
   },
 ];
 

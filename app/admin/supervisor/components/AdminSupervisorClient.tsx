@@ -17,7 +17,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import { supervisorModalInput } from "@/const";
 import DataTable from "@/components/DataTable";
-import CustomDialog from "@/components/CustomDialog";
+import FormDialog from "@/components/FormDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 
 const columns: ColumnDef<DataColumn>[] = [
@@ -135,7 +135,7 @@ export default function AdminSupervisor() {
         onAdd={handleToggleModal}
       />
       <DataTable data={dataColumnSupervisor} columns={columns} />
-      <CustomDialog
+      <FormDialog
         open={open}
         onOpenChange={handleOpenChange}
         title='Tambah Supervisor'
