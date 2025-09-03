@@ -88,10 +88,10 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center pb-4">
           {enableFilter && (
             <Input
-              placeholder="Filter names..."
-              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              placeholder="Filter keterangan..."
+              value={(table.getColumn("notes")?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
-                table.getColumn("name")?.setFilterValue(event.target.value)
+                table.getColumn("notes")?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />
