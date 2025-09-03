@@ -25,7 +25,7 @@ export default function AdminDashboard() {
   };
 
   const stats = {
-    totalUsers: 45,
+    totalUsers: 46,
     activeInterns: 32,
     supervisors: 8,
     totalAttendance: 89,
@@ -71,6 +71,33 @@ export default function AdminDashboard() {
     },
   ];
 
+  const statCards = [
+    {
+      Icon: FaUsers,
+      title: "Total Users",
+      value: stats.totalUsers,
+      contentColor: "text-blue-600",
+    },
+    {
+      Icon: FaBuilding,
+      title: "Active Interns",
+      value: stats.activeInterns,
+      contentColor: "text-green-600",
+    },
+    {
+      Icon: AiFillFileText,
+      title: "Pending Requests",
+      value: stats.pendingRequests,
+      contentColor: "text-yellow-600",
+    },
+    {
+      Icon: FaUsers,
+      title: "Supervisors",
+      value: stats.supervisors,
+      contentColor: "text-indigo-600",
+    },
+  ];
+
   const getActivityIcon = (type: ActivityType) => {
     switch (type) {
       case "user":
@@ -99,51 +126,23 @@ export default function AdminDashboard() {
           <h1 className='title_header max-sm:text-3xl'>
             Selamat Datang, Ibu {user.full_name}!
           </h1>
-        <DashboardClock />
+          <DashboardClock />
         </div>
       </div>
 
-      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 max-md:grid-cols-2'>
-        <Card>
-          <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
-            <StatCard
-              Icon={FaUsers}
-              title='Total Users'
-              value={stats.totalUsers}
-              contentColor='text-blue-600'
-            />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
-            <StatCard
-              Icon={FaBuilding}
-              title='Active Interns'
-              value={stats.activeInterns}
-              contentColor='text-green-600'
-            />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
-            <StatCard
-              Icon={AiFillFileText}
-              title='Pending Requests'
-              value={stats.pendingRequests}
-              contentColor='text-yellow-600'
-            />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
-            <StatCard
-              Icon={FaUsers}
-              title='Supervisors'
-              value={stats.supervisors}
-              contentColor='text-indigo-600'
-            />
-          </CardContent>
-        </Card>
+      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-5 max-md:grid-cols-2'>
+        {statCards.map((card, i) => (
+          <Card key={i}>
+            <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
+              <StatCard
+                Icon={card.Icon}
+                title={card.title}
+                value={card.value}
+                contentColor={card.contentColor}
+              />
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <div className='flex flex-row mt-5 justify-center gap-6 items-center max-sm:flex-col'>
@@ -153,7 +152,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
-              <ul className="flex flex-col gap-3 max-sm:gap-5">
+              <ul className='flex flex-col gap-3 max-sm:gap-5'>
                 {recentActivities.map((activity) => (
                   <li
                     key={activity.id}
