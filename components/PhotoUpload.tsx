@@ -85,19 +85,21 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
             className='w-full h-full object-cover'
           />
           <Button
+            type='button'
             variant="destructive"
             size="sm"
             className="absolute top-2 right-2"
-            onClick={removePhoto}
+            onClick={(e) => { e.preventDefault(); removePhoto(); }}
           >
             Hapus
           </Button>
         </div>
       ) : (
         <Button
+          type="button"
           variant="outline"
           className="flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 bg-gray-200"
-          onClick={handleClick}
+          onClick={(e) => { e.preventDefault(); handleClick(); }}
         >
           <TbCameraPlus className="w-4 h-4" />
           <span>Tambahkan foto</span>

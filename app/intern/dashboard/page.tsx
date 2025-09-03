@@ -24,7 +24,7 @@ export default function InternDashboard() {
         />
 
         <div className='relative z-10'>
-          <h1 className='title_header max-sm:text-3xl'>
+          <h1 className='title_header'>
             Selamat Datang, Dika Arnanda Putra!
           </h1>
           <h2 className='text-white text-2xl max-sm:text-lg'>

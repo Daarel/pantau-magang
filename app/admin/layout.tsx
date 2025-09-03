@@ -36,7 +36,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     <SidebarMenuButton
                       asChild
                       isActive={isActive}
-                      className='flex items-center gap-3 pl-5 py-2 rounded-md transition-colors'
+                      className='flex items-center gap-3 pl-5 h-10 transition-colors'
                     >
                       <Link href={menu.path}>
                         <menu.Icon className='h-9 w-9' />
