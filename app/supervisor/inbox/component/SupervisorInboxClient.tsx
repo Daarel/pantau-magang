@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-// import TabelSupervisor from "@/app/tabel-supervisor/page";
+import { ReportTable } from "@/components/tabel-supervisor/AttendanceTable";
 
-
-export default function ReportClient() {
+export default function SupervisorInboxClient() {
   const [activeTab, setActiveTab] = useState("Semua Daftar");
 
   return (
@@ -38,7 +37,7 @@ export default function ReportClient() {
 
       {/* Content */}
       <div className="mt-6 space-y-4">
-        {/* <TabelSupervisor activeTab={activeTab} type="reports" /> */}
+        <ReportTable activeTab={activeTab} />
       </div>
     </div>
   );
