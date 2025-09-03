@@ -29,7 +29,7 @@ export default function AdminDashboard() {
     activeInterns: 32,
     supervisors: 8,
     totalAttendance: 89,
-    pendingRequests: 12,
+    departments: 12,
     systemAlerts: 3,
   };
 
@@ -79,22 +79,22 @@ export default function AdminDashboard() {
       contentColor: "text-blue-600",
     },
     {
-      Icon: FaBuilding,
-      title: "Active Interns",
+      Icon: FaUsers,
+      title: "Interns",
       value: stats.activeInterns,
       contentColor: "text-green-600",
-    },
-    {
-      Icon: AiFillFileText,
-      title: "Pending Requests",
-      value: stats.pendingRequests,
-      contentColor: "text-yellow-600",
     },
     {
       Icon: FaUsers,
       title: "Supervisors",
       value: stats.supervisors,
       contentColor: "text-indigo-600",
+    },
+    {
+      Icon: FaBuilding,
+      title: "Departments",
+      value: stats.departments,
+      contentColor: "text-yellow-600",
     },
   ];
 

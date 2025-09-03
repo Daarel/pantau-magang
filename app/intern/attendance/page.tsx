@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from "react";
 // Components
 import { AttendanceForm } from "@/components/AttendanceForm";
-import { Button } from "@/components/ui/button"
 // Icons
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { TbCameraPlus } from 'react-icons/tb';
 
 export default function Attendance() {
   return (

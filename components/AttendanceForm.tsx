@@ -142,7 +142,6 @@ export function AttendanceForm() {
       return;
     }
 
-    // let imageUrl = "https://example.com/path-to-user-image.jpg"; // Default
     let imageUrl = ""; // Default
     let attachmentUrl = "";
     let attachmentType = "none";
