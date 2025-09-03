@@ -10,6 +10,7 @@ import { FiCalendar } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BsHouse } from "react-icons/bs";
 import { AiOutlineClockCircle } from "react-icons/ai";
+import { FaRegFileAlt } from "react-icons/fa";
 
 import type { IconType } from "react-icons";
 
@@ -127,7 +128,7 @@ const supervisorMenu: MenuByRole[] = [
     path: "/supervisor/attendance",
     Icon: AiOutlineClockCircle,
   },
-  { title: "Reports", path: "/supervisor/reports", Icon: FiCalendar },
+  { title: "Inbox", path: "/supervisor/inbox", Icon: FaRegFileAlt },
 ];
 
 // untuk menu sidebar admin
