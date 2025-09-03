@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "./ui/label";
+import { Label } from "@/components/ui/label";
 import { IconType } from "react-icons";
 import { DialogDescription } from "@radix-ui/react-dialog";
 
