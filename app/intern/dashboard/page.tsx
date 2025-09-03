@@ -6,6 +6,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 // Components
 import PieChart from "@/components/PieChart";
 import TodaysAttendance from "@/components/TodaysAttendance";
+import DashboardClock from "@/components/DashboardClock"
 // Styles
 import "../../globals.css";
 import Image from "next/image";
@@ -27,10 +28,7 @@ export default function InternDashboard() {
           <h1 className='title_header'>
             Selamat Datang, Dika Arnanda Putra!
           </h1>
-          <h2 className='text-white text-2xl max-sm:text-lg'>
-            Kamis, 14 Agustus 2025
-          </h2>
-          <p className='text-white text-lg max-sm:text-sm'>13:18:15</p>
+          <DashboardClock />
         </div>
       </div>
 
