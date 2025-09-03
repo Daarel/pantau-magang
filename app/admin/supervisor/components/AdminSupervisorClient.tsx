@@ -128,22 +128,20 @@ export default function AdminSupervisor() {
 
   return (
     <>
-      <div className='min-h-screen bg-gray-50 p-6'>
-        <TablePageHeader
-          title='Daftar Supervisor'
-          subtitle='List daftar supervisor aktif'
-          label='Tambah Supervisor'
-          onAdd={handleToggleModal}
-        />
-        <DataTable data={dataColumnSupervisor} columns={columns} />
-        <CustomDialog
-          open={open}
-          onOpenChange={handleOpenChange}
-          title='Tambah Supervisor'
-          fields={supervisorModalInput}
-          onSubmit={handleSubmit}
-        />
-      </div>
+      <TablePageHeader
+        title='Daftar Supervisor'
+        subtitle='List daftar supervisor aktif'
+        label='Tambah Supervisor'
+        onAdd={handleToggleModal}
+      />
+      <DataTable data={dataColumnSupervisor} columns={columns} />
+      <CustomDialog
+        open={open}
+        onOpenChange={handleOpenChange}
+        title='Tambah Supervisor'
+        fields={supervisorModalInput}
+        onSubmit={handleSubmit}
+      />
     </>
   );
 }
