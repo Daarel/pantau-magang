@@ -43,7 +43,7 @@ export function DataTable<TData, TValue>({
   data,
   pageSize = 5, // Default 5 data per halaman
   enableFilter = true, // Default true
-  enableColumnVisibility = true, // Default true
+  enableColumnVisibility = false, // Default false
   // enablePagination = true,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -79,10 +79,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="border-2 rounded-md p-4">
-      <div>
-        <h5 className="h5 font-semibold mb-4">Today&apos;s Intern Status</h5>
-      </div>
+    <div>
       {/* Field input filter */}
       {(enableFilter || enableColumnVisibility) && (
         <div className="flex items-center pb-4">
@@ -93,7 +90,7 @@ export function DataTable<TData, TValue>({
               onChange={(event) =>
                 table.getColumn("notes")?.setFilterValue(event.target.value)
               }
-              className="max-w-sm"
+              className="max-w-sm mt-4"
             />
           )}
           {enableColumnVisibility && <DataTableViewOptions table={table} />}
@@ -144,23 +141,39 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-
-      <div className="flex items-center justify-end space-x-2 pt-4">
+      
+      {/* Pagination */}
+      <div className="flex items-center justify-center space-x-2 pt-4">
+        {/* Tombol Previous */}
         <Button
           variant="outline"
           size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          &lt;
         </Button>
+
+        {/* Angka Pagination */}
+        {Array.from({ length: table.getPageCount() }, (_, i) => (
+          <Button
+            key={i}
+            variant={table.getState().pagination.pageIndex === i ? "default" : "outline"}
+            size="sm"
+            onClick={() => table.setPageIndex(i)}
+          >
+            {i + 1}
+          </Button>
+        ))}
+
+        {/* Tombol Next */}
         <Button
           variant="outline"
           size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          &gt;
         </Button>
       </div>
     </div>
