@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 // Components
 import { AttendanceForm } from "@/components/AttendanceForm";
+import { AttendanceInfo } from "@/components/AttendanceInfo";
 // Icons
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 
@@ -23,6 +24,7 @@ export default function Attendance() {
 
         {/* Foto & Form Konfirmasi Kehadiran */}
         <AttendanceForm />
+        <AttendanceInfo status="hadir" />
       </div>
     </>
   );
