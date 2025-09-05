@@ -1,21 +1,22 @@
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
-import { AttendanceIntern } from "../../types/attendance"
-import data from "../../const/intern_dummyData.json"
+import { internAttendanceData } from "@/hooks/useAttendance"
 
 export function InternAttendanceTable({ activeTab }: { activeTab: string }) {
-  const attendanceDataIntern: AttendanceIntern[] = data as AttendanceIntern[]
+  const { attendanceData, loading, error } = internAttendanceData(activeTab)
 
-  // Filter data sesuai tab
-  const filteredData =
-    activeTab === "Semua Riwayat"
-      ? attendanceDataIntern
-      : attendanceDataIntern.filter((item) => item.status === activeTab)
+  if (loading) {
+    return <div className="flex p-5 justify-center items-center">Loading...</div>
+  }
+  if (error) {
+    return <div className="flex p-5 justify-center items-center">Error: {error}</div>
+  }
+
   return (
     <div className="w-full">
       <DataTable 
         columns={columns} 
-        data={filteredData} 
+        data={attendanceData} 
         enableFilter={true}
         // enableColumnVisibility={false}
         // pageSize={5}

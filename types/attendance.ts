@@ -11,8 +11,8 @@ export type AttendanceRecord = {
 };
 
 export type AttendanceIntern = {
-  id: string
-  nmr_induk: number
+  id: number
+  user_id: string
   date: string
   check_in_time: string | null
   check_out_time: string | null
