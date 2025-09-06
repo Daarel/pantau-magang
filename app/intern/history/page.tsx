@@ -1,7 +1,7 @@
 // src/components/AttendanceHistory.tsx
 "use client";
-import React, { useEffect, useState } from "react";
-import { Download, Clock, MapPin, Calendar } from "lucide-react";
+import React, { useState } from "react";
+import { Download, } from "lucide-react";
 import { InternAttendanceTable } from "@/components/today-intern-status/page"
 
 export default function InternHistory() {
