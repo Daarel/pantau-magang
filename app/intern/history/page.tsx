@@ -2,52 +2,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Download, Clock, MapPin, Calendar } from "lucide-react";
-import { getAttendanceHistory } from "@/lib/attendance";
-import { supabase } from "@/lib/supabaseClient";
-import { AttendanceRecord } from "@/lib/attendance";
 import { InternAttendanceTable } from "@/components/today-intern-status/page"
 
 export default function InternHistory() {
-  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [errorMsg, setErrorMsg] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("Semua Riwayat");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const userId = session?.user?.id;
-
-        if (!userId) {
-          setLoading(false);
-          return;
-        }
-
-        const records: AttendanceRecord[] | null = await getAttendanceHistory(
-          userId
-        );
-        setAttendanceData(records || []);
-      } catch (error: unknown) {
-        console.error("Get attendance history error:", error);
-        if (error instanceof Error) {
-          setErrorMsg(error.message);
-        } else {
-          setErrorMsg("Gagal memuat data absensi");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   return (
     <div className='flex flex-col min-h-screen gap-4'>
