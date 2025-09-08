@@ -1,16 +1,16 @@
 import type { FC, FormEvent } from "react";
+import type { IconType } from "react-icons";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogDescription,
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { IconType } from "react-icons";
-import { DialogDescription } from "@radix-ui/react-dialog";
 
 interface FieldConfig {
   name: string;
