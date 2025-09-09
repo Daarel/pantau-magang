@@ -30,7 +30,7 @@ export type Report = {
 }
 export type Dashboard = {
   name: string
-  status: "Hadir" | "Sakit" | "Izin" | "Alfa"
+  status: string
   institutions: string
   check_in_time: string
   check_out_time: string
@@ -265,21 +265,21 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
     },
     // Tambahkan cell rendering dengan styling kondisional
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
+      const status = (row.getValue("status") as string)?.toLowerCase()
       
       // Tentukan kelas CSS berdasarkan status
       let statusClass = "";
       switch (status) {
-        case "Hadir":
+        case "hadir":
           statusClass = "bg-green-100 text-green-800";
           break;
-        case "Sakit":
+        case "sakit":
           statusClass = "bg-yellow-100 text-yellow-800";
           break;
-        case "Izin":
+        case "izin":
           statusClass = "bg-blue-100 text-blue-800";
           break;
-        case "Alfa":
+        case "alfa":
           statusClass = "bg-red-100 text-red-800";
           break;
         default:
@@ -288,7 +288,7 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
       
       return (
         <div className={`w-full py-1 rounded-full text-center font-medium ${statusClass}`}>
-          {status}
+          {status || "-"}
         </div>
       );
     },

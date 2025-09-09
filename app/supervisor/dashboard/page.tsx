@@ -2,6 +2,7 @@ import { GoClock, GoPeople } from "react-icons/go";
 import { FiTrendingUp } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { auth } from '@/lib/server/auth'; 
+import { supabase } from '@/lib/supabaseClient';
 import '../../globals.css';
 import Image from 'next/image';
 import DashboardClock from "@/components/DashboardClock";
@@ -12,8 +13,19 @@ import { DashboardTable } from "@/components/tabel-supervisor/AttendanceTable";
 export default async function SupervisorDashboard() {
   const session = await auth();
 
+  let totalInterns = 0;
+  if (session?.id) {
+    const { count } = await supabase
+      .from("users")
+      .select("*", { count: "exact", head: true })
+      .eq("role", "intern")
+      .eq("supervisor_id", session.id);
+
+    totalInterns = count ?? 0;
+  }
+
   const stats = {
-    totalInterns: 4,
+    totalInterns,
     presentToday: 2,
     pendingLeaves: 50,
     avgAttendance: 2,
@@ -82,7 +94,7 @@ export default async function SupervisorDashboard() {
       </div>
 
       {/* Today's Intern Status */}
-      <DashboardTable />
+      {session?.id && <DashboardTable supervisorId={session.id}/>}
     </>
   );
 }
