@@ -1,6 +1,7 @@
 
 import { columns, reportColumns, Dashboardcolumns, Attendance, Report, Dashboard} from "./columns"
 import { DataTable } from "./data-table"
+import { supabase } from "@/lib/supabaseClient"
 
 function getData(): Attendance[] {
   // Fetch data from your API here.
@@ -167,95 +168,52 @@ function getReportData(): Report[] {
 
 }
 
-function getDashboardData(): Dashboard[] {
-  // Fetch data from your API here.
-  return [
-    { 
-      name: "Andi",
-      status: "Hadir",
-      institutions: "UPJ", 
-      check_in_time: "08:00", 
-      check_out_time: "08:00",
-    },
-    { 
-      name: "Budi",
-      status: "Hadir", 
-      institutions: "UPJ", 
-      check_in_time: "08:05", 
-      check_out_time: "08:05",
-    },
-    { 
-      name: "Citra",
-      status: "Hadir",
-      institutions: "UPJ",  
-      check_in_time: "08:30", 
-      check_out_time: "08:30",
-    },
-    { 
-      name: "Dewi",
-      status: "Hadir", 
-      institutions: "UPJ", 
-      check_in_time: "08:10", 
-      check_out_time: "08:10",
-    },
-    { 
-      name: "Eka",
-      status: "Hadir", 
-      institutions: "UPJ", 
-      check_in_time: "08:15", 
-      check_out_time: "08:15",
-    },
-    { 
-      name: "Fajar",
-      status: "Sakit", 
-      institutions: "UPH",
-      check_in_time: "-:-", 
-      check_out_time: "-:-" },
+async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, "0")
+  const day = String(now.getDate()).padStart(2, "0")
+  const today = `${year}-${month}-${day}`
 
-      { 
-      name: "Gina",
-      status: "Hadir", 
-      institutions: "UNPAM", 
-      check_in_time: "08:20", 
-      check_out_time: "08:20",
-    },
-    { 
-      name: "Hari",
-      status: "Hadir",
-      institutions: "UNTIRTA",  
-      check_in_time: "08:25", 
-      check_out_time: "08:25",
-    },
-    { 
-      name: "Intan",
-      status: "Alfa", 
-      institutions: "UPH", 
-      check_in_time: "-:-", 
-      check_out_time: "-:-" },
+  const { data, error } = await supabase
+    .from("attendance")
+    .select(`
+      id,
+      status,
+      check_in_time,
+      check_out_time,
+      date,
+      users!inner (
+        full_name,
+        institution,
+        supervisor_id
+      )
+    `)
+    .eq("users.supervisor_id", supervisorId) // filter by supervisor langsung di join
+    .eq("date", today)
 
-      { 
-      name: "Joko",
-      status: "Izin",
-      institutions: "UNPAM",  
-      check_in_time: "-:-", 
-      check_out_time: "-:-",
-    },
+  if (error) {
+    console.error("Error fetching dashboard data:", error)
+    return []
+  }
 
-    { 
-      name: "Ucok",
-      status: "Alfa", 
-      institutions: "UBL", 
-      check_in_time: "-:-", 
-      check_out_time: "-:-" },
-
-    { 
-      name: "Abeng",
-      status: "Sakit", 
-      institutions: "UBL", 
-      check_in_time: "-:-", 
-      check_out_time: "-:-" },
-
-  ]
+  return (data ?? []).map((att: any) => ({
+    name: att.users?.full_name ?? "Unknown",
+    status: att.status,
+    institutions: att.users?.institution ?? "-",
+    check_in_time: att.check_in_time
+      ? new Date(att.check_in_time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "-:-",
+    check_out_time: att.check_out_time
+      ? new Date(att.check_out_time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "-:-",
+  }))
 }
 
 export function AttendanceTable({ activeTab }: { activeTab: string }) {
@@ -301,8 +259,8 @@ export function ReportTable({ activeTab }: { activeTab: string }) {
   )
 }
 
-export function DashboardTable() {
-  const reportData = getDashboardData()
+export async function DashboardTable({ supervisorId }: { supervisorId: string }) {
+  const reportData = await getDashboardData(supervisorId)
 
   return (
     <div className="w-full">
