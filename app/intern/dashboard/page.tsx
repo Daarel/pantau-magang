@@ -7,11 +7,16 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import PieChart from "@/components/PieChart";
 import TodaysAttendance from "@/components/TodaysAttendance";
 import DashboardClock from "@/components/DashboardClock"
+import { getWorkdaysInMonth } from "@/lib/utils"
 // Styles
 import "../../globals.css";
 import Image from "next/image";
 
+import { internDashboardSummary } from '@/hooks/useDashboardData'
+
 export default function InternDashboard() {
+  const { summaryData, loading, error } = internDashboardSummary()
+  const totalHariKerja = getWorkdaysInMonth()
   return (
     <>
       {/* 1. Informasi nama, tanggal, dan waktu */}
@@ -59,13 +64,13 @@ export default function InternDashboard() {
             </h1>
             <div className='flex gap-4'>
               <div className='flex flex-col justify-center'>
-                <h1 className='h5 md:h3 font-bold'>08:00</h1>
+                <h1 className='h5 md:h3 font-bold'>{summaryData?.start_time}</h1>
                 <h1 className='text-xs sm:h6 font-semibold text-blue-600'>
                   Masuk
                 </h1>
               </div>
               <div className='flex flex-col justify-center'>
-                <h1 className='h5 md:h3 font-bold'>15:00</h1>
+                <h1 className='h5 md:h3 font-bold'>{summaryData?.end_time}</h1>
                 <h1 className='text-xs sm:h6 font-semibold text-blue-600'>
                   Pulang
                 </h1>
@@ -85,7 +90,7 @@ export default function InternDashboard() {
               <h1 className='text-sm lg:text-lg font-semibold text-black/50'>
                 Bulan Ini
               </h1>
-              <h1 className='h5 sm:h3 font-bold'>22/23</h1>
+              <h1 className='h5 sm:h3 font-bold'>{summaryData?.total_hadir_bulanan}/{totalHariKerja}</h1>
               <h1 className='text-xs sm:h6 font-semibold text-green-600'>
                 Kehadiran
               </h1>
@@ -101,7 +106,7 @@ export default function InternDashboard() {
               <h1 className='text-sm lg:text-lg font-semibold text-black/50'>
                 Dispensasi
               </h1>
-              <h1 className='h5 sm:h3 font-bold'>2</h1>
+              <h1 className='h5 sm:h3 font-bold'>{summaryData?.total_dispensasi}</h1>
               <h1 className='text-xs sm:h6 font-semibold text-[#CA8A04]'>
                 Disetujui
               </h1>

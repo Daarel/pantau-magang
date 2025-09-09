@@ -25,12 +25,24 @@ export const formatDate = (dateString: string | null): string => {
 // Format waktu menjadi HH:MM
 export const formatTime = (timeString: string | null): string => {
   if (!timeString || timeString === "-" || timeString === null) return "-";
-  
+
   try {
-    const time = new Date(timeString);
-    return time.toLocaleTimeString('id-ID', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    let dateObj: Date;
+
+    // Jika hanya berupa HH:mm:ss, gabungkan dengan tanggal hari ini
+    if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeString)) {
+      const today = new Date();
+      const isoDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
+      dateObj = new Date(`${isoDate}T${timeString}`);
+    } else {
+      // Anggap string sudah ISO valid
+      dateObj = new Date(timeString);
+    }
+
+    // Ambil Jam & Menit saja
+    return dateObj.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch (error) {
     console.error("Error formatting time:", error);
@@ -49,6 +61,7 @@ export const truncateText = (text: string, maxWords: number = 15): string => {
   return text;
 };
 
+// Ubah warna background berdasarkan status kehadiran
 export const statusColor = (status: string): { class: string; text: string } => {
   switch (status) {
     case "hadir":
@@ -62,4 +75,21 @@ export const statusColor = (status: string): { class: string; text: string } => 
     default:
       return { class: "bg-gray-100 text-gray-800", text: status };
   }
+}
+
+// Hitung jumlah hari kerja dalam bulan ini
+export const getWorkdaysInMonth = (): number => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = today.getMonth() // 0-11
+
+  const start = new Date(year, month, 1)
+  const end = new Date(year, month + 1, 0)
+
+  let workdays = 0
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const day = d.getDay()
+    if (day >= 1 && day <= 5) workdays++ // Senin(1) - Jumat(5)
+  }
+  return workdays
 }

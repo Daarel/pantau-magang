@@ -34,13 +34,13 @@ export default function TodaysAttendance() {
         </div>
       </div>
       {/* Button Check In */}
-      <Button 
+      {/* <Button 
         size='icon' 
         className='w-full bg-green-200 hover:bg-green-300 border-green-700 active:bg-green-400 transition-colors duration-100 shadow'
         onClick={() => router.push('/intern/attendance')}
       >
         <h5 className='text-black/80 font-bold'>Silakan Absen Masuk</h5>
-      </Button>
+      </Button> */}
       {/* Button Check Out */}
       <CheckOutModal />
     </div>
