@@ -13,15 +13,24 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "types": ["node", "react"],   // ✅ tambahin ini
     "plugins": [
-      {
-        "name": "next"
-      }
+      { "name": "next" }
     ],
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "lib/supabaseClient.ts", "lib/middleware.ts", "components/PieChart.tsx", "app/(supervisor)/supervisor/attendance/page.jsx", "app/intern/attendance/page.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "lib/supabaseClient.ts",
+    "lib/middleware.ts",
+    "components/PieChart.tsx",
+    "app/(supervisor)/supervisor/attendance/page.jsx",
+    "app/intern/attendance/page.tsx"
+  ],
   "exclude": ["node_modules"]
 }

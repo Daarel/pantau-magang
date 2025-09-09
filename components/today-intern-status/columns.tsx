@@ -9,11 +9,7 @@ import { formatDate, formatTime, truncateText, statusColor } from "@/lib/utils"
 export const columns: ColumnDef<AttendanceIntern>[] = [
   {
     accessorKey: "status",
-    header: ({ column }) => {
-      return (
-        <DataTableColumnHeader column={column} title="Status" />
-      )
-    },
+    header: "Status",
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       const statusInfo = statusColor(status);
@@ -39,11 +35,7 @@ export const columns: ColumnDef<AttendanceIntern>[] = [
   {
     accessorKey: "notes",
     // Sorting by institution name
-    header: ({ column }) => {
-      return (
-        <DataTableColumnHeader column={column} title="Keterangan" />
-      )
-    },
+    header: "Keterangan",
     cell: ({ row }) => {
       const notes = row.getValue("notes") as string;
       return <div title={notes}>{truncateText(notes, 15)}</div>;
@@ -51,11 +43,7 @@ export const columns: ColumnDef<AttendanceIntern>[] = [
   },
   {
     accessorKey: "check_in_time",
-    header: ({ column }) => {
-      return (
-        <DataTableColumnHeader column={column} title="Masuk" />
-      )
-    },
+    header: "Masuk",
     cell: ({ row }) => {
       const checkInTime = row.getValue("check_in_time") as string | null;
       return <div>{formatTime(checkInTime)}</div>;
@@ -63,11 +51,7 @@ export const columns: ColumnDef<AttendanceIntern>[] = [
   },
   {
     accessorKey: "check_out_time",
-    header: ({ column }) => {
-      return (
-        <DataTableColumnHeader column={column} title="Pulang" />
-      )
-    },
+    header: "Pulang",
     cell: ({ row }) => {
       const checkOutTime = row.getValue("check_out_time") as string | null;
       return <div>{formatTime(checkOutTime)}</div>;
@@ -75,11 +59,7 @@ export const columns: ColumnDef<AttendanceIntern>[] = [
   },
   {
     accessorKey: "file_url",
-    header: ({ column }) => {
-      return (
-        <DataTableColumnHeader column={column} title="Lampiran" />
-      )
-    },
+    header: "Lampiran",
     cell: ({ row }) => {
       const fileUrl = row.getValue("file_url") as string;
       return (

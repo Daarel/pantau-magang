@@ -24,7 +24,7 @@ export function DataTableViewOptions<TData>({
         <Button
           variant="outline"
           size="sm"
-          className="ml-auto h-8 flex"
+          className="ml-auto h-8 flex mt-4"
         >
           <Settings2 />
           View

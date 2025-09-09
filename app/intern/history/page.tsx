@@ -1,60 +1,11 @@
 // src/components/AttendanceHistory.tsx
 "use client";
-import React, { useEffect, useState } from "react";
-import { Download, Clock, MapPin, Calendar } from "lucide-react";
-import { getAttendanceHistory } from "@/lib/attendance";
-import { supabase } from "@/lib/supabaseClient";
-import { AttendanceRecord } from "@/lib/attendance";
-import InternTable from "@/components/today-intern-status/page"
+import React, { useState } from "react";
+import { Download, } from "lucide-react";
+import { InternAttendanceTable } from "@/components/today-intern-status/page"
 
 export default function InternHistory() {
-  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [errorMsg, setErrorMsg] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<string>("All Records");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setErrorMsg("");
-
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const userId = session?.user?.id;
-
-        if (!userId) {
-          setLoading(false);
-          return;
-        }
-
-        const records: AttendanceRecord[] | null = await getAttendanceHistory(
-          userId
-        );
-        setAttendanceData(records || []);
-      } catch (error: unknown) {
-        console.error("Get attendance history error:", error);
-        if (error instanceof Error) {
-          setErrorMsg(error.message);
-        } else {
-          setErrorMsg("Gagal memuat data absensi");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const filteredData =
-    activeTab === "All Records"
-      ? attendanceData
-      : attendanceData.filter(
-          (record) => record.status?.toLowerCase() === activeTab.toLowerCase()
-        );
+  const [activeTab, setActiveTab] = useState<string>("Semua Riwayat");
 
   return (
     <div className='flex flex-col min-h-screen gap-4'>
@@ -79,7 +30,7 @@ export default function InternHistory() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-2 ${
+              className={`pb-2 cursor-pointer ${
                 activeTab === tab
                   ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-gray-500 hover:text-blue-600"
@@ -91,57 +42,9 @@ export default function InternHistory() {
         </div>
 
         {/* Content */}
-        <div className='mt-6 space-y-4'>
-          {loading ? (
-            <div className='text-center text-gray-500 mt-10'>
-              Loading attendance records...
-            </div>
-          ) : errorMsg ? (
-            <div className='text-center text-red-500 mt-10'>{errorMsg}</div>
-          ) : filteredData.length > 0 ? (
-            filteredData.map((record, index) => (
-              <div
-                key={index}
-                className='bg-white p-4 rounded-lg shadow-sm border'
-              >
-                <div className='flex items-center justify-between'>
-                  <div className='flex items-center gap-2'>
-                    <Calendar size={18} className='text-gray-500' />
-                    <span className='font-semibold'>{record.date}</span>
-                  </div>
-                  <span
-                    className={`px-3 py-1 text-sm rounded-full ${
-                      record.status === "hadir"
-                        ? "bg-green-100 text-green-800"
-                        : record.status === "alfa"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {record.status}
-                  </span>
-                </div>
-
-                <div className='mt-3 space-y-1 text-sm'>
-                  <div className='flex items-center gap-2 text-green-600'>
-                    <Clock size={16} /> Check In: {record.checkIn}
-                  </div>
-                  <div className='flex items-center gap-2 text-blue-600'>
-                    <MapPin size={16} /> Location: {record.location}
-                  </div>
-                  <div className='flex items-center gap-2 text-red-600'>
-                    <Clock size={16} /> Check Out: {record.checkOut}
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className='text-center text-gray-500 mt-10'>
-              No attendance records found
-            </div>
-          )}
+        <div className='space-y-4'>
+          <InternAttendanceTable activeTab={activeTab} />
         </div>
-        <InternTable />
       </div>
     </div>
   );
