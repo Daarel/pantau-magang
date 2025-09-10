@@ -92,7 +92,7 @@ export default function InternDashboard() {
                 Bulan Ini
               </h1>
               <h1 className='h5 sm:h3 font-bold'>
-                {loading? "-" : summaryData?.total_hadir_bulanan}/{totalHariKerja}
+                {loading? "-" : summaryData?.total_hadir_bulanan ?? "0"}/{totalHariKerja}
               </h1>
               <h1 className='text-xs sm:h6 font-semibold text-green-600'>
                 Kehadiran
@@ -110,7 +110,7 @@ export default function InternDashboard() {
                 Dispensasi
               </h1>
               <h1 className='h5 sm:h3 font-bold'>
-                {loading? "-" : summaryData?.total_dispensasi ?? "-"}
+                {loading? "-" : summaryData?.total_dispensasi ?? "0"}
               </h1>
               <h1 className='text-xs sm:h6 font-semibold text-[#CA8A04]'>
                 Disetujui
