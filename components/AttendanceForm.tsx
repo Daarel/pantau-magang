@@ -25,7 +25,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { AttendanceRecord } from "../types/attendance"
+import { supabase } from '@/lib/supabaseClient'
+import { AttendanceCheckIn } from "../types/attendance"
+import { InsertAttendanceIntern } from "@/hooks/useAttendance"
 // Icons
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
@@ -55,7 +57,7 @@ const FormSchema = z.object({
   description: z.string().optional(),
   location: locationSchema.optional(),
 }).superRefine((data, ctx) => {
-  if ((data.status === "Izin" || data.status === "Sakit") && (!data.description || data.description.trim() === "")) {
+  if ((data.status === "Izin" || data.status === "sakit") && (!data.description || data.description.trim() === "")) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["description"],
@@ -73,7 +75,7 @@ const OFFICE_COORDINATES = {
 }
 
 export function AttendanceForm() {
-  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([])
+  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceCheckIn[]>([])
   const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error' | 'approved'>('idle')
   const [userLocation, setUserLocation] = useState<UserLocation  | null>(null)
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
@@ -82,9 +84,10 @@ export function AttendanceForm() {
   const [fileFile, setFileFile] = useState<File | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const defaultValuesRef = useRef({
-    status: "Hadir",
+    status: "hadir",
     description: "",
     dob: new Date(),
     location: {},
@@ -120,107 +123,101 @@ export function AttendanceForm() {
   };
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const isApproved = data.location?.approved ?? false;
+    setIsSubmitting(true);
+    // const isApproved = data.location?.approved ?? false;
 
-    // if (data.status === "Hadir" && (!data.location || !isApproved)) {
-    //   toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir")
-    //   return
-    // }
-    // if (data.status === "Hadir") {
-    //   if (!photoFile) {
-    //     toast.error("Foto wajib diunggah untuk status Hadir");
-    //     return;
-    //   }
-    //   if (!isApproved) {
-    //     toast.error("Harap setujui lokasi Anda terlebih dahulu untuk status Hadir");
-    //     return;
-    //   }
-    // }
-
-    if ((data.status === "Izin" || data.status === "Sakit") && (!data.description || data.description.trim() === "")) {
-      toast.error("Keterangan wajib diisi untuk status Izin atau Sakit");
-      return;
-    }
-
-    let imageUrl = ""; // Default
-    let attachmentUrl = "";
-    let attachmentType = "none";
-
-    if (photoFile) {
-      try {
-        // toast.loading("Mengupload foto...");
-        imageUrl = await uploadPhoto(photoFile);
-        toast.dismiss();
-      } catch (error) {
-        toast.error("Gagal mengupload foto");
-        console.error("Upload error:", error);
+    try {
+      const userDataString = localStorage.getItem('user');
+      if (!userDataString) {
+        toast.error('User data not found');
+        return;
       }
-    } 
-    
-    if ((data.status === "Izin" || data.status === "Sakit") && fileFile) {
-      try {
-        // toast.loading("Mengupload file...");
-        attachmentUrl = await uploadFile(fileFile);
-        attachmentType = "file";
-        toast.dismiss();
-      } catch (error) {
-        toast.error("Gagal mengupload file");
-        console.error("Upload error:", error);
+      
+      const userData = JSON.parse(userDataString);
+      const user_id = userData.id;
+
+      let imageUrl = "";
+      let attachmentUrl = "";
+      
+      if ((data.status === "izin" || data.status === "sakit") && (!data.description || data.description.trim() === "")) {
+        toast.error("Keterangan wajib diisi untuk status Izin atau Sakit");
+        return;
       }
+      
+      // Upload foto jika status Hadir
+      if (data.status === "hadir" && photoFile) {
+        try {
+          imageUrl = await uploadPhoto(photoFile);
+        } catch (error) {
+          toast.error("Gagal mengupload foto");
+          return;
+        }
+      }
+      
+      // Upload file jika status Izin/Sakit
+      if ((data.status === "izin" || data.status === "sakit") && fileFile) {
+        try {
+          attachmentUrl = await uploadFile(fileFile);
+        } catch (error) {
+          toast.error("Gagal mengupload file");
+          return;
+        }
+      }
+
+      // Tentukan file_url berdasarkan status
+      let file_url = null;
+      if (data.status === "hadir") {
+        file_url = imageUrl;
+      } else if (data.status === "izin" || data.status === "sakit") {
+        file_url = attachmentUrl;
+      }
+
+      // Tentukan nilai untuk dispensation dan notes berdasarkan status
+      let dispensationValue = null;
+      let notesValue = "-";
+
+      if (data.status === "sakit" || data.status === "izin") {
+        dispensationValue = "pending";
+        notesValue = data.description || "-";
+      }
+
+      const attendanceData: AttendanceCheckIn = {
+        user_id: user_id,
+        date: data.dob.toISOString().split('T')[0],
+        status: data.status,
+        check_in_time: data.status === 'hadir' ? new Date().toISOString() : null,
+        file_url: file_url,
+        notes: notesValue,
+        dispensation: dispensationValue,
+      }
+
+      // Insert data ke tabel attendance
+      await InsertAttendanceIntern(attendanceData);
+
+      toast.success("Data kehadiran berhasil disimpan");
+      console.log("Data baru yang akan disimpan:", attendanceData);
+
+      // Reset form setelah submit
+      form.reset({
+        status: form.getValues("status"), 
+        description: form.getValues("description"),
+        dob: new Date(),
+        location: undefined
+      })
+      setLocationStatus('idle')
+      setUserLocation(null)
+      setPhotoFile(null)
+      setFileFile(null)
+
+    } catch (error) {
+      console.error('Error saving attendance:', error);
+      toast.error('Gagal menyimpan data kehadiran');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const newRecord: AttendanceRecord = {
-      id: 2022071014,
-      date: data.dob,
-      status: data.status,
-      latitude: userLocation?.latitude || 0,
-      longitude: userLocation?.longitude || 0,
-      location: userLocation?.address || "Lokasi tidak tersedia",
-      address: userLocation?.address || "Lokasi tidak tersedia",
-      imageUrl: imageUrl,
-      description: data.description || "-",
-    }
-
-    console.log("Data baru yang akan disimpan:", newRecord);
-
-    setAttendanceRecords(prev => [...prev, newRecord])
-
-    // toast("Data kehadiran berhasil disimpan", {
-    //   description: (
-    //     <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-    //       <code className="text-white">
-    //         {JSON.stringify(
-    //           {
-    //             id: newRecord.id,
-    //             tanggal: format(newRecord.date, "PPP"),
-    //             status: newRecord.status,
-    //             lokasi: newRecord.location,
-    //             foto: newRecord.imageUrl ? "Tersedia" : "Tidak tersedia",
-    //             foto2: newRecord.imageUrl,
-    //           },
-    //           null,
-    //           2
-    //         )}
-    //       </code>
-    //     </pre>
-    //   ),
-    // })
-
-    // Reset form setelah submit
-    form.reset({
-      status: form.getValues("status"), 
-      description: form.getValues("description"),
-      dob: new Date(),
-      location: undefined
-    })
-    // form.reset(undefined, { keepValues: false }); 
-    setLocationStatus('idle')
-    setUserLocation(null)
-    setPhotoFile(null)
-    setFileFile(null)
   }
 
-   // Dapatkan status lokasi untuk ditampilkan di UI
+  // Dapatkan status lokasi untuk ditampilkan di UI
   const getLocationButtonText = () => {
     switch (locationStatus) {
       case 'idle': return "Tetapkan Lokasi"
@@ -238,7 +235,7 @@ export function AttendanceForm() {
         {/* Foto */}
         <div className="flex flex-col md:flex-row items-center justify-around gap-6 md:gap-7 lg:gap-15 border-2 p-6 rounded-md">
           <FormItem>
-            {form.watch('status') === 'Hadir' ? (
+            {form.watch('status') === 'hadir' ? (
               <PhotoUpload onPhotoChange={handlePhotoChange} />
             ) : (
               <FileUpload onFileChange={handleFileChange} />
@@ -279,7 +276,7 @@ export function AttendanceForm() {
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
-                              form.setValue("status", "Hadir");
+                              form.setValue("status", "hadir");
                               form.clearErrors("status");
                             }}
                           >
@@ -290,7 +287,7 @@ export function AttendanceForm() {
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
-                              form.setValue("status", "Sakit");
+                              form.setValue("status", "sakit");
                               form.clearErrors("status");
                             }}
                           >
@@ -301,7 +298,7 @@ export function AttendanceForm() {
                             variant="ghost"
                             className="justify-start"
                             onClick={() => {
-                              form.setValue("status", "Izin");
+                              form.setValue("status", "izin");
                               form.clearErrors("status");
                             }}
                           >
@@ -360,7 +357,7 @@ export function AttendanceForm() {
             />
 
             {/* Tombol untuk menangkap lokasi - hanya ditampilkan jika status Hadir */}
-            {form.watch('status') === 'Hadir' && (
+            {form.watch('status') === 'hadir' && (
               <FormItem>
                 <FormLabel>
                   Lokasi
@@ -401,12 +398,13 @@ export function AttendanceForm() {
               type="submit" 
               className="w-full active:bg-black/90 transition-colors duration-100 shadow"
               disabled={
-                (form.watch("status") === "Hadir" && (locationStatus !== "approved" && form.watch("imageUrl") == null)) ||
-                ((form.watch("status") === "Izin" || form.watch("status") === "Sakit") &&
+                isSubmitting || 
+                (form.watch("status") === "hadir" && (locationStatus !== "approved" && form.watch("imageUrl") == null)) ||
+                ((form.watch("status") === "izin" || form.watch("status") === "sakit") &&
                   ((form.watch("description") ?? "").trim() === ""))
               }
             >
-              Submit
+              {isSubmitting ? "Menyimpan..." : "Submit"}
             </Button>
           </div>
         </div>

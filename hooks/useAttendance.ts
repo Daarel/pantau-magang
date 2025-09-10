@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { AttendanceIntern } from '@/types/attendance'
+import { AttendanceIntern, AttendanceCheckIn } from '@/types/attendance'
 
 export function internAttendanceData(activeTab: string) {
   const [attendanceData, setAttendanceData] = useState<AttendanceIntern[]>([])
@@ -80,3 +80,24 @@ export function internAttendanceData(activeTab: string) {
 
   return { attendanceData, loading, error }
 }
+
+export const InsertAttendanceIntern = async (attendanceData: AttendanceCheckIn) => {
+  const { data, error } = await supabase
+    .from('attendance')
+    .insert([{
+      user_id: attendanceData.user_id,
+      status: attendanceData.status,
+      date: attendanceData.date,
+      check_in_time: attendanceData.check_in_time,
+      notes: attendanceData.notes,
+      file_url: attendanceData.file_url,
+      dispensation: attendanceData.dispensation,
+    }])
+    .select();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
