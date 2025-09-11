@@ -11,18 +11,20 @@ import {
 import { FiMoreHorizontal } from "react-icons/fi";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { BiSolidXCircle } from "react-icons/bi";
+import { supabase } from "@/lib/supabaseClient";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Attendance = {
   name: string
-  status: "Hadir" | "Sakit" | "Izin" | "Alfa"
+  status: string
   date: string
   keterangan?: string
   check_in_time: string
   check_out_time: string
 }
 export type Report = {
+  id(arg0: string, id: any): { error: any; } | PromiseLike<{ error: any; }>;
   file?: string
   name: string
   status: "Sakit" | "Izin" 
@@ -55,21 +57,21 @@ export const columns: ColumnDef<Attendance>[] = [
     },
     // Tambahkan cell rendering dengan styling kondisional
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
+      const status = (row.getValue("status") as string)?.toLowerCase()
       
       // Tentukan kelas CSS berdasarkan status
       let statusClass = "";
       switch (status) {
-        case "Hadir":
+        case "hadir":
           statusClass = "bg-green-100 text-green-800";
           break;
-        case "Sakit":
+        case "sakit":
           statusClass = "bg-yellow-100 text-yellow-800";
           break;
-        case "Izin":
+        case "izin":
           statusClass = "bg-blue-100 text-blue-800";
           break;
-        case "Alfa":
+        case "alfa":
           statusClass = "bg-red-100 text-red-800";
           break;
         default:
@@ -78,7 +80,7 @@ export const columns: ColumnDef<Attendance>[] = [
       
       return (
         <div className={`w-full py-1 rounded-full text-center font-medium ${statusClass}`}>
-          {status}
+          {status ? status.charAt(0).toUpperCase() + status.slice(1) : "-"}
         </div>
       );
     },
@@ -230,13 +232,42 @@ export const reportColumns: ColumnDef<Report>[] = [
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
-            onClick={() => console.log("Approve:", row.original)} className="cursor-pointer"
+            onClick={async () => {
+              const { error } = await supabase
+                .from("attendance")
+                .update({ dispensation: "approved" })
+                .eq("id", row.original.id); // pastikan id ikut di-select!
+
+              if (error) {
+                console.error("Error approving:", error);
+              } else {
+                console.log("Approved:", row.original);
+                // TODO: trigger refresh data
+              }
+            }} 
+            className="cursor-pointer"
           >
             <BiSolidCheckCircle className="mr-2 h-4 w-4 text-green-600" />
           Approve
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => console.log("Reject:", row.original)} className="cursor-pointer"
+          onClick={async () => {
+            const { error } = await supabase
+              .from("attendance")
+              .update({
+                status: "alfa",          // ubah status jadi Alfa
+                dispensation: "n_approved", // ubah pending jadi n_approved
+              })
+              .eq("id", row.original.id);
+
+            if (error) {
+              console.error("Error rejecting:", error);
+            } else {
+              console.log("Rejected:", row.original);
+              // TODO: trigger refresh data kalau mau auto update
+            }
+          }} 
+          className="cursor-pointer"
           >
             <BiSolidXCircle className="mr-2 h-4 w-4 text-red-600" />
           Reject
@@ -288,7 +319,7 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
       
       return (
         <div className={`w-full py-1 rounded-full text-center font-medium ${statusClass}`}>
-          {status || "-"}
+          {status ? status.charAt(0).toUpperCase() + status.slice(1) : "-"}
         </div>
       );
     },

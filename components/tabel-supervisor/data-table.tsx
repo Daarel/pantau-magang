@@ -36,6 +36,7 @@ interface DataTableProps<TData, TValue> {
   enableFilter?: boolean          // Prop filter
   enableColumnVisibility?: boolean // Prop visibility
   // enablePagination?: boolean // Prop pagination
+  title?: string // Prop title
 }
 
 export function DataTable<TData, TValue>({
@@ -45,6 +46,7 @@ export function DataTable<TData, TValue>({
   enableFilter = true, // Default true
   enableColumnVisibility = true, // Default true
   // enablePagination = true,
+  title,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -81,7 +83,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="border-2 rounded-md p-4">
       <div>
-        <h5 className="h5 font-semibold mb-4">Today&apos;s Intern Status</h5>
+        {title &&<h5 className="h5 font-semibold mb-4">{title}</h5>}
       </div>
       {/* Field input filter */}
       {(enableFilter || enableColumnVisibility) && (

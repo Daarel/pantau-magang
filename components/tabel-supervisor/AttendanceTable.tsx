@@ -1,179 +1,87 @@
+"use client";
 
-import { columns, reportColumns, Dashboardcolumns, Attendance, Report, Dashboard} from "./columns"
-import { DataTable } from "./data-table"
-import { supabase } from "@/lib/supabaseClient"
+import { useEffect, useState } from "react";
+import { columns, reportColumns, Dashboardcolumns, Attendance, Report, Dashboard } from "./columns";
+import { DataTable } from "./data-table";
+import { supabase } from "@/lib/supabaseClient";
 
-function getData(): Attendance[] {
-  // Fetch data from your API here.
-  return [
-    { 
-      name: "Andi",
-      status: "Hadir",
-      keterangan: "-",
-      date: "2024-06-01", 
-      check_in_time: "08:00", 
-      check_out_time: "08:00",
-    },
-    { 
-      name: "Budi",
-      status: "Hadir", 
-      keterangan: "-",
-      date: "2024-06-01",   
-      check_in_time: "08:05", 
-      check_out_time: "08:05",
-    },
-    { 
-      name: "Citra",
-      status: "Hadir",
-      keterangan: "-",
-      date: "2024-06-01",  
-      check_in_time: "08:30", 
-      check_out_time: "08:30",
-    },
-    { 
-      name: "Dewi",
-      status: "Hadir", 
-      keterangan: "-",
-      date: "2024-06-01", 
-      check_in_time: "08:10", 
-      check_out_time: "08:10",
-    },
-    { 
-      name: "Eka",
-      status: "Hadir", 
-      keterangan: "-",
-      date: "2024-06-01", 
-      check_in_time: "08:15", 
-      check_out_time: "08:15",
-    },
-    { 
-      name: "Fajar",
-      status: "Sakit", 
-      keterangan: "-",
-      date: "2024-06-01", 
-      check_in_time: "-:-", 
-      check_out_time: "-:-" },
+async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
+  const { data, error } = await supabase
+    .from("attendance")
+    .select(`
+      id,
+      status,
+      date,
+      check_in_time,
+      check_out_time,
+      notes,
+      dispensation,
+      users!inner (
+        full_name,
+        supervisor_id
+      )
+    `)
+    .eq("users.supervisor_id", supervisorId)
+    .or("dispensation.eq.approved,status.eq.hadir,status.eq.alfa")
+    .order("date", { ascending: false });
 
-      { 
-      name: "Gina",
-      status: "Hadir", 
-      keterangan: "-",
-      date: "2024-06-01", 
-      check_in_time: "08:20", 
-      check_out_time: "08:20",
-    },
-    { 
-      name: "Hari",
-      status: "Hadir",
-      keterangan: "-",
-      date: "2024-06-01",  
-      check_in_time: "08:25", 
-      check_out_time: "08:25",
-    },
-    { 
-      name: "Intan",
-      status: "Alfa", 
-      keterangan: "-",
-      date: "2024-06-01", 
-      check_in_time: "-:-", 
-      check_out_time: "-:-" },
+  if (error) {
+    console.error("Error fetching attendance:", error);
+    return [];
+  }
 
-      { 
-      name: "Joko",
-      status: "Izin",
-      keterangan: "-",
-      date: "2024-06-01",  
-      check_in_time: "-:-", 
-      check_out_time: "-:-",
-    },
-
-    { 
-      name: "Ucok",
-      status: "Alfa", 
-      keterangan: "-",
-      date: "2024-06-04", 
-      check_in_time: "-:-", 
-      check_out_time: "-:-" },
-
-    { 
-      name: "Abeng",
-      status: "Sakit", 
-      keterangan: "-",
-      date: "2024-06-05", 
-      check_in_time: "-:-", 
-      check_out_time: "-:-" },
-
-  ]
+  return (data ?? []).map((att: any) => ({
+    name: att.users?.full_name ?? "Unknown",
+    status: att.status.charAt(0).toUpperCase() + att.status.slice(1),
+    keterangan: att.notes ?? "-",
+    date: att.date,
+    check_in_time: att.check_in_time
+      ? new Date(att.check_in_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : "-:-",
+    check_out_time: att.check_out_time
+      ? new Date(att.check_out_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : "-:-",
+  }));
 }
 
-function getReportData(): Report[] {
-  // Fetch data from your API here.
-  return [
-    { 
-      file: "report_andi.pdf",
-      name: "Andi",
-      status: "Izin",
-      keterangan: "Izin ke kampus",
-    },
+async function getReportData(supervisorId: string): Promise<Report[]> {
+  const { data, error } = await supabase
+    .from("attendance")
+    .select(`
+      id,
+      status,
+      notes,
+      dispensation,
+      users!inner (
+        full_name,
+        supervisor_id
+      )
+    `)
+    .eq("users.supervisor_id", supervisorId)
+    .eq("dispensation", "pending") // cuma ambil yang masih pending
+    .order("id", { ascending: false });
 
-    { 
-      file: "report_sandi.pdf",
-      name: "Sandi",
-      status: "Sakit",
-      keterangan: "Izin Sakit",
-    },
+  if (error) {
+    console.error("Error fetching report data:", error);
+    return [];
+  }
 
-    { 
-      file: "report_andi.pdf",
-      name: "Andi",
-      status: "Sakit",
-      keterangan: "Masih Sakit",
-    },
-
-    { 
-      file: "report_sandi.pdf",
-      name: "Sandi",
-      status: "Sakit",
-      keterangan: "Ketularan Sakit",
-    },
-
-    { 
-      file: "report_dono.pdf",
-      name: "Dono",
-      status: "Izin",
-      keterangan: "Main ke luar kota",
-    },
-
-    { 
-      file: "report_dono.pdf",
-      name: "Dono",
-      status: "Sakit",
-      keterangan: "Demam tinggi",
-    },
-
-    { 
-      file: "report_sandi.pdf",
-      name: "Sandi",
-      status: "Izin",
-      keterangan: "Tidak ada keterangan",
-    },
-
-    { 
-      file: "report_vior.pdf",
-      name: "Vior",
-      status: "Izin",
-      keterangan: "Nikah",
-    },
-  ]
-
+  return (data ?? []).map((att: any) => ({
+    id: att.id,
+    file: `report_${att.users?.full_name?.toLowerCase()}.pdf`, // sementara generate nama file
+    name: att.users?.full_name ?? "Unknown",
+    status: att.status.charAt(0).toUpperCase() + att.status.slice(1),
+    keterangan: att.notes ?? "-",
+  }));
 }
+
 
 async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, "0")
-  const day = String(now.getDate()).padStart(2, "0")
-  const today = `${year}-${month}-${day}`
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const today = `${year}-${month}-${day}`;
 
   const { data, error } = await supabase
     .from("attendance")
@@ -183,18 +91,21 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
       check_in_time,
       check_out_time,
       date,
+      dispensation,
       users!inner (
         full_name,
         institution,
         supervisor_id
       )
     `)
-    .eq("users.supervisor_id", supervisorId) // filter by supervisor langsung di join
+    .eq("users.supervisor_id", supervisorId)
     .eq("date", today)
+    .or("dispensation.eq.approved,status.eq.hadir,status.eq.alfa")
+    .order("date", { ascending: false });
 
   if (error) {
-    console.error("Error fetching dashboard data:", error)
-    return []
+    console.error("Error fetching dashboard data:", error);
+    return [];
   }
 
   return (data ?? []).map((att: any) => ({
@@ -213,17 +124,26 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
           minute: "2-digit",
         })
       : "-:-",
-  }))
+  }));
 }
 
-export function AttendanceTable({ activeTab }: { activeTab: string }) {
-  const attendanceData = getData()
+export default function AttendanceTable({
+  activeTab,
+  supervisorId,
+}: {
+  activeTab: string;
+  supervisorId: string;
+}) {
+  const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
 
-  // Filter data sesuai tab
+  useEffect(() => {
+    getAttendanceData(supervisorId).then(setAttendanceData);
+  }, [supervisorId]);
+
   const filteredData =
     activeTab === "Semua Daftar"
       ? attendanceData
-      : attendanceData.filter((item) => item.status === activeTab)
+      : attendanceData.filter((item) => item.status === activeTab);
 
   return (
     <div className="w-full">
@@ -234,18 +154,21 @@ export function AttendanceTable({ activeTab }: { activeTab: string }) {
         enableColumnVisibility={false}
       />
     </div>
-  )
+  );
 }
 
 // Komponen khusus Report
-export function ReportTable({ activeTab }: { activeTab: string }) {
-  const reportData = getReportData()
+export function ReportTable({ activeTab, supervisorId }: { activeTab: string; supervisorId: string }) {
+  const [reportData, setReportData] = useState<Report[]>([]);
 
-    // Filter data sesuai tab
+  useEffect(() => {
+    getReportData(supervisorId).then(setReportData);
+  }, [supervisorId]);
+
   const filteredData =
     activeTab === "Semua Daftar"
       ? reportData
-      : reportData.filter((item) => item.status === activeTab)
+      : reportData.filter((item) => item.status === activeTab);
 
   return (
     <div className="w-full">
@@ -256,20 +179,26 @@ export function ReportTable({ activeTab }: { activeTab: string }) {
         enableColumnVisibility={false}
       />
     </div>
-  )
+  );
 }
 
-export async function DashboardTable({ supervisorId }: { supervisorId: string }) {
-  const reportData = await getDashboardData(supervisorId)
+
+export function DashboardTable({ supervisorId }: { supervisorId: string }) {
+  const [dashboardData, setDashboardData] = useState<Dashboard[]>([]);
+
+  useEffect(() => {
+    getDashboardData(supervisorId).then(setDashboardData);
+  }, [supervisorId]);
 
   return (
     <div className="w-full">
       <DataTable
         columns={Dashboardcolumns}
-        data={reportData}
+        data={dashboardData}
         enableFilter={false}
         enableColumnVisibility={false}
+        title="Status Kehadiran Hari Ini"
       />
     </div>
-  )
+  );
 }
