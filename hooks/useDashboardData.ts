@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/client";
 import { internSummary } from "@/types/dashboard";
 import { formatTime } from "@/lib/utils";
 
-export function internDashboardSummary() {
+export function useDashboardData() {
   const supabase = createClient();
   const [summaryData, setSummaryData] = useState<internSummary | null>(null);
   const [loading, setLoading] = useState(true);

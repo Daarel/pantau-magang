@@ -1,9 +1,9 @@
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
-import { internAttendanceData } from "@/hooks/useAttendance"
+import { useAttendance } from "@/hooks/useAttendance"
 
 export function InternAttendanceTable({ activeTab }: { activeTab: string }) {
-  const { attendanceData, loading, error } = internAttendanceData(activeTab)
+  const { attendanceData, loading, error } = useAttendance(activeTab)
 
   if (loading) {
     return <div className="flex p-5 justify-center items-center">Loading...</div>

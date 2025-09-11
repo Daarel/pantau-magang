@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { AttendanceIntern } from "@/types/attendance";
 
-export function internAttendanceData(activeTab: string) {
+export function useAttendance(activeTab: string) {
+  const supabase = createClient();
   const [attendanceData, setAttendanceData] = useState<AttendanceIntern[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
