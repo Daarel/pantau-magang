@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabaseClient'
 import { internSummary } from '@/types/dashboard'
 import { formatTime } from "@/lib/utils"
 
 export function internDashboardSummary(){
+  const supabase = createClient();
   const [summaryData, setSummaryData] = useState<internSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

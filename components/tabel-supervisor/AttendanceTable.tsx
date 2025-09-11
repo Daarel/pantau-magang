@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { columns, reportColumns, Dashboardcolumns, Attendance, Report, Dashboard } from "./columns";
 import { DataTable } from "./data-table";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseClient";
 
 async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("attendance")
     .select(`
@@ -45,6 +46,7 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
 }
 
 async function getReportData(supervisorId: string): Promise<Report[]> {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("attendance")
     .select(`
@@ -77,6 +79,8 @@ async function getReportData(supervisorId: string): Promise<Report[]> {
 
 
 async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
+  const supabase = createClient();
+
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");

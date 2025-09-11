@@ -1,8 +1,10 @@
 // 'use client'
-import { supabase } from "../supabaseClient"
+import { createClient } from "../supabaseClient"
 import bcrypt from 'bcryptjs';
 
 export async function loginUser(nomorInduk: number, password: string) {
+  const supabase = createClient();
+
   console.log("DEBUG: Input nomor induk:", nomorInduk);
   console.log("DEBUG: Input password:", password);
 

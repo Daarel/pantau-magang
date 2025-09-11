@@ -11,7 +11,7 @@ import {
 import { FiMoreHorizontal } from "react-icons/fi";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { BiSolidXCircle } from "react-icons/bi";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseClient";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -37,6 +37,8 @@ export type Dashboard = {
   check_in_time: string
   check_out_time: string
 }
+
+const supabase = createClient();
 
 // Header name
 export const columns: ColumnDef<Attendance>[] = [
