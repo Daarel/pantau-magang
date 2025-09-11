@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ReportTable } from "@/components/tabel-supervisor/AttendanceTable";
+import { ReportTable }  from "@/components/tabel-supervisor/AttendanceTable";
 
-export default function SupervisorInboxClient() {
+export default function SupervisorInboxClient({ supervisorId }: { supervisorId: string }) {
   const [activeTab, setActiveTab] = useState("Semua Daftar");
 
   return (
@@ -37,7 +37,7 @@ export default function SupervisorInboxClient() {
 
       {/* Content */}
       <div className="mt-6 space-y-4">
-        <ReportTable activeTab={activeTab} />
+        <ReportTable activeTab={activeTab} supervisorId={supervisorId} />
       </div>
     </div>
   );

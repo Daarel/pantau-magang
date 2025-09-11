@@ -11,6 +11,7 @@ import {
 import { FiMoreHorizontal } from "react-icons/fi";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { BiSolidXCircle } from "react-icons/bi";
+import { supabase } from "@/lib/supabaseClient";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -23,6 +24,7 @@ export type Attendance = {
   check_out_time: string
 }
 export type Report = {
+  id(arg0: string, id: any): { error: any; } | PromiseLike<{ error: any; }>;
   file?: string
   name: string
   status: "Sakit" | "Izin" 
@@ -230,13 +232,42 @@ export const reportColumns: ColumnDef<Report>[] = [
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
-            onClick={() => console.log("Approve:", row.original)} className="cursor-pointer"
+            onClick={async () => {
+              const { error } = await supabase
+                .from("attendance")
+                .update({ dispensation: "approved" })
+                .eq("id", row.original.id); // pastikan id ikut di-select!
+
+              if (error) {
+                console.error("Error approving:", error);
+              } else {
+                console.log("Approved:", row.original);
+                // TODO: trigger refresh data
+              }
+            }} 
+            className="cursor-pointer"
           >
             <BiSolidCheckCircle className="mr-2 h-4 w-4 text-green-600" />
           Approve
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => console.log("Reject:", row.original)} className="cursor-pointer"
+          onClick={async () => {
+            const { error } = await supabase
+              .from("attendance")
+              .update({
+                status: "alfa",          // ubah status jadi Alfa
+                dispensation: "n_approved", // ubah pending jadi n_approved
+              })
+              .eq("id", row.original.id);
+
+            if (error) {
+              console.error("Error rejecting:", error);
+            } else {
+              console.log("Rejected:", row.original);
+              // TODO: trigger refresh data kalau mau auto update
+            }
+          }} 
+          className="cursor-pointer"
           >
             <BiSolidXCircle className="mr-2 h-4 w-4 text-red-600" />
           Reject

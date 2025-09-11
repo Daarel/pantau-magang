@@ -44,18 +44,37 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
   }));
 }
 
-function getReportData(): Report[] {
-  return [
-    { file: "report_andi.pdf", name: "Andi", status: "Izin", keterangan: "Izin ke kampus" },
-    { file: "report_sandi.pdf", name: "Sandi", status: "Sakit", keterangan: "Izin Sakit" },
-    { file: "report_andi.pdf", name: "Andi", status: "Sakit", keterangan: "Masih Sakit" },
-    { file: "report_sandi.pdf", name: "Sandi", status: "Sakit", keterangan: "Ketularan Sakit" },
-    { file: "report_dono.pdf", name: "Dono", status: "Izin", keterangan: "Main ke luar kota" },
-    { file: "report_dono.pdf", name: "Dono", status: "Sakit", keterangan: "Demam tinggi" },
-    { file: "report_sandi.pdf", name: "Sandi", status: "Izin", keterangan: "Tidak ada keterangan" },
-    { file: "report_vior.pdf", name: "Vior", status: "Izin", keterangan: "Nikah" },
-  ];
+async function getReportData(supervisorId: string): Promise<Report[]> {
+  const { data, error } = await supabase
+    .from("attendance")
+    .select(`
+      id,
+      status,
+      notes,
+      dispensation,
+      users!inner (
+        full_name,
+        supervisor_id
+      )
+    `)
+    .eq("users.supervisor_id", supervisorId)
+    .eq("dispensation", "pending") // cuma ambil yang masih pending
+    .order("id", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching report data:", error);
+    return [];
+  }
+
+  return (data ?? []).map((att: any) => ({
+    id: att.id,
+    file: `report_${att.users?.full_name?.toLowerCase()}.pdf`, // sementara generate nama file
+    name: att.users?.full_name ?? "Unknown",
+    status: att.status.charAt(0).toUpperCase() + att.status.slice(1),
+    keterangan: att.notes ?? "-",
+  }));
 }
+
 
 async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
   const now = new Date();
@@ -139,8 +158,12 @@ export default function AttendanceTable({
 }
 
 // Komponen khusus Report
-export function ReportTable({ activeTab }: { activeTab: string }) {
-  const reportData = getReportData();
+export function ReportTable({ activeTab, supervisorId }: { activeTab: string; supervisorId: string }) {
+  const [reportData, setReportData] = useState<Report[]>([]);
+
+  useEffect(() => {
+    getReportData(supervisorId).then(setReportData);
+  }, [supervisorId]);
 
   const filteredData =
     activeTab === "Semua Daftar"
@@ -158,6 +181,7 @@ export function ReportTable({ activeTab }: { activeTab: string }) {
     </div>
   );
 }
+
 
 export function DashboardTable({ supervisorId }: { supervisorId: string }) {
   const [dashboardData, setDashboardData] = useState<Dashboard[]>([]);
