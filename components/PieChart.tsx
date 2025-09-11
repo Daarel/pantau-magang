@@ -1,6 +1,7 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, Title, Tooltip, ArcElement } from "chart.js";
+import { internDashboardSummary } from '@/hooks/useDashboardData'
 // icons
 import { AiOutlinePieChart } from 'react-icons/ai';
 
@@ -8,9 +9,14 @@ import { AiOutlinePieChart } from 'react-icons/ai';
 ChartJS.register(Title, Tooltip, ArcElement);
 
 export default function PieChart() {
-  // Data random
+  const { summaryData, loading, error } = internDashboardSummary()
+  const {
+    total_hadir = 0,
+    total_alfa = 0,
+    total_sakit_izin = 0,
+  } = summaryData || {};
   const labels = ["Hadir", "Alfa", "Sakit/Izin"];
-  const dataValues = labels.map(() => Math.floor(Math.random() * 100) + 10); // nilai random 10-110
+  const dataValues = [total_hadir, total_alfa, total_sakit_izin]
 
   const data = {
     labels,
@@ -62,7 +68,7 @@ export default function PieChart() {
             </div>
           ))}
         </div>
-        <div className="w-full max-w-[180px] md:max-w-[180px] aspect-square">
+        <div className="w-full max-w-[160px] md:max-w-[180px] aspect-square">
           <Pie data={data} options={options} />
         </div>
       </div>
