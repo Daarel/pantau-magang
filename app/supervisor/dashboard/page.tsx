@@ -14,19 +14,43 @@ export default async function SupervisorDashboard() {
   const session = await auth();
 
   let totalInterns = 0;
+  let presentToday = 0;
+
   if (session?.id) {
-    const { count } = await supabase
+    // hitung total interns untuk supervisor ini
+    const { count: internsCount } = await supabase
       .from("users")
       .select("*", { count: "exact", head: true })
       .eq("role", "intern")
       .eq("supervisor_id", session.id);
 
-    totalInterns = count ?? 0;
+    totalInterns = internsCount ?? 0;
+
+    // ambil tanggal hari ini (lokal)
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const today = `${year}-${month}-${day}`;
+
+    // hitung yang hadir hari ini
+    const { count: presentCount, error } = await supabase
+      .from("attendance")
+      .select("id, users!inner(supervisor_id)", { count: "exact", head: true }) 
+      .eq("date", today)
+      .eq("status", "hadir")
+      .eq("users.supervisor_id", session.id);
+
+    if (error) {
+      console.error("Error fetching presentToday:", error);
+    }
+
+    presentToday = presentCount ?? 0;
   }
 
   const stats = {
     totalInterns,
-    presentToday: 2,
+    presentToday,
     pendingLeaves: 50,
     avgAttendance: 2,
   };

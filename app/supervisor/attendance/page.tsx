@@ -1,10 +1,9 @@
-// src/components/AttendanceHistory.tsx
+import { auth } from "@/lib/server/auth";
 import AttendanceClient from "@/app/supervisor/attendance/component/AttendanceClient";
 
-export default async function Attendance() {
-  return (
-    <>
-      <AttendanceClient/>
-    </>
-  );
+export default async function AttendancePage() {
+  const session = await auth();
+  const supervisorId = session?.id ?? "";
+
+  return <AttendanceClient supervisorId={supervisorId} />;
 }

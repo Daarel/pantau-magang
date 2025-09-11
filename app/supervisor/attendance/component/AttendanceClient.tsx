@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { AttendanceTable } from "@/components/tabel-supervisor/AttendanceTable";
+import AttendanceTable from "@/components/tabel-supervisor/AttendanceTable";
 
-export default function AttendanceClient() {
+export default function AttendanceClient({ supervisorId }: { supervisorId: string }) {
   const [activeTab, setActiveTab] = useState("Semua Daftar");
 
   return (
@@ -37,7 +37,7 @@ export default function AttendanceClient() {
 
       {/* Content */}
       <div className="mt-6 space-y-4">
-        <AttendanceTable activeTab={activeTab} />
+        <AttendanceTable activeTab={activeTab} supervisorId={supervisorId} />
       </div>
     </div>
   );
