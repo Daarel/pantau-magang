@@ -1,4 +1,4 @@
-import { createClient } from "./supabaseClient";
+import { createClient } from "./supabase/client";
 import QRCode from "qrcode";
 import { format } from "date-fns";
 import { ReactNode } from "react";

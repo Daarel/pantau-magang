@@ -25,7 +25,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "lib/supabaseClient.ts",
+    "lib/supabase/client.ts",
     "lib/middleware.ts",
     "components/PieChart.tsx",
     "app/(supervisor)/supervisor/attendance/page.jsx",

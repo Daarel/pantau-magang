@@ -1,6 +1,6 @@
 // 'use client'
-import { createClient } from "../supabaseClient"
-import bcrypt from 'bcryptjs';
+import { createClient } from "../supabase/client";
+import bcrypt from "bcryptjs";
 
 export async function loginUser(nomorInduk: number, password: string) {
   const supabase = createClient();
@@ -33,7 +33,7 @@ export async function loginUser(nomorInduk: number, password: string) {
     id: user.id,
     nomor_induk: user.nomor_induk,
     name: user.name,
-    role: user.role
+    role: user.role,
   };
   localStorage.setItem("user", JSON.stringify(clientSafeUser));
 
@@ -41,10 +41,10 @@ export async function loginUser(nomorInduk: number, password: string) {
   const session = { id: user.id, role: user.role };
   const maxAge = 60 * 60 * 24 * 7; // 7 hari
   const sessionString = encodeURIComponent(JSON.stringify(session));
-  
+
   const expires = new Date();
   expires.setTime(expires.getTime() + maxAge * 1000);
-  
+
   // Format cookie dengan semua properti penting
   const cookieParts = [
     `session=${sessionString}`,
@@ -53,9 +53,11 @@ export async function loginUser(nomorInduk: number, password: string) {
     `max-age=${maxAge}`,
     `samesite=lax`,
     // Hanya set secure di production
-    process.env.NODE_ENV === 'production' ? 'secure' : ''
-  ].filter(Boolean).join('; ');
-  
+    process.env.NODE_ENV === "production" ? "secure" : "",
+  ]
+    .filter(Boolean)
+    .join("; ");
+
   document.cookie = cookieParts;
 
   console.log("DEBUG: User berhasil login, session tersimpan + cookie di-set");
@@ -78,6 +80,6 @@ export async function logoutUser() {
 }
 
 export async function hashPassword(password: string): Promise<string> {
-const salt = await bcrypt.genSalt(10);
-return bcrypt.hash(password, salt);
-} 
+  const salt = await bcrypt.genSalt(10);
+  return bcrypt.hash(password, salt);
+}

@@ -1,15 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { columns, reportColumns, Dashboardcolumns, Attendance, Report, Dashboard } from "./columns";
+import {
+  columns,
+  reportColumns,
+  Dashboardcolumns,
+  Attendance,
+  Report,
+  Dashboard,
+} from "./columns";
 import { DataTable } from "./data-table";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 
 async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("attendance")
-    .select(`
+    .select(
+      `
       id,
       status,
       date,
@@ -21,7 +29,8 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
         full_name,
         supervisor_id
       )
-    `)
+    `
+    )
     .eq("users.supervisor_id", supervisorId)
     .or("dispensation.eq.approved,status.eq.hadir,status.eq.alfa")
     .order("date", { ascending: false });
@@ -37,10 +46,16 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
     keterangan: att.notes ?? "-",
     date: att.date,
     check_in_time: att.check_in_time
-      ? new Date(att.check_in_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      ? new Date(att.check_in_time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
       : "-:-",
     check_out_time: att.check_out_time
-      ? new Date(att.check_out_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      ? new Date(att.check_out_time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
       : "-:-",
   }));
 }
@@ -49,7 +64,8 @@ async function getReportData(supervisorId: string): Promise<Report[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("attendance")
-    .select(`
+    .select(
+      `
       id,
       status,
       notes,
@@ -58,7 +74,8 @@ async function getReportData(supervisorId: string): Promise<Report[]> {
         full_name,
         supervisor_id
       )
-    `)
+    `
+    )
     .eq("users.supervisor_id", supervisorId)
     .eq("dispensation", "pending") // cuma ambil yang masih pending
     .order("id", { ascending: false });
@@ -77,7 +94,6 @@ async function getReportData(supervisorId: string): Promise<Report[]> {
   }));
 }
 
-
 async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
   const supabase = createClient();
 
@@ -89,7 +105,8 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
 
   const { data, error } = await supabase
     .from("attendance")
-    .select(`
+    .select(
+      `
       id,
       status,
       check_in_time,
@@ -101,7 +118,8 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
         institution,
         supervisor_id
       )
-    `)
+    `
+    )
     .eq("users.supervisor_id", supervisorId)
     .eq("date", today)
     .or("dispensation.eq.approved,status.eq.hadir,status.eq.alfa")
@@ -150,7 +168,7 @@ export default function AttendanceTable({
       : attendanceData.filter((item) => item.status === activeTab);
 
   return (
-    <div className="w-full">
+    <div className='w-full'>
       <DataTable
         columns={columns}
         data={filteredData}
@@ -162,7 +180,13 @@ export default function AttendanceTable({
 }
 
 // Komponen khusus Report
-export function ReportTable({ activeTab, supervisorId }: { activeTab: string; supervisorId: string }) {
+export function ReportTable({
+  activeTab,
+  supervisorId,
+}: {
+  activeTab: string;
+  supervisorId: string;
+}) {
   const [reportData, setReportData] = useState<Report[]>([]);
 
   useEffect(() => {
@@ -175,7 +199,7 @@ export function ReportTable({ activeTab, supervisorId }: { activeTab: string; su
       : reportData.filter((item) => item.status === activeTab);
 
   return (
-    <div className="w-full">
+    <div className='w-full'>
       <DataTable
         columns={reportColumns}
         data={filteredData}
@@ -186,7 +210,6 @@ export function ReportTable({ activeTab, supervisorId }: { activeTab: string; su
   );
 }
 
-
 export function DashboardTable({ supervisorId }: { supervisorId: string }) {
   const [dashboardData, setDashboardData] = useState<Dashboard[]>([]);
 
@@ -195,13 +218,13 @@ export function DashboardTable({ supervisorId }: { supervisorId: string }) {
   }, [supervisorId]);
 
   return (
-    <div className="w-full">
+    <div className='w-full'>
       <DataTable
         columns={Dashboardcolumns}
         data={dashboardData}
         enableFilter={false}
         enableColumnVisibility={false}
-        title="Status Kehadiran Hari Ini"
+        title='Status Kehadiran Hari Ini'
       />
     </div>
   );

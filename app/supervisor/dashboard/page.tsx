@@ -1,10 +1,10 @@
 import { GoClock, GoPeople } from "react-icons/go";
 import { FiTrendingUp } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { auth } from '@/lib/server/auth'; 
-import { createClient } from '@/lib/supabaseClient';
-import '../../globals.css';
-import Image from 'next/image';
+import { auth } from "@/lib/server/auth";
+import { createClient } from "@/lib/supabase/client";
+import "../../globals.css";
+import Image from "next/image";
 import DashboardClock from "@/components/DashboardClock";
 import { Card, CardContent } from "@/components/Card";
 import StatCard from "@/components/StatCard";
@@ -37,7 +37,7 @@ export default async function SupervisorDashboard() {
     // hitung yang hadir hari ini
     const { count: presentCount, error } = await supabase
       .from("attendance")
-      .select("id, users!inner(supervisor_id)", { count: "exact", head: true }) 
+      .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
       .eq("date", today)
       .eq("status", "hadir")
       .eq("users.supervisor_id", session.id);
@@ -57,35 +57,34 @@ export default async function SupervisorDashboard() {
   };
 
   const statCards = [
-      {
-        Icon: GoPeople,
-        title: "Total Interns",
-        value: stats.totalInterns,
-        contentColor: "text-blue-600",
-      },
-      {
-        Icon: GoClock,
-        title: "Present Today",
-        value: stats.presentToday,
-        contentColor: "text-green-600",
-      },
-      {
-        Icon: IoDocumentTextOutline,
-        title: "Pending Leaves",
-        value: stats.pendingLeaves,
-        contentColor: "text-yellow-600",
-      },
-      {
-        Icon: FiTrendingUp,
-        title: "Avg Attendance",
-        value: stats.avgAttendance,
-        contentColor: "text-indigo-600",
-      },
-    ];
-
+    {
+      Icon: GoPeople,
+      title: "Total Interns",
+      value: stats.totalInterns,
+      contentColor: "text-blue-600",
+    },
+    {
+      Icon: GoClock,
+      title: "Present Today",
+      value: stats.presentToday,
+      contentColor: "text-green-600",
+    },
+    {
+      Icon: IoDocumentTextOutline,
+      title: "Pending Leaves",
+      value: stats.pendingLeaves,
+      contentColor: "text-yellow-600",
+    },
+    {
+      Icon: FiTrendingUp,
+      title: "Avg Attendance",
+      value: stats.avgAttendance,
+      contentColor: "text-indigo-600",
+    },
+  ];
 
   return (
-    <> 
+    <>
       <div className='relative bg-green-500 space-y-2 mb-7 h-48 p-8 rounded-lg overflow-hidden'>
         <Image
           src='/overlayBuilding.jpeg'
@@ -99,7 +98,7 @@ export default async function SupervisorDashboard() {
           <h1 className='title_header max-sm:text-3xl'>
             Selamat Datang, Dika Arnanda Putra!
           </h1>
-          <DashboardClock/>
+          <DashboardClock />
         </div>
       </div>
 
@@ -119,7 +118,7 @@ export default async function SupervisorDashboard() {
       </div>
 
       {/* Today's Intern Status */}
-      {session?.id && <DashboardTable supervisorId={session.id}/>}
+      {session?.id && <DashboardTable supervisorId={session.id} />}
     </>
   );
 }
