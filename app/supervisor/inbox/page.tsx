@@ -9,7 +9,7 @@
 //   );
 // }
 
-import { auth } from "@/lib/server/auth";
+import { auth } from "@/dump/server/auth";
 import SupervisorInboxClient from "@/app/supervisor/inbox/component/SupervisorInboxClient";
 
 export default async function AttendancePage() {

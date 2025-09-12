@@ -10,8 +10,8 @@ async function getUserByNomorInduk(nomorInduk: string) {
   const { data, error } = await supabase
     .from("users_with_email")
     .select("role, email")
-    .eq("nomor_induk", nomorInduk) // filter sesuai nomor_induk
-    .single(); // karena 1 orang 1 nomor_induk
+    .eq("nomor_induk", nomorInduk)
+    .single();
 
   if (error) {
     console.error("Error:", error);
@@ -21,7 +21,7 @@ async function getUserByNomorInduk(nomorInduk: string) {
   return data;
 }
 
-export async function login(formData: FormData) {
+export async function loginUser(formData: FormData) {
   const supabase = await createClient();
 
   const loginData = {

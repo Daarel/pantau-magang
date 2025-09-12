@@ -1,49 +1,63 @@
-import { login } from './actions'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { loginUser } from "@/lib/auth/actions";
+
+import LogoESDM from "@/public/logo.png";
+import Image from "next/image";
+import { FaRegUser } from "react-icons/fa";
+import { Input } from "@/components/ui/input";
+import { CiLock } from "react-icons/ci";
+import { Button } from "@/components/ui/button";
+
 export default function LoginPage() {
   return (
-    <form>
-      <label htmlFor="nomorInduk">Nomor Induk:</label>
-      <input id="nomorInduk" name="nomorInduk" type="number" required />
-      <label htmlFor="password">Password:</label>
-      <input id="password" name="password" type="password" required />
-      <button formAction={login}>Log in</button>
-    </form>
-  )
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4'>
+      <Card className='w-[400px]'>
+        <CardHeader className='text-center'>
+          <div className='mx-auto p-3 w-fit mb-4'>
+            <Image
+              src={LogoESDM}
+              alt='Logo Kementrian Energi dan Sumber Daya Mineral'
+              width={150}
+              height={150}
+              priority
+              className='h-auto w-auto'
+            />
+          </div>
+          <CardTitle className='text-2xl text-gray-900'>
+            PANTAU MAGANG
+          </CardTitle>
+          <p className='text-gray-600'>Sign in to your account</p>
+        </CardHeader>
+
+        <CardContent>
+          <form action={loginUser} className='space-y-4'>
+            <div className='relative'>
+              <FaRegUser className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
+              <Input
+                id='nomorInduk'
+                name='nomorInduk'
+                type='number'
+                placeholder='Nomor Induk'
+                className='pl-10'
+                required
+              />
+            </div>
+
+            <div className='relative'>
+              <CiLock className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
+              <Input
+                id='password'
+                name='password'
+                type='password'
+                placeholder='Password'
+                className='pl-10'
+                required
+              />
+            </div>
+            <Button formAction={loginUser} className='w-full mt-5'>Log in</Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
-
-// "use client";
-
-// import { useRouter } from "next/navigation";
-// import LoginForm from "@/components/LoginForm";
-
-// type UserRole = "intern" | "supervisor" | "admin";
-
-// export interface User {
-//   role: UserRole;
-// }
-
-// export default function LoginPage() {
-//   const router = useRouter();
-
-//   const handleLogin = (user: User) => {
-//     // Arahkan ke halaman dashboard sesuai role
-//     switch (user.role) {
-//       case "intern":
-//         router.push("/intern/dashboard");
-//         break;
-//       case "supervisor":
-//         router.push("/supervisor/dashboard");
-//         break;
-//       case "admin":
-//         router.push("/admin/dashboard");
-//         break;
-//       default:
-//         router.push("/intern/dashboard");
-//     }
-//   };
-//   return (
-//     <main className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100'>
-//       <LoginForm onLogin={handleLogin} />
-//     </main>
-//   );
-// }

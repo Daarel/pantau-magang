@@ -1,7 +1,7 @@
 import { GoClock, GoPeople } from "react-icons/go";
 import { FiTrendingUp } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { auth } from "@/lib/server/auth";
+import { auth } from "@/dump/server/auth";
 import { createClient } from "@/lib/supabase/client";
 import "../../globals.css";
 import Image from "next/image";

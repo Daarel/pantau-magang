@@ -9,7 +9,7 @@ import LogoESDM from "@/public/logo.png";
 import { Card, CardContent, CardTitle, CardHeader } from "../components/Card";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { loginUser } from "@/lib/client/auth";
+import { loginUser } from "@/dump/client/auth";
 import type { FC } from "react";
 import type { User } from "@/app/page";
 

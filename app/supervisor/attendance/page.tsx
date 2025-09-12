@@ -1,4 +1,4 @@
-import { auth } from "@/lib/server/auth";
+import { auth } from "@/dump/server/auth";
 import AttendanceClient from "@/app/supervisor/attendance/component/AttendanceClient";
 
 export default async function AttendancePage() {
