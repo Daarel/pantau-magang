@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { AttendanceIntern } from "@/types/attendance";
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client';
+import { AttendanceIntern, AttendanceCheckIn } from '@/types/attendance'
 
 export function useAttendance(activeTab: string) {
   const supabase = createClient();
@@ -77,7 +77,29 @@ export function useAttendance(activeTab: string) {
     };
 
     fetchData();
-  }, [activeTab]);
+  }, [activeTab, supabase]);
 
-  return { attendanceData, loading, error };
+  return { attendanceData, loading, error }
 }
+
+export const InsertAttendanceIntern = async (attendanceData: AttendanceCheckIn) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('attendance')
+    .insert([{
+      user_id: attendanceData.user_id,
+      status: attendanceData.status,
+      date: attendanceData.date,
+      check_in_time: attendanceData.check_in_time,
+      notes: attendanceData.notes,
+      file_url: attendanceData.file_url,
+      dispensation: attendanceData.dispensation,
+    }])
+    .select();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};

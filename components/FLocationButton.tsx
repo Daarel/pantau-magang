@@ -17,7 +17,7 @@ export const LocationButton = ({
   locationStatus,
   getLocationButtonText
 }: LocationButtonProps) => {
-  if (status !== "Hadir") return null;
+  if (status !== "hadir") return null;
 
   return (
     <div className="flex flex-col space-y-2">

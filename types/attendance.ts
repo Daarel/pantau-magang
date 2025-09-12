@@ -1,13 +1,11 @@
-export type AttendanceRecord = {
-  id: number;
+export type AttendanceCheckIn = {
+  user_id: string;
   status: string;
-  date: Date;
-  latitude: number;
-  longitude: number;
-  address: string;
-  location: string;
-  imageUrl: string; // simpan URL string di database
-  description: string;
+  date: string;
+  notes: string | null;
+  file_url: string | null;
+  check_in_time: string | null;
+  dispensation: string | null;
 };
 
 export type AttendanceIntern = {
@@ -16,7 +14,7 @@ export type AttendanceIntern = {
   date: string
   check_in_time: string | null
   check_out_time: string | null
-  status: "Hadir" | "Sakit" | "Izin" | "Alfa"
+  status: "hadir" | "sakit" | "izin" | "alfa"
   notes: string
   file_url: string
   dispensation: "pending" | "approved" | "n_approved"
