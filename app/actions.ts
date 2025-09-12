@@ -4,32 +4,21 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-async function getEmailAndRoleByNomorInduk(nomorInduk: string) {
+async function getUserByNomorInduk(nomorInduk: string) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("users")
-    .select(
-      `
-      nomor_induk,
-      role,
-      auth_user:email_auth (
-        email
-      )
-    `
-    )
-    .eq("nomor_induk", nomorInduk) // cari berdasarkan NIM
-    .single();
+    .from("users_with_email")
+    .select("role, email")
+    .eq("nomor_induk", nomorInduk) // filter sesuai nomor_induk
+    .single(); // karena 1 orang 1 nomor_induk
 
   if (error) {
-    console.error("❌ Query error:", error);
+    console.error("Error:", error);
     return null;
   }
 
-  return {
-    email: data?.auth_user?.[0]?.email || null,
-    role: data?.role || null,
-  };
+  return data;
 }
 
 export async function login(formData: FormData) {
@@ -44,7 +33,13 @@ export async function login(formData: FormData) {
     throw new Error("Nomor Induk dan Password harus diisi");
   }
 
-  const { email, role } = (await getEmailAndRoleByNomorInduk(loginData.nomorInduk)) || {};
+  const userInfo = await getUserByNomorInduk(loginData.nomorInduk);
+
+  if (!userInfo) {
+    throw new Error("Nomor Induk tidak ditemukan");
+  }
+
+  const { email, role } = userInfo;
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
@@ -52,15 +47,17 @@ export async function login(formData: FormData) {
   });
 
   if (error) {
+    console.error("Login error:", error);
     redirect("/error");
   }
 
   // Redirect based on role
-  const redirectPath = role === 'intern'
-    ? '/intern/dashboard'
-    : role === 'supervisor'
-    ? '/supervisor/dashboard'
-    : '/admin/dashboard';
+  const redirectPath =
+    role === "intern"
+      ? "/intern/dashboard"
+      : role === "supervisor"
+      ? "/supervisor/dashboard"
+      : "/admin/dashboard";
 
   revalidatePath(redirectPath, "layout");
   redirect(redirectPath);

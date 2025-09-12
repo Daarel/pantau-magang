@@ -1,4 +1,15 @@
-
+import { login } from './actions'
+export default function LoginPage() {
+  return (
+    <form>
+      <label htmlFor="nomorInduk">Nomor Induk:</label>
+      <input id="nomorInduk" name="nomorInduk" type="number" required />
+      <label htmlFor="password">Password:</label>
+      <input id="password" name="password" type="password" required />
+      <button formAction={login}>Log in</button>
+    </form>
+  )
+}
 
 // "use client";
 
