@@ -1,8 +1,6 @@
 import { GoClock, GoPeople } from "react-icons/go";
 import { FiTrendingUp } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { auth } from "@/dump/server/auth";
-import { createClient } from "@/lib/supabase/client";
 import "../../globals.css";
 import Image from "next/image";
 import DashboardClock from "@/components/DashboardClock";
@@ -10,20 +8,28 @@ import { Card, CardContent } from "@/components/Card";
 import StatCard from "@/components/StatCard";
 import { DashboardTable } from "@/components/tabel-supervisor/AttendanceTable";
 
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+
 export default async function SupervisorDashboard() {
-  const session = await auth();
-  const supabase = createClient();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/");
+  }
 
   let totalInterns = 0;
   let presentToday = 0;
 
-  if (session?.id) {
+  if (user) {
     // hitung total interns untuk supervisor ini
     const { count: internsCount } = await supabase
       .from("users")
       .select("*", { count: "exact", head: true })
       .eq("role", "intern")
-      .eq("supervisor_id", session.id);
+      .eq("supervisor_id", user.id);
 
     totalInterns = internsCount ?? 0;
 
@@ -40,7 +46,7 @@ export default async function SupervisorDashboard() {
       .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
       .eq("date", today)
       .eq("status", "hadir")
-      .eq("users.supervisor_id", session.id);
+      .eq("users.supervisor_id", user.id);
 
     if (error) {
       console.error("Error fetching presentToday:", error);
@@ -118,7 +124,7 @@ export default async function SupervisorDashboard() {
       </div>
 
       {/* Today's Intern Status */}
-      {session?.id && <DashboardTable supervisorId={session.id} />}
+      {user.id && <DashboardTable supervisorId={user.id} />}
     </>
   );
 }

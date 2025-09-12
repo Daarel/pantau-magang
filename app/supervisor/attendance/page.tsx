@@ -1,9 +1,15 @@
-import { auth } from "@/dump/server/auth";
 import AttendanceClient from "@/app/supervisor/attendance/component/AttendanceClient";
 
-export default async function AttendancePage() {
-  const session = await auth();
-  const supervisorId = session?.id ?? "";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
-  return <AttendanceClient supervisorId={supervisorId} />;
+export default async function AttendancePage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/");
+  }
+
+  return <AttendanceClient supervisorId={user.id} />;
 }

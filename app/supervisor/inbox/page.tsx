@@ -1,20 +1,15 @@
-// // src/components/AttendanceHistory.tsx
-// import SupervisorInboxClient from "@/app/supervisor/inbox/component/SupervisorInboxClient";
-
-// export default async function SupervisorInbox() {
-//   return (
-//     <>
-//       <SupervisorInboxClient />
-//     </>
-//   );
-// }
-
-import { auth } from "@/dump/server/auth";
 import SupervisorInboxClient from "@/app/supervisor/inbox/component/SupervisorInboxClient";
 
-export default async function AttendancePage() {
-  const session = await auth();
-  const supervisorId = session?.id ?? "";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
-  return <SupervisorInboxClient supervisorId={supervisorId} />;
+export default async function AttendancePage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/");
+  }
+
+  return <SupervisorInboxClient supervisorId={user.id} />;
 }
