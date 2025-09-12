@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClient";
+import { createClient } from "./supabase/client";
 import QRCode from "qrcode";
 import { format } from "date-fns";
 import { ReactNode } from "react";
@@ -68,6 +68,8 @@ export async function getCurrentLocation(): Promise<{
 }
 
 export async function checkIn(userId: string): Promise<boolean> {
+  const supabase = createClient();
+
   try {
     const today = format(new Date(), "yyyy-MM-dd");
     const location = await getCurrentLocation();
@@ -121,6 +123,8 @@ export async function checkIn(userId: string): Promise<boolean> {
 }
 
 export async function checkOut(userId: string): Promise<boolean> {
+  const supabase = createClient();
+
   try {
     const today = format(new Date(), "yyyy-MM-dd");
     const location = await getCurrentLocation();
@@ -169,6 +173,7 @@ export async function checkOut(userId: string): Promise<boolean> {
 export async function getTodayAttendance(
   userId: string
 ): Promise<AttendanceRecord | null> {
+  const supabase = createClient();
   try {
     const today = format(new Date(), "yyyy-MM-dd");
 
@@ -194,6 +199,7 @@ export async function getAttendanceHistory(
   userId: string,
   limit = 30
 ): Promise<AttendanceRecord[]> {
+  const supabase = createClient();
   try {
     const { data, error } = await supabase
       .from("attendance")

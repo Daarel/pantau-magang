@@ -12,10 +12,10 @@ import { getWorkdaysInMonth, } from "@/lib/utils"
 import "../../globals.css";
 import Image from "next/image";
 
-import { internDashboardSummary } from '@/hooks/useDashboardData'
+import { useDashboardData } from '@/hooks/useDashboardData'
 
 export default function InternDashboard() {
-  const { summaryData, loading, error } = internDashboardSummary()
+  const { summaryData, loading, error } = useDashboardData()
   const totalHariKerja = getWorkdaysInMonth()
 
   return (
