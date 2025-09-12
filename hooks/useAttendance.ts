@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client'
 import { AttendanceIntern, AttendanceCheckIn } from '@/types/attendance'
 
 export function useAttendance(activeTab: string) {
