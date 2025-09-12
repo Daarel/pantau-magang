@@ -25,7 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabase/client'
 import { AttendanceCheckIn } from "../types/attendance"
 import { InsertAttendanceIntern } from "@/hooks/useAttendance"
 // Icons
@@ -75,6 +75,8 @@ const OFFICE_COORDINATES = {
 }
 
 export function AttendanceForm() {
+  const supabase = createClient();
+
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceCheckIn[]>([])
   const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error' | 'approved'>('idle')
   const [userLocation, setUserLocation] = useState<UserLocation  | null>(null)
