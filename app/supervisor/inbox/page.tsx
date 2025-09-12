@@ -5,11 +5,24 @@ import { createClient } from "@/lib/supabase/server";
 
 export default async function AttendancePage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     redirect("/");
   }
 
-  return <SupervisorInboxClient supervisorId={user.id} />;
+  const { data, error } = await supabase
+    .from("users")
+    .select("id")
+    .eq("email_auth", user.id)
+    .single();
+
+  if (error || !data) {
+    console.error("Error fetching supervisor data:", error);
+    redirect("/");
+  }
+
+  return <SupervisorInboxClient supervisorId={data.id} />;
 }

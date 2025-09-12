@@ -11,10 +11,11 @@ import { DashboardTable } from "@/components/tabel-supervisor/AttendanceTable";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-
 export default async function SupervisorDashboard() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     redirect("/");
@@ -23,37 +24,48 @@ export default async function SupervisorDashboard() {
   let totalInterns = 0;
   let presentToday = 0;
 
-  if (user) {
-    // hitung total interns untuk supervisor ini
-    const { count: internsCount } = await supabase
-      .from("users")
-      .select("*", { count: "exact", head: true })
-      .eq("role", "intern")
-      .eq("supervisor_id", user.id);
+  const { data, error: errorGetUser } = await supabase
+    .from("users")
+    .select("id")
+    .eq("email_auth", user.id)
+    .single();
 
-    totalInterns = internsCount ?? 0;
-
-    // ambil tanggal hari ini (lokal)
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const today = `${year}-${month}-${day}`;
-
-    // hitung yang hadir hari ini
-    const { count: presentCount, error } = await supabase
-      .from("attendance")
-      .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
-      .eq("date", today)
-      .eq("status", "hadir")
-      .eq("users.supervisor_id", user.id);
-
-    if (error) {
-      console.error("Error fetching presentToday:", error);
-    }
-
-    presentToday = presentCount ?? 0;
+  if (errorGetUser || !data) {
+    console.error("Error fetching supervisor data:", errorGetUser);
+    redirect("/");
   }
+
+  // hitung total interns untuk supervisor ini
+  const { count: internsCount } = await supabase
+    .from("users")
+    .select("*", { count: "exact", head: true })
+    .eq("role", "intern")
+    .eq("supervisor_id", data.id);
+
+  console.log("Interns Count:", internsCount);
+
+  totalInterns = internsCount ?? 0;
+
+  // ambil tanggal hari ini (lokal)
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const today = `${year}-${month}-${day}`;
+
+  // hitung yang hadir hari ini
+  const { count: presentCount, error } = await supabase
+    .from("attendance")
+    .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+    .eq("date", today)
+    .eq("status", "hadir")
+    .eq("users.supervisor_id", data.id);
+
+  if (error) {
+    console.error("Error fetching presentToday:", error);
+  }
+
+  presentToday = presentCount ?? 0;
 
   const stats = {
     totalInterns,
@@ -124,7 +136,7 @@ export default async function SupervisorDashboard() {
       </div>
 
       {/* Today's Intern Status */}
-      {user.id && <DashboardTable supervisorId={user.id} />}
+      {data.id && <DashboardTable supervisorId={data.id} />}
     </>
   );
 }
