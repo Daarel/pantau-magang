@@ -8,6 +8,10 @@ export type AttendanceCheckIn = {
   dispensation: string | null;
 };
 
+export type AttendanceCheckOut = {
+  check_out_time: string;
+}
+
 export type AttendanceIntern = {
   id: number
   user_id: string
