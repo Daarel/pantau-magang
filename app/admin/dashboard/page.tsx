@@ -1,4 +1,4 @@
-import { Card, CardContent, CardTitle, CardHeader } from "@/components/Card";
+import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 
 import { FaUsers, FaBuilding, FaRegCheckCircle } from "react-icons/fa";
@@ -7,6 +7,9 @@ import { FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
 import NavigationButton from "../../../components/NavigationButton";
 import DashboardClock from "@/components/DashboardClock";
+
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
 type ActivityType = "user" | "approval" | "attendance" | "alert";
 
@@ -18,11 +21,17 @@ type recentActivities = {
   type: ActivityType;
 };
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/");
+  }
+
   // Mock data
-  const user = {
-    full_name: "Mia Melita",
-  };
 
   const stats = {
     totalUsers: 46,
@@ -124,7 +133,7 @@ export default function AdminDashboard() {
 
         <div className='relative z-10'>
           <h1 className='title_header max-sm:text-3xl'>
-            Selamat Datang, Ibu {user.full_name}!
+            Selamat Datang, Ibu {user?.user_metadata.full_name}!
           </h1>
           <DashboardClock />
         </div>

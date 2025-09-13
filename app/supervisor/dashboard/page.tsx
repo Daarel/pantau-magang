@@ -4,7 +4,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import "../../globals.css";
 import Image from "next/image";
 import DashboardClock from "@/components/DashboardClock";
-import { Card, CardContent } from "@/components/Card";
+import { Card, CardContent } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 import { DashboardTable } from "@/components/tabel-supervisor/AttendanceTable";
 
@@ -114,7 +114,7 @@ export default async function SupervisorDashboard() {
 
         <div className='relative z-10'>
           <h1 className='title_header max-sm:text-3xl'>
-            Selamat Datang, Dika Arnanda Putra!
+            Selamat Datang, {user?.user_metadata.full_name}!
           </h1>
           <DashboardClock />
         </div>
