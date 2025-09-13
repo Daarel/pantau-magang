@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { AttendanceIntern, AttendanceCheckIn } from '@/types/attendance'
-import { string } from 'zod'
 
 // Fetch data user (intern)
 export function internAttendanceData(activeTab: string) {
   const [attendanceData, setAttendanceData] = useState<AttendanceIntern[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -108,6 +108,7 @@ export const InsertAttendanceIntern = async (attendanceData: AttendanceCheckIn) 
 
 // Update data attendance untuk menambahkan data checkout intern
 export const UpdateCheckOutTime = async (userId: string, date: string) => {
+  const supabase = createClient();
   try {
     // Dapatkan record attendance untuk user pada tanggal tertentu
     const { data: attendanceRecord, error: fetchError } = await supabase

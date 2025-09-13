@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabase/client'
 import { internSummary, InternDashboardAttendance } from '@/types/dashboard'
 import { formatTime } from "@/lib/utils"
 
 export function useDashboardData() {
-  const supabase = createClient();
   const [summaryData, setSummaryData] = useState<internSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const supabase = createClient(); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +44,10 @@ export function useDashboardData() {
           return;
         }
 
+        console.log("Raw data from Supabase:", data)
+        console.log("Raw start_time:", data.start_time, "Type:", typeof data.start_time)
+        console.log("Raw end_time:", data.end_time, "Type:", typeof data.end_time)
+
         if (data) {
           const formatted = {
             ...data,
@@ -70,6 +74,7 @@ export function internAttendanceSummary(){
   const [summaryData, setSummaryData] = useState<InternDashboardAttendance | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchData = async () => {
