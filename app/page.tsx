@@ -6,7 +6,7 @@ import Image from "next/image";
 import { FaRegUser } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { CiLock } from "react-icons/ci";
-import { Button } from "@/components/ui/button";
+import LoginButton from "@/components/LoginButton";
 
 export default function LoginPage() {
   return (
@@ -54,7 +54,7 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <Button formAction={loginUser} className='w-full mt-5'>Log in</Button>
+            <LoginButton />
           </form>
         </CardContent>
       </Card>
