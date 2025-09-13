@@ -15,10 +15,13 @@ const DashboardClock: FC = () => {
 
   return (
     <>
-      <h2 className="text-white text-2xl max-sm:text-lg mb-2">
+      <h2
+        className='text-white text-2xl max-sm:text-lg mb-2'
+        suppressHydrationWarning
+      >
         {time.toLocaleDateString("id-ID", { dateStyle: "full" })}
       </h2>
-      <p className="text-white text-lg max-sm:text-sm">
+      <p className='text-white text-lg max-sm:text-sm' suppressHydrationWarning>
         {time.toLocaleTimeString("id-ID", { hour12: false })}
       </p>
     </>

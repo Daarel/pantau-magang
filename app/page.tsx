@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { loginUser } from "@/lib/auth/actions";
 
-import LogoESDM from "@/public/logo.png";
+import LogoESDM from "@/app/logoESDM.png";
 import Image from "next/image";
 import { FaRegUser } from "react-icons/fa";
 import { Input } from "@/components/ui/input";

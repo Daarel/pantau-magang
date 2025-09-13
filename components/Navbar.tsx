@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import Image from "next/image";
-import logo from "@/public/logo.png";
+import logo from "@/public/logoesdm.png";
 import ProfileDropDown from "./ProfileDropdown";
 
 export default function Navbar() {

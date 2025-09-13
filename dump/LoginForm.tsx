@@ -5,7 +5,7 @@
 // import { CiLock } from "react-icons/ci";
 // import { FaRegUser } from "react-icons/fa";
 // import Image from "next/image";
-// import LogoESDM from "@/public/logo.png";
+// import LogoESDM from "@/public/logoesdm.png";
 // import { Card, CardContent, CardTitle, CardHeader } from "../components/Card";
 // import { Input } from "../components/ui/input";
 // import { Button } from "../components/ui/button";

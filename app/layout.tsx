@@ -14,11 +14,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "PantauMagang | Manajemen Magang dan Sertifikat",
+    default: "PantauMagang | Manajemen Magang",
     template: "%s | PantauMagang",
   },
   description:
-    "PantauMagang membantu mengelola absensi, perizinan, dan sertifikat anak magang secara mudah dan profesional.",
+    "PantauMagang membantu mengelola absensi dan perizinan anak magang secara mudah dan profesional.",
   keywords: [
     "magang",
     "absensi magang",
@@ -35,8 +35,8 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <head>
-        <link rel="icon" href="logo.png" sizes="any" />
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="icon" href="./logoESDM.png" sizes="any" />
+        <link rel="apple-touch-icon" href="./logoESDM.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

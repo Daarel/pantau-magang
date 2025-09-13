@@ -114,7 +114,7 @@ export default async function SupervisorDashboard() {
 
         <div className='relative z-10'>
           <h1 className='title_header max-sm:text-3xl'>
-            Selamat Datang, Dika Arnanda Putra!
+            Selamat Datang, {user?.user_metadata.full_name}!
           </h1>
           <DashboardClock />
         </div>
