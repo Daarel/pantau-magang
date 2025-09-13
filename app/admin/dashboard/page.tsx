@@ -1,4 +1,4 @@
-import { Card, CardContent, CardTitle, CardHeader } from "@/components/Card";
+import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 
 import { FaUsers, FaBuilding, FaRegCheckCircle } from "react-icons/fa";

@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/Card";
+import { Card, CardContent } from "@/components/ui/card";
 import LayoutWrapper from "@/dump/LayoutWrapper";
 import Image from "next/image";
 

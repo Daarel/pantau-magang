@@ -4,7 +4,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import "../../globals.css";
 import Image from "next/image";
 import DashboardClock from "@/components/DashboardClock";
-import { Card, CardContent } from "@/components/Card";
+import { Card, CardContent } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 import { DashboardTable } from "@/components/tabel-supervisor/AttendanceTable";
 
