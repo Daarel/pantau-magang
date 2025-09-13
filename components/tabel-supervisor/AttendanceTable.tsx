@@ -150,7 +150,7 @@ export default function AttendanceTable({
       <DataTable
         columns={columns}
         data={filteredData}
-        enableFilter={false}
+        enableFilter={true}
         enableColumnVisibility={false}
       />
     </div>
@@ -160,6 +160,11 @@ export default function AttendanceTable({
 // Komponen khusus Report
 export function ReportTable({ activeTab, supervisorId }: { activeTab: string; supervisorId: string }) {
   const [reportData, setReportData] = useState<Report[]>([]);
+
+  const fetchData = async () => {
+    const data = await getReportData(supervisorId);
+    setReportData(data);
+  };
 
   useEffect(() => {
     getReportData(supervisorId).then(setReportData);
@@ -173,9 +178,9 @@ export function ReportTable({ activeTab, supervisorId }: { activeTab: string; su
   return (
     <div className="w-full">
       <DataTable
-        columns={reportColumns}
+        columns={reportColumns (fetchData)}
         data={filteredData}
-        enableFilter={false}
+        enableFilter={true}
         enableColumnVisibility={false}
       />
     </div>

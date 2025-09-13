@@ -23,11 +23,11 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className='flex flex-col w-full h-screen'>
+      <div className="flex flex-col w-full h-screen">
         <Navbar />
-        <div className='flex flex-1 overflow-auto'>
+        <div className="flex flex-1 overflow-auto">
           <Sidebar>
-            <SidebarMenu className='mt-16 max-sm:mt-5'>
+            <SidebarMenu className="mt-16 max-sm:mt-5">
               {supervisorMenu.map((menu) => {
                 const isActive = pathname.startsWith(menu.path);
 
@@ -36,11 +36,14 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
                     <SidebarMenuButton
                       asChild
                       isActive={isActive}
-                      className='flex items-center gap-3 pl-5 py-2 rounded-md transition-colors'
+                      className="flex items-center gap-3 pl-5 py-2 rounded-md transition-colors"
                     >
-                      <Link href={menu.path}>
-                        <menu.Icon className='h-9 w-9' />
-                        {menu.title}
+                      <Link
+                        href={menu.path}
+                        className="flex items-center gap-2 relative"
+                      >
+                        <menu.Icon className="h-9 w-9" />
+                        <span>{menu.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -48,9 +51,9 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
               })}
             </SidebarMenu>
           </Sidebar>
-          <div className='flex h-full w-full'>
+          <div className="flex h-full w-full">
             <SidebarInset>
-              <main className='p-4'>{children}</main>
+              <main className="p-4">{children}</main>
             </SidebarInset>
           </div>
         </div>

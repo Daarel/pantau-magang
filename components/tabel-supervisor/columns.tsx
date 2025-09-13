@@ -153,7 +153,7 @@ export const columns: ColumnDef<Attendance>[] = [
 ]
 
 // 👉 Columns khusus untuk Reports Page
-export const reportColumns: ColumnDef<Report>[] = [
+export const reportColumns = (onActionComplete: () => void): ColumnDef<Report>[] => [
   {
     accessorKey: "file",
     header: ({ column }) => (
@@ -243,6 +243,7 @@ export const reportColumns: ColumnDef<Report>[] = [
               } else {
                 console.log("Approved:", row.original);
                 // TODO: trigger refresh data
+                onActionComplete();
               }
             }} 
             className="cursor-pointer"
@@ -265,6 +266,7 @@ export const reportColumns: ColumnDef<Report>[] = [
             } else {
               console.log("Rejected:", row.original);
               // TODO: trigger refresh data kalau mau auto update
+              onActionComplete();
             }
           }} 
           className="cursor-pointer"

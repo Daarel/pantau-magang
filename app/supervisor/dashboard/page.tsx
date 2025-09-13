@@ -15,6 +15,7 @@ export default async function SupervisorDashboard() {
 
   let totalInterns = 0;
   let presentToday = 0;
+  let pendingLeaves = 0;
 
   if (session?.id) {
     // hitung total interns untuk supervisor ini
@@ -46,12 +47,26 @@ export default async function SupervisorDashboard() {
     }
 
     presentToday = presentCount ?? 0;
+
+
+  // hitung pending leaves dari attendance
+    const { count: leavesCount, error: leavesError } = await supabase
+      .from("attendance")
+      .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+      .eq("dispensation", "pending")
+      .eq("users.supervisor_id", session.id);
+
+    if (leavesError) {
+      console.error("Error fetching pendingLeaves:", leavesError);
+    }
+
+    pendingLeaves = leavesCount ?? 0;
   }
 
   const stats = {
     totalInterns,
     presentToday,
-    pendingLeaves: 50,
+    pendingLeaves,
     avgAttendance: 2,
   };
 
