@@ -19,6 +19,7 @@ interface SupervisorLayoutProps {
 }
 
 export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
+
   const pathname = usePathname();
 
   return (

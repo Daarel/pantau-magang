@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { logoutUser } from "@/lib/client/auth";
+import { logoutUser } from "@/lib/auth/client";
 
 import {
   DropdownMenu,

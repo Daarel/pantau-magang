@@ -12,11 +12,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "noImplicitAny": false,
     "incremental": true,
-    "types": ["node", "react"],   // ✅ tambahin ini
-    "plugins": [
-      { "name": "next" }
-    ],
+    "types": ["node", "react"], // ✅ tambahin ini
+    "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./*"]
     }
@@ -26,7 +25,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "lib/supabaseClient.ts",
+    "lib/supabase/client.ts",
     "lib/middleware.ts",
     "components/PieChart.tsx",
     "app/(supervisor)/supervisor/attendance/page.jsx",

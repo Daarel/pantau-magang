@@ -1,66 +1,72 @@
 import { GoClock, GoPeople } from "react-icons/go";
 import { FiTrendingUp } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
-import { auth } from '@/lib/server/auth'; 
-import { supabase } from '@/lib/supabaseClient';
-import '../../globals.css';
-import Image from 'next/image';
+import "../../globals.css";
+import Image from "next/image";
 import DashboardClock from "@/components/DashboardClock";
-import { Card, CardContent } from "@/components/Card";
+import { Card, CardContent } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 import { DashboardTable } from "@/components/tabel-supervisor/AttendanceTable";
 
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
 export default async function SupervisorDashboard() {
-  const session = await auth();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/");
+  }
 
   let totalInterns = 0;
   let presentToday = 0;
   let pendingLeaves = 0;
 
-  if (session?.id) {
-    // hitung total interns untuk supervisor ini
-    const { count: internsCount } = await supabase
-      .from("users")
-      .select("*", { count: "exact", head: true })
-      .eq("role", "intern")
-      .eq("supervisor_id", session.id);
+  const { data, error: errorGetUser } = await supabase
+    .from("users")
+    .select("id")
+    .eq("email_auth", user.id)
+    .single();
 
-    totalInterns = internsCount ?? 0;
+  if (errorGetUser || !data) {
+    console.error("Error fetching supervisor data:", errorGetUser);
+    redirect("/");
+  }
 
-    // ambil tanggal hari ini (lokal)
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const today = `${year}-${month}-${day}`;
+  // hitung total interns untuk supervisor ini
+  const { count: internsCount } = await supabase
+    .from("users")
+    .select("*", { count: "exact", head: true })
+    .eq("role", "intern")
+    .eq("supervisor_id", data.id);
 
-    // hitung yang hadir hari ini
-    const { count: presentCount, error } = await supabase
-      .from("attendance")
-      .select("id, users!inner(supervisor_id)", { count: "exact", head: true }) 
-      .eq("date", today)
-      .eq("status", "hadir")
-      .eq("users.supervisor_id", session.id);
+  console.log("Interns Count:", internsCount);
 
-    if (error) {
-      console.error("Error fetching presentToday:", error);
-    }
+  totalInterns = internsCount ?? 0;
+
+  // ambil tanggal hari ini (lokal)
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const today = `${year}-${month}-${day}`;
+
+  // hitung yang hadir hari ini
+  const { count: presentCount, error } = await supabase
+    .from("attendance")
+    .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+    .eq("date", today)
+    .eq("status", "hadir")
+    .eq("users.supervisor_id", data.id);
+
+  if (error) {
+    console.error("Error fetching presentToday:", error);
+  }
 
     presentToday = presentCount ?? 0;
-
-
-  // hitung pending leaves dari attendance
-    const { count: leavesCount, error: leavesError } = await supabase
-      .from("attendance")
-      .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
-      .eq("dispensation", "pending")
-      .eq("users.supervisor_id", session.id);
-
-    if (leavesError) {
-      console.error("Error fetching pendingLeaves:", leavesError);
-    }
-
-    pendingLeaves = leavesCount ?? 0;
   }
 
   const stats = {
@@ -71,35 +77,34 @@ export default async function SupervisorDashboard() {
   };
 
   const statCards = [
-      {
-        Icon: GoPeople,
-        title: "Total Interns",
-        value: stats.totalInterns,
-        contentColor: "text-blue-600",
-      },
-      {
-        Icon: GoClock,
-        title: "Present Today",
-        value: stats.presentToday,
-        contentColor: "text-green-600",
-      },
-      {
-        Icon: IoDocumentTextOutline,
-        title: "Pending Leaves",
-        value: stats.pendingLeaves,
-        contentColor: "text-yellow-600",
-      },
-      {
-        Icon: FiTrendingUp,
-        title: "Avg Attendance",
-        value: stats.avgAttendance,
-        contentColor: "text-indigo-600",
-      },
-    ];
-
+    {
+      Icon: GoPeople,
+      title: "Total Interns",
+      value: stats.totalInterns,
+      contentColor: "text-blue-600",
+    },
+    {
+      Icon: GoClock,
+      title: "Present Today",
+      value: stats.presentToday,
+      contentColor: "text-green-600",
+    },
+    {
+      Icon: IoDocumentTextOutline,
+      title: "Pending Leaves",
+      value: stats.pendingLeaves,
+      contentColor: "text-yellow-600",
+    },
+    {
+      Icon: FiTrendingUp,
+      title: "Avg Attendance",
+      value: stats.avgAttendance,
+      contentColor: "text-indigo-600",
+    },
+  ];
 
   return (
-    <> 
+    <>
       <div className='relative bg-green-500 space-y-2 mb-7 h-48 p-8 rounded-lg overflow-hidden'>
         <Image
           src='/overlayBuilding.jpeg'
@@ -111,9 +116,9 @@ export default async function SupervisorDashboard() {
 
         <div className='relative z-10'>
           <h1 className='title_header max-sm:text-3xl'>
-            Selamat Datang, Dika Arnanda Putra!
+            Selamat Datang, {user?.user_metadata.full_name}!
           </h1>
-          <DashboardClock/>
+          <DashboardClock />
         </div>
       </div>
 
@@ -133,7 +138,7 @@ export default async function SupervisorDashboard() {
       </div>
 
       {/* Today's Intern Status */}
-      {session?.id && <DashboardTable supervisorId={session.id}/>}
+      {data.id && <DashboardTable supervisorId={data.id} />}
     </>
   );
 }

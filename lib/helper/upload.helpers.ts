@@ -11,9 +11,10 @@
 //     resolve(objectUrl);
 //   });
 // };
-import { supabase } from '@/lib/supabaseClient'
+import {createClient} from '@/lib/supabase/client';
 
 export const uploadPhoto = async (file: File): Promise<string> => {
+  const supabase = createClient();
   const fileName = `${Date.now()}-${file.name}`;
   
   const { data, error } = await supabase.storage
@@ -32,6 +33,7 @@ export const uploadPhoto = async (file: File): Promise<string> => {
 };
 
 export const uploadFile = async (file: File): Promise<string> => {
+  const supabase = createClient();
   const fileName = `${Date.now()}-${file.name}`;
   
   const { data, error } = await supabase.storage
