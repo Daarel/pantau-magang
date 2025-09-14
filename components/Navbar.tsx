@@ -16,8 +16,10 @@ export default function Navbar() {
           <SidebarTrigger />
         </div>
         <Image
-          src="/logoESDM.png"
+          src='/logoESDM.png'
           alt='Logo Kementrian Energi dan Sumber Daya Mineral'
+          width={40}
+          height={40}
           priority
           className='size-10'
         />

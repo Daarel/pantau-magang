@@ -207,6 +207,10 @@
     position: relative;
     padding-right: 30px;
   }
+
+  body::selection {
+    @apply bg-[#fcf400]/80 text-foreground;
+  }
 }
 
 @layer utilities {
