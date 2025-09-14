@@ -54,7 +54,6 @@ export default function LoginPage() {
               <LoginInput
                 id='password'
                 name='password'
-                type='password'
                 placeholder='Password'
                 className='pl-10'
                 required
