@@ -1,7 +1,13 @@
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 
-import { FaUsers, FaBuilding, FaRegCheckCircle } from "react-icons/fa";
+import {
+  FaUsers,
+  FaBuilding,
+  FaRegCheckCircle,
+  FaUserGraduate,
+  FaUserTie,
+} from "react-icons/fa";
 import { AiFillFileText } from "react-icons/ai";
 import { FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
@@ -88,13 +94,13 @@ export default async function AdminDashboard() {
       contentColor: "text-blue-600",
     },
     {
-      Icon: FaUsers,
+      Icon: FaUserGraduate,
       title: "Interns",
       value: stats.activeInterns,
       contentColor: "text-green-600",
     },
     {
-      Icon: FaUsers,
+      Icon: FaUserTie,
       title: "Supervisors",
       value: stats.supervisors,
       contentColor: "text-indigo-600",
@@ -133,7 +139,7 @@ export default async function AdminDashboard() {
 
         <div className='relative z-10'>
           <h1 className='title_header max-sm:text-3xl'>
-            Selamat Datang, Ibu {user?.user_metadata.full_name}!
+            Selamat Datang, {user?.user_metadata.full_name}!
           </h1>
           <DashboardClock />
         </div>
@@ -142,7 +148,7 @@ export default async function AdminDashboard() {
       <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-5 max-md:grid-cols-2'>
         {statCards.map((card, i) => (
           <Card key={i}>
-            <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
+            <CardContent className='flex justify-center items-center gap-1 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
               <StatCard
                 Icon={card.Icon}
                 title={card.title}
