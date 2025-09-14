@@ -5,6 +5,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Input } from "@/components/ui/input";
 
 interface LoginInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  id: string;
   className: string;
 }
 

@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import Image from "next/image";
-import logoESDM from "@/app/logoESDM.png";
 import ProfileDropDown from "./ProfileDropdown";
 
 export default function Navbar() {
@@ -17,7 +16,7 @@ export default function Navbar() {
           <SidebarTrigger />
         </div>
         <Image
-          src={logoESDM}
+          src="/logoESDM.png"
           alt='Logo Kementrian Energi dan Sumber Daya Mineral'
           priority
           className='size-10'

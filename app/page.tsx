@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { loginUser } from "@/lib/auth/actions";
-
-import LogoESDM from "@/app/logoESDM.png";
 import Image from "next/image";
 import { FaRegUser } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
@@ -16,7 +14,7 @@ export default function LoginPage() {
         <CardHeader className='text-center'>
           <div className='mx-auto p-3 w-fit mb-4'>
             <Image
-              src={LogoESDM}
+              src="/logoESDM.png"
               alt='Logo Kementrian Energi dan Sumber Daya Mineral'
               width={150}
               height={150}
@@ -53,7 +51,14 @@ export default function LoginPage() {
                 className='pl-10'
                 required
               /> */}
-              <LoginInput className='pl-10' />
+              <LoginInput
+                id='password'
+                name='password'
+                type='password'
+                placeholder='Password'
+                className='pl-10'
+                required
+              />
             </div>
             <LoginButton />
           </form>
