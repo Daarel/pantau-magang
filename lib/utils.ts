@@ -23,23 +23,58 @@ export const formatDate = (dateString: string | null): string => {
 };
 
 // Format waktu menjadi HH:MM
+// export const formatTime = (timeString: string | null): string => {
+//   if (!timeString || timeString === "-" || timeString === null) return "-";
+
+//   try {
+//     let dateObj: Date;
+
+//     // Jika hanya berupa HH:mm:ss, gabungkan dengan tanggal hari ini
+//     if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeString)) {
+//       const today = new Date();
+//       const isoDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
+//       dateObj = new Date(`${isoDate}T${timeString}`);
+//     } else {
+//       // Anggap string sudah ISO valid
+//       dateObj = new Date(timeString);
+//     }
+
+//     // Ambil Jam & Menit saja
+//     return dateObj.toLocaleTimeString("id-ID", {
+//       hour: "2-digit",
+//       minute: "2-digit",
+//     });
+//   } catch (error) {
+//     console.error("Error formatting time:", error);
+//     return "-";
+//   }
+// };
+
+// Format waktu menjadi HH:MM
 export const formatTime = (timeString: string | null): string => {
   if (!timeString || timeString === "-" || timeString === null) return "-";
 
   try {
-    let dateObj: Date;
-
-    // Jika hanya berupa HH:mm:ss, gabungkan dengan tanggal hari ini
-    if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeString)) {
-      const today = new Date();
-      const isoDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
-      dateObj = new Date(`${isoDate}T${timeString}`);
-    } else {
-      // Anggap string sudah ISO valid
-      dateObj = new Date(timeString);
+    // Handle format time PostgreSQL (HH:mm:ss)
+    if (/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/.test(timeString)) {
+      const [hours, minutes] = timeString.split(':');
+      return `${hours.padStart(2, '0')}:${minutes}`;
     }
 
-    // Ambil Jam & Menit saja
+    // Handle format timestamp dengan time zone
+    // Jika string kosong atau invalid, return "-"
+    if (timeString.trim() === "" || timeString === "null") {
+      return "-";
+    }
+    
+    // Handle format timestamp dengan time zone
+    const dateObj = new Date(timeString);
+    
+    // Validasi jika dateObj invalid
+    if (isNaN(dateObj.getTime())) {
+      return "-";
+    }
+
     return dateObj.toLocaleTimeString("id-ID", {
       hour: "2-digit",
       minute: "2-digit",

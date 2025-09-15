@@ -1,4 +1,5 @@
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useState } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +12,48 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner";
+import { UpdateCheckOutTime } from "@/hooks/useAttendance";
 
 export function CheckOutModal() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleCheckOut = async () => {
+    setIsLoading(true);
+    try {
+      // Dapatkan user data dari localStorage
+      const userDataString = localStorage.getItem('user');
+      if (!userDataString) {
+        throw new Error('Data user tidak ditemukan');
+      }
+
+      const userData = JSON.parse(userDataString);
+      const userId = userData.id;
+
+      if (!userId) {
+        throw new Error('ID user tidak valid');
+      }
+
+      // Dapatkan tanggal hari ini dalam format YYYY-MM-DD
+      const today = new Date().toISOString().split('T')[0];
+
+      // Update check_out_time
+      await UpdateCheckOutTime(userId, today);
+
+      toast.success("Absensi pulang berhasil dicatat");
+      setIsOpen(false);
+      
+      // Refresh halaman untuk memperbarui data
+      router.refresh();
+    } catch (error) {
+      console.error('Error during check-out:', error);
+      toast.error('Gagal melakukan absensi pulang');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -30,8 +71,19 @@ export function CheckOutModal() {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="bg-red-200 hover:bg-red-300">Batalkan</AlertDialogCancel>
-          <AlertDialogAction className="bg-green-200 hover:bg-green-300 text-black">Konfirmasi</AlertDialogAction>
+          <AlertDialogCancel 
+            className="bg-red-200 hover:bg-red-300"
+            disabled={isLoading}
+          >
+            Batalkan
+          </AlertDialogCancel>
+          <AlertDialogAction 
+            className="bg-green-200 hover:bg-green-300 text-black"
+            onClick={handleCheckOut}
+            disabled={isLoading}
+          >
+            { isLoading? "Memproses" : "Konfirmasi" }
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

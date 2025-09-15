@@ -6,9 +6,11 @@ import { Badge } from "@/components/ui/badge"
 // Components
 import { Button } from "@/components/ui/button";
 import { CheckOutModal } from "@/components/CheckOutModal"
+import { internAttendanceSummary } from '@/hooks/useDashboardData'
 
 export default function TodaysAttendance() {
   const router = useRouter();
+  const { summaryData, loading, error } = internAttendanceSummary()
   return (
     <div className='flex flex-col w-full md:w-1/2 border-2 gap-6 py-4 px-5 rounded-md'>
       {/* Header */}
@@ -26,11 +28,11 @@ export default function TodaysAttendance() {
         </div>
         <div className='flex justify-between'>
           <h1>Check In:</h1>
-          <h1 className='font-semibold'>13:43:15</h1>
+          <h1 className='font-semibold'>{loading ? "-" : summaryData?.last_check_in ?? "-"}</h1>
         </div>
         <div className='flex justify-between'>
           <h1>Check Out:</h1>
-          <h1 className='font-semibold'>--:--:--</h1>
+          <h1 className='font-semibold'>{loading ? "-" : summaryData?.last_check_out ?? "-"}</h1>
         </div>
       </div>
       {/* Button Check In */}

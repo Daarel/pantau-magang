@@ -9,3 +9,9 @@ export type internSummary = {
   total_dispensasi: number;
   total_hadir_bulanan: number;
 };
+
+export type InternDashboardAttendance = {
+  user_id: string;
+  last_check_in: string | null;
+  last_check_out: string | null;
+};

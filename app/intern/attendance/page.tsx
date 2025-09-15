@@ -24,7 +24,7 @@ export default function Attendance() {
 
         {/* Foto & Form Konfirmasi Kehadiran */}
         <AttendanceForm />
-        <AttendanceInfo status="hadir" />
+        <AttendanceInfo status="hadir" /> {/*hadir, sakit, izin, alfa*/}
       </div>
     </>
   );
