@@ -52,7 +52,7 @@ export default function Navbar() {
       <NavigationMenu>
         <NavigationMenuList className='flex items-center gap-4'>
           <ProfileDropDown
-            username={user ? user?.user_metadata.full_name : "Loading user..."}
+            username={user ? user?.user_metadata.full_name?.split(" ")[0] : "Loading user..."}
             role={
               user
                 ? user?.user_metadata.role[0].toUpperCase() +
