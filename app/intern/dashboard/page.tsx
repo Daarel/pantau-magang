@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 // Icons
 import { GoClock } from "react-icons/go";
 import { FiCalendar } from "react-icons/fi";
@@ -17,6 +18,12 @@ import { useDashboardData } from '@/hooks/useDashboardData'
 export default function InternDashboard() {
   const { summaryData, loading, error } = useDashboardData()
   const totalHariKerja = getWorkdaysInMonth()
+
+  useEffect(() => {
+    console.log("Summary data:", summaryData);
+    console.log("Loading:", loading);
+    console.log("Error:", error);
+  }, [summaryData, loading, error]);
 
   return (
     <>
