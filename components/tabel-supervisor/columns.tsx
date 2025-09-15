@@ -266,6 +266,7 @@ export const reportColumns = (onActionComplete: () => void): ColumnDef<Report>[]
             } else {
               console.log("Rejected:", row.original);
               // TODO: trigger refresh data kalau mau auto update
+              onActionComplete();
             }
           }} 
           className="cursor-pointer"

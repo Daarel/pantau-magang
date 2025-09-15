@@ -13,14 +13,37 @@ import { usePathname } from "next/navigation";
 import { supervisorMenu } from "@/const/index";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface SupervisorLayoutProps {
   children: ReactNode;
 }
 
 export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
-
   const pathname = usePathname();
+  const [hasPending, setHasPending] = useState(false);
+
+  // cek apakah ada data pending
+  async function fetchPending() {
+    const { count, error } = await createClient()
+      .from("attendance")
+      .select("id", { count: "exact", head: true })
+      .eq("dispensation", "pending");
+
+    if (error) {
+      console.error("Error fetching pending leaves:", error);
+    } else {
+      setHasPending((count ?? 0) > 0);
+    }
+  }
+
+  useEffect(() => {
+    fetchPending();
+    // auto refresh setiap 10 detik
+    const interval = setInterval(fetchPending, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <SidebarProvider>
@@ -44,7 +67,13 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
                         className="flex items-center gap-2 relative"
                       >
                         <menu.Icon className="h-9 w-9" />
-                        <span>{menu.title}</span>
+                        <span className="flex items-center gap-2">
+                          {menu.title}
+                          {/* notif dot merah kalau ada pending */}
+                          {menu.title === "Inbox" && hasPending && (
+                            <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+                          )}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

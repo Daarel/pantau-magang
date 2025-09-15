@@ -24,6 +24,7 @@ export default async function SupervisorDashboard() {
   let totalInterns = 0;
   let presentToday = 0;
   let pendingLeaves = 0;
+  let avgAttendance = 0;
 
   const { data, error: errorGetUser } = await supabase
     .from("users")
@@ -66,14 +67,66 @@ export default async function SupervisorDashboard() {
     console.error("Error fetching presentToday:", error);
   }
 
-    presentToday = presentCount ?? 0;
+  presentToday = presentCount ?? 0;
+
+  // hitung yang cuti/izin/sakit yang belum disetujui
+  const { count: pendingCount, error: pendingError } = await supabase
+    .from("attendance")
+    .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+    .eq("dispensation", "pending")
+    .eq("users.supervisor_id", data.id);
+
+  if (pendingError) {
+    console.error("Error fetching pendingLeaves:", pendingError);
   }
 
+  pendingLeaves = pendingCount ?? 0;
+
+  // ambil semua kehadiran intern supervisor ini
+const { data: attendanceData, error: attendanceError } = await supabase
+  .from("attendance")
+  .select("date, status, users!inner(supervisor_id)")
+  .eq("users.supervisor_id", data.id);
+
+if (attendanceError) {
+  console.error("Error fetching attendance data:", attendanceError);
+}
+
+if (attendanceData && attendanceData.length > 0) {
+  // buat object untuk menyimpan jumlah hadir per tanggal
+  const attendancePerDay: Record<string, number> = {};
+
+  attendanceData.forEach((att: any) => {
+    if (att.status === "hadir") {
+      if (!attendancePerDay[att.date]) {
+        attendancePerDay[att.date] = 0;
+      }
+      attendancePerDay[att.date] += 1; // tambah jumlah hadir
+    }
+  });
+
+  const totalDays = Object.keys(attendancePerDay).length;
+
+  // total hadir seluruh hari
+  const totalPresent = Object.values(attendancePerDay).reduce(
+    (sum, val) => sum + val,
+    0
+  );
+
+  // hitung avg attendance
+  avgAttendance = totalDays > 0 && totalInterns > 0 
+  ? (totalPresent / (totalDays * totalInterns)) * 100
+  : 0;
+
+  avgAttendance = parseFloat(avgAttendance.toFixed(2));
+}
+
+  // Ensure totalInterns is defined and in scope
   const stats = {
-    totalInterns,
-    presentToday,
-    pendingLeaves,
-    avgAttendance: 2,
+    totalInterns: totalInterns + " Anak",
+    presentToday: presentToday + " Hadir",
+    pendingLeaves: pendingLeaves + " Pending",
+    avgAttendance: avgAttendance + "%",
   };
 
   const statCards = [
