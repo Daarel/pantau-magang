@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { internSummary, InternDashboardAttendance } from '@/types/dashboard'
-import { formatTime } from "@/lib/utils"
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { internSummary, InternDashboardAttendance } from "@/types/dashboard";
+import { formatTime } from "@/lib/utils";
 
 export function useDashboardData() {
   const [summaryData, setSummaryData] = useState<internSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClient(); 
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,9 +44,19 @@ export function useDashboardData() {
           return;
         }
 
-        console.log("Raw data from Supabase:", data)
-        console.log("Raw start_time:", data.start_time, "Type:", typeof data.start_time)
-        console.log("Raw end_time:", data.end_time, "Type:", typeof data.end_time)
+        console.log("Raw data from Supabase:", data);
+        console.log(
+          "Raw start_time:",
+          data.start_time,
+          "Type:",
+          typeof data.start_time
+        );
+        console.log(
+          "Raw end_time:",
+          data.end_time,
+          "Type:",
+          typeof data.end_time
+        );
 
         if (data) {
           const formatted = {
@@ -64,75 +74,75 @@ export function useDashboardData() {
       }
     };
 
-    fetchData()
-  }, [])
-  
-  return { summaryData, loading, error }
+    fetchData();
+  }, []);
+
+  return { summaryData, loading, error };
 }
 
-export function internAttendanceSummary(){
-  const [summaryData, setSummaryData] = useState<InternDashboardAttendance | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+export function useAttendanceSummary() {
+  const [summaryData, setSummaryData] =
+    useState<InternDashboardAttendance | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Dapatkan user data dari localStorage
-        const userDataString = localStorage.getItem('user')
-        const today = new Date().toISOString().split("T")[0]
+        const userDataString = localStorage.getItem("user");
+        const today = new Date().toISOString().split("T")[0];
 
-        if (!userDataString){
-          setError('User data not found in localStorage')
-          setLoading(false)
-          return
+        if (!userDataString) {
+          setError("User data not found in localStorage");
+          setLoading(false);
+          return;
         }
 
         // Parse data user
-        const userData = JSON.parse(userDataString)
-        const user_id = userData.id
+        const userData = JSON.parse(userDataString);
+        const user_id = userData.id;
 
         if (!user_id) {
-          setError('User ID not found in user data')
-          setLoading(false)
-          return
+          setError("User ID not found in user data");
+          setLoading(false);
+          return;
         }
 
         // Query data dari Supabase berdasarkan user_id
         const { data, error } = await supabase
-          .from('intern_dashboard')
-          .select('last_check_in, last_check_out')
-          .eq('user_id', user_id)
+          .from("intern_dashboard")
+          .select("last_check_in, last_check_out")
+          .eq("user_id", user_id)
           .gte("last_check_in", `${today}T00:00:00`)
           .lte("last_check_in", `${today}T23:59:59`)
-          .single()
+          .single();
 
         if (error) {
-          setError(error.message)
-          setLoading(false)
-          return
+          setError(error.message);
+          setLoading(false);
+          return;
         }
 
-        if(data) {
+        if (data) {
           const formatted = {
             ...data,
             last_check_in: formatTime(data.last_check_in),
             last_check_out: formatTime(data.last_check_out),
-          }
-          setSummaryData(formatted as InternDashboardAttendance)
+          };
+          setSummaryData(formatted as InternDashboardAttendance);
         }
-        
-        setLoading(false)
-      } 
-      catch {
-        setError("Unexpected error occurred")
-        setLoading(false)
-      }
-    }
 
-    fetchData()
-  }, [])
-  
-  return { summaryData, loading, error }
+        setLoading(false);
+      } catch {
+        setError("Unexpected error occurred");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return { summaryData, loading, error };
 }
