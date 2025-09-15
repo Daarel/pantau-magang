@@ -16,10 +16,10 @@ const StatCard: FC<StatCardProps> = ({
 }) => {
   return (
     <>
-      <div className='p-3 bg-blue-100 rounded-lg max-lg:flex max-lg:justify-center max-lg: items-center'>
-        <Icon className={`h-6 w-6 ${contentColor}`} />
+      <div className='p-3 rounded-lg max-lg:flex max-lg:justify-center max-lg: items-center'>
+        <Icon className={`h-10 w-10 ${contentColor}`} />
       </div>
-      <div className='ml-4 max-lg:flex max-lg:flex-col max-lg:justify-center max-lg:items-center max-lg:ml-0'>
+      <div className='flex flex-col max-lg:flex max-lg:flex-col max-lg:justify-center max-lg:items-center'>
         <p className='text-sm text-gray-600'>{title}</p>
         <p className='text-2xl font-bold text-gray-900'>{value}</p>
       </div>

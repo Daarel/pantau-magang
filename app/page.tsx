@@ -1,12 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { loginUser } from "@/lib/auth/actions";
-
-import LogoESDM from "@/app/logoESDM.png";
 import Image from "next/image";
 import { FaRegUser } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { CiLock } from "react-icons/ci";
 import LoginButton from "@/components/LoginButton";
+import LoginInput from "@/components/LoginInput";
 
 export default function LoginPage() {
   return (
@@ -15,7 +14,7 @@ export default function LoginPage() {
         <CardHeader className='text-center'>
           <div className='mx-auto p-3 w-fit mb-4'>
             <Image
-              src={LogoESDM}
+              src="/logoESDM.png"
               alt='Logo Kementrian Energi dan Sumber Daya Mineral'
               width={150}
               height={150}
@@ -42,13 +41,19 @@ export default function LoginPage() {
                 required
               />
             </div>
-
             <div className='relative'>
               <CiLock className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
-              <Input
+              {/* <Input
                 id='password'
                 name='password'
                 type='password'
+                placeholder='Password'
+                className='pl-10'
+                required
+              /> */}
+              <LoginInput
+                id='password'
+                name='password'
                 placeholder='Password'
                 className='pl-10'
                 required

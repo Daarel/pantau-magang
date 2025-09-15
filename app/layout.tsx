@@ -35,8 +35,8 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <head>
-        <link rel="icon" href="./logoESDM.png" sizes="any" />
-        <link rel="apple-touch-icon" href="./logoESDM.png" />
+        <link rel="icon" href="/logoESDM.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/logoESDM.ico" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
