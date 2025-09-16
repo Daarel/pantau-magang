@@ -158,7 +158,7 @@ if (attendanceData && attendanceData.length > 0) {
 
   return (
     <>
-      <div className='relative bg-green-500 space-y-2 mb-7 h-48 p-8 rounded-lg overflow-hidden'>
+      <div className='relative bg-green-500 space-y-2 mb-7 min-h-48 p-8 rounded-lg overflow-hidden'>
         <Image
           src='/overlayBuilding.jpeg'
           alt='Overlay'
@@ -178,7 +178,7 @@ if (attendanceData && attendanceData.length > 0) {
       <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 max-md:grid-cols-2 mb-5'>
         {statCards.map((card, i) => (
           <Card key={i}>
-            <CardContent className='flex items-center p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1'>
+            <CardContent className='flex justify-center items-center gap-0 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1 pr-8'>
               <StatCard
                 Icon={card.Icon}
                 title={card.title}

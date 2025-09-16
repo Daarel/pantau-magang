@@ -32,7 +32,7 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
     `
     )
     .eq("users.supervisor_id", supervisorId)
-    .or("dispensation.eq.approved,status.eq.hadir,status.eq.alfa")
+    .or("dispensation.eq.approved,dispensation.eq.n_approved,dispensation.eq.-")
     .order("date", { ascending: false });
 
   if (error) {
@@ -41,6 +41,7 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
   }
 
   return (data ?? []).map((att: any) => ({
+    id: att.id,
     name: att.users?.full_name ?? "Unknown",
     status: att.status.charAt(0).toUpperCase() + att.status.slice(1),
     keterangan: att.notes ?? "-",
@@ -122,7 +123,7 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
     )
     .eq("users.supervisor_id", supervisorId)
     .eq("date", today)
-    .or("dispensation.eq.approved,status.eq.hadir,status.eq.alfa")
+    .or("dispensation.eq.approved,dispensation.eq.n_approved,dispensation.eq.-")
     .order("date", { ascending: false });
 
   if (error) {
@@ -158,6 +159,11 @@ export default function AttendanceTable({
 }) {
   const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
 
+  const fetchData = async () => {
+    const data = await getAttendanceData(supervisorId);
+    setAttendanceData(data);
+  };
+
   useEffect(() => {
     getAttendanceData(supervisorId).then(setAttendanceData);
   }, [supervisorId]);
@@ -168,9 +174,9 @@ export default function AttendanceTable({
       : attendanceData.filter((item) => item.status === activeTab);
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <DataTable
-        columns={columns}
+        columns={columns(fetchData)}
         data={filteredData}
         enableFilter={true}
         enableColumnVisibility={false}
@@ -204,9 +210,9 @@ export function ReportTable({
       : reportData.filter((item) => item.status === activeTab);
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <DataTable
-        columns={reportColumns (fetchData)}
+        columns={reportColumns(fetchData)}
         data={filteredData}
         enableFilter={true}
         enableColumnVisibility={false}
@@ -223,13 +229,13 @@ export function DashboardTable({ supervisorId }: { supervisorId: string }) {
   }, [supervisorId]);
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <DataTable
         columns={Dashboardcolumns}
         data={dashboardData}
         enableFilter={false}
         enableColumnVisibility={false}
-        title='Status Kehadiran Hari Ini'
+        title="Status Kehadiran Hari Ini"
       />
     </div>
   );

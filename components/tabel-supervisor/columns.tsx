@@ -16,6 +16,7 @@ import { createClient } from "@/lib/supabase/client";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Attendance = {
+  id(arg0: string, id: any): { error: any } | PromiseLike<{ error: any }>;
   name: string;
   status: string;
   date: string;
@@ -41,7 +42,7 @@ export type Dashboard = {
 const supabase = createClient();
 
 // Header name
-export const columns: ColumnDef<Attendance>[] = [
+export const columns = (onActionComplete: () => void): ColumnDef<Attendance>[] => [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -111,8 +112,30 @@ export const columns: ColumnDef<Attendance>[] = [
     },
   },
   {
-    id: "actions",
-    cell: ({ row }) => (
+  id: "actions",
+  cell: ({ row }) => {
+    const handleUpdateStatus = async (newStatus: string) => {
+      try {
+        const { error } = await supabase
+          .from("attendance") // pastikan nama tabel bener
+          .update({ status: newStatus })
+          .eq("id", row.original.id); // wajib ada id di dataset
+
+        if (error) {
+          console.error("Gagal update status:", error);
+        } else {
+          console.log(`Status updated to ${newStatus} for`, row.original);
+
+          // 🔄 update langsung di UI tanpa reload
+          row.original.status = newStatus;
+          onActionComplete();
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+      }
+    };
+
+    return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className='p-2 rounded-full hover:bg-gray-100 cursor-pointer'>
@@ -121,33 +144,34 @@ export const columns: ColumnDef<Attendance>[] = [
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
-            onClick={() => console.log("Hadir:", row.original)}
-            className='cursor-pointer'
+            onClick={() => handleUpdateStatus("hadir")}
+            className='cursor-pointer bg-green-100 text-green-800 w-full py-1 rounded-full flex justify-center font-medium mb-1'
           >
             Hadir
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => console.log("Sakit:", row.original)}
-            className='cursor-pointer'
+            onClick={() => handleUpdateStatus("sakit")}
+            className='cursor-pointer bg-yellow-100 text-yellow-800 w-full py-1 rounded-full flex justify-center font-medium mb-1'
           >
             Sakit
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => console.log("Izin:", row.original)}
-            className='cursor-pointer'
+            onClick={() => handleUpdateStatus("izin")}
+            className='cursor-pointer bg-blue-100 text-blue-800 w-full py-1 rounded-full flex justify-center font-medium mb-1'
           >
             Izin
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => console.log("Alfa:", row.original)}
-            className='cursor-pointer'
+            onClick={() => handleUpdateStatus("alfa")}
+            className='cursor-pointer bg-red-100 text-red-800 w-full py-1 rounded-full flex justify-center font-medium mb-1'
           >
             Alfa
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    ),
+    );
   },
+},
 ];
 
 // 👉 Columns khusus untuk Reports Page
