@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { internSummary, InternDashboardAttendance } from '@/types/dashboard'
-import { formatTime } from "@/lib/utils"
+import { internSummary } from '@/types/dashboard'
+import { formatTimeStamp, formatTime } from "@/lib/utils"
+import { redirect } from "next/navigation";
 
 export function useDashboardData() {
   const [summaryData, setSummaryData] = useState<internSummary | null>(null);
@@ -12,30 +13,31 @@ export function useDashboardData() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Dapatkan user data dari localStorage
-        const userDataString = localStorage.getItem("user");
-
-        if (!userDataString) {
-          setError("User data not found in localStorage");
-          setLoading(false);
-          return;
+        // Dapatkan user data dari supabase.auth
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+      
+        if (!user) {
+          redirect("/");
         }
 
-        // Parse data user
-        const userData = JSON.parse(userDataString);
-        const user_id = userData.id;
-
-        if (!user_id) {
-          setError("User ID not found in user data");
-          setLoading(false);
-          return;
+        const { data, error: errorGetUser } = await supabase
+          .from("users")
+          .select("id")
+          .eq("email_auth", user.id)
+          .single();
+      
+        if (errorGetUser || !data) {
+          console.error("Error fetching intern data:", errorGetUser);
+          redirect("/");
         }
 
         // Query data dari Supabase berdasarkan user_id
-        const { data, error } = await supabase
+        const { data: dashboardData, error } = await supabase
           .from("intern_dashboard")
           .select("*")
-          .eq("user_id", user_id)
+          .eq("user_id", data.id)
           .single();
 
         if (error) {
@@ -44,15 +46,17 @@ export function useDashboardData() {
           return;
         }
 
-        console.log("Raw data from Supabase:", data)
-        console.log("Raw start_time:", data.start_time, "Type:", typeof data.start_time)
-        console.log("Raw end_time:", data.end_time, "Type:", typeof data.end_time)
+        console.log("Raw data from Supabase:", dashboardData)
+        console.log("Raw start_time:", dashboardData?.start_time, "Type:", typeof dashboardData?.start_time)
+        console.log("Raw end_time:", dashboardData?.end_time, "Type:", typeof dashboardData?.end_time)
 
-        if (data) {
+        if (dashboardData) {
           const formatted = {
-            ...data,
-            start_time: formatTime(data.start_time),
-            end_time: formatTime(data.end_time),
+            ...dashboardData,
+            start_time: formatTime(dashboardData.start_time),
+            end_time: formatTime(dashboardData.end_time),
+            today_check_in: formatTimeStamp(dashboardData.today_check_in),
+            today_check_out: formatTimeStamp(dashboardData.today_check_out),
           };
           setSummaryData(formatted as internSummary);
         }
@@ -63,73 +67,6 @@ export function useDashboardData() {
         setLoading(false);
       }
     };
-
-    fetchData()
-  }, [])
-  
-  return { summaryData, loading, error }
-}
-
-export function internAttendanceSummary(){
-  const [summaryData, setSummaryData] = useState<InternDashboardAttendance | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const supabase = createClient();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Dapatkan user data dari localStorage
-        const userDataString = localStorage.getItem('user')
-        const today = new Date().toISOString().split("T")[0]
-
-        if (!userDataString){
-          setError('User data not found in localStorage')
-          setLoading(false)
-          return
-        }
-
-        // Parse data user
-        const userData = JSON.parse(userDataString)
-        const user_id = userData.id
-
-        if (!user_id) {
-          setError('User ID not found in user data')
-          setLoading(false)
-          return
-        }
-
-        // Query data dari Supabase berdasarkan user_id
-        const { data, error } = await supabase
-          .from('intern_dashboard')
-          .select('last_check_in, last_check_out')
-          .eq('user_id', user_id)
-          .gte("last_check_in", `${today}T00:00:00`)
-          .lte("last_check_in", `${today}T23:59:59`)
-          .single()
-
-        if (error) {
-          setError(error.message)
-          setLoading(false)
-          return
-        }
-
-        if(data) {
-          const formatted = {
-            ...data,
-            last_check_in: formatTime(data.last_check_in),
-            last_check_out: formatTime(data.last_check_out),
-          }
-          setSummaryData(formatted as InternDashboardAttendance)
-        }
-        
-        setLoading(false)
-      } 
-      catch {
-        setError("Unexpected error occurred")
-        setLoading(false)
-      }
-    }
 
     fetchData()
   }, [])

@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const capitalize = (str: string) => {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 // Format tanggal menjadi dd/mm/yy
 export const formatDate = (dateString: string | null): string => {
   if (!dateString || dateString === "-" || dateString === null) return "-";
@@ -22,68 +27,38 @@ export const formatDate = (dateString: string | null): string => {
   }
 };
 
-// Format waktu menjadi HH:MM
-// export const formatTime = (timeString: string | null): string => {
-//   if (!timeString || timeString === "-" || timeString === null) return "-";
-
-//   try {
-//     let dateObj: Date;
-
-//     // Jika hanya berupa HH:mm:ss, gabungkan dengan tanggal hari ini
-//     if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeString)) {
-//       const today = new Date();
-//       const isoDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
-//       dateObj = new Date(`${isoDate}T${timeString}`);
-//     } else {
-//       // Anggap string sudah ISO valid
-//       dateObj = new Date(timeString);
-//     }
-
-//     // Ambil Jam & Menit saja
-//     return dateObj.toLocaleTimeString("id-ID", {
-//       hour: "2-digit",
-//       minute: "2-digit",
-//     });
-//   } catch (error) {
-//     console.error("Error formatting time:", error);
-//     return "-";
-//   }
-// };
-
-// Format waktu menjadi HH:MM
-export const formatTime = (timeString: string | null): string => {
-  if (!timeString || timeString === "-" || timeString === null) return "-";
+// Fungsi untuk format kolom bertipe TIME
+export const formatTime = (timeValue: string | null): string => {
+  if (!timeValue) return "-";
 
   try {
-    // Handle format time PostgreSQL (HH:mm:ss)
-    if (/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/.test(timeString)) {
-      const [hours, minutes] = timeString.split(':');
-      return `${hours.padStart(2, '0')}:${minutes}`;
-    }
-
-    // Handle format timestamp dengan time zone
-    // Jika string kosong atau invalid, return "-"
-    if (timeString.trim() === "" || timeString === "null") {
-      return "-";
-    }
-    
-    // Handle format timestamp dengan time zone
-    const dateObj = new Date(timeString);
-    
-    // Validasi jika dateObj invalid
-    if (isNaN(dateObj.getTime())) {
-      return "-";
-    }
-
-    return dateObj.toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    // Asumsikan timeValue berupa string "HH:mm:ss"
+    const [hours, minutes, seconds] = timeValue.split(":");
+    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
   } catch (error) {
     console.error("Error formatting time:", error);
     return "-";
   }
-};
+}
+
+// Fungsi untuk format kolom bertipe TIMESTAMP / TIMESTAMPTZ
+export const formatTimeStamp = (timestampValue: string | null): string => {
+  if (!timestampValue) return "-";
+
+  try {
+    const date = new Date(timestampValue);
+    if (isNaN(date.getTime())) return "-";
+
+    return date.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // biar format 24 jam
+    });
+  } catch (error) {
+    console.error("Error formatting timestamp:", error);
+    return "-";
+  }
+}
 
 // Potong teks jika lebih dari jumlah kata tertentu
 export const truncateText = (text: string, maxWords: number = 15): string => {
