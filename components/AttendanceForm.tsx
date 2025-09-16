@@ -167,7 +167,7 @@ export function AttendanceForm() {
       }
 
       // Tentukan file_url berdasarkan status
-      let file_url = null;
+      let file_url: string | null = null;
       if (data.status === "hadir") {
         file_url = imageUrl;
       } else if (data.status === "izin" || data.status === "sakit") {
@@ -175,7 +175,7 @@ export function AttendanceForm() {
       }
 
       // Tentukan nilai untuk dispensation dan notes berdasarkan status
-      let dispensationValue = null;
+      let dispensationValue: string | null = null;
       let notesValue = "-";
 
       if (data.status === "sakit" || data.status === "izin") {

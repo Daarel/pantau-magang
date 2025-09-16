@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { AttendanceIntern, AttendanceCheckIn } from '@/types/attendance'
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { AttendanceIntern, AttendanceCheckIn } from "@/types/attendance";
 
 // Fetch data user (intern)
-export function internAttendanceData(activeTab: string) {
-  const [attendanceData, setAttendanceData] = useState<AttendanceIntern[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+export function useAttendanceData(activeTab: string) {
+  const [attendanceData, setAttendanceData] = useState<AttendanceIntern[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -80,23 +80,27 @@ export function internAttendanceData(activeTab: string) {
     fetchData();
   }, [activeTab, supabase]);
 
-  return { attendanceData, loading, error }
+  return { attendanceData, loading, error };
 }
 
 // Simpan informasi presensi user ke database
-export const InsertAttendanceIntern = async (attendanceData: AttendanceCheckIn) => {
+export const InsertAttendanceIntern = async (
+  attendanceData: AttendanceCheckIn
+) => {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from('attendance')
-    .insert([{
-      user_id: attendanceData.user_id,
-      status: attendanceData.status,
-      date: attendanceData.date,
-      check_in_time: attendanceData.check_in_time,
-      notes: attendanceData.notes,
-      file_url: attendanceData.file_url,
-      dispensation: attendanceData.dispensation,
-    }])
+    .from("attendance")
+    .insert([
+      {
+        user_id: attendanceData.user_id,
+        status: attendanceData.status,
+        date: attendanceData.date,
+        check_in_time: attendanceData.check_in_time,
+        notes: attendanceData.notes,
+        file_url: attendanceData.file_url,
+        dispensation: attendanceData.dispensation,
+      },
+    ])
     .select();
 
   if (error) {
@@ -112,30 +116,32 @@ export const UpdateCheckOutTime = async (userId: string, date: string) => {
   try {
     // Dapatkan record attendance untuk user pada tanggal tertentu
     const { data: attendanceRecord, error: fetchError } = await supabase
-      .from('attendance')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('date', date)
-      .eq('status', 'hadir')
-      .is('check_out_time', null)
+      .from("attendance")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("date", date)
+      .eq("status", "hadir")
+      .is("check_out_time", null)
       .single();
 
     if (fetchError) {
-      throw new Error(`Tidak ditemukan data absensi masuk untuk hari ini: ${fetchError.message}`);
+      throw new Error(
+        `Tidak ditemukan data absensi masuk untuk hari ini: ${fetchError.message}`
+      );
     }
 
     if (!attendanceRecord) {
-      throw new Error('Tidak ditemukan data absensi masuk untuk hari ini');
+      throw new Error("Tidak ditemukan data absensi masuk untuk hari ini");
     }
 
     // Update check_out_time
     const { data, error } = await supabase
-      .from('attendance')
+      .from("attendance")
       .update({
         check_out_time: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('id', attendanceRecord.id)
+      .eq("id", attendanceRecord.id)
       .select();
 
     if (error) {
@@ -144,7 +150,7 @@ export const UpdateCheckOutTime = async (userId: string, date: string) => {
 
     return data;
   } catch (error) {
-    console.error('Error updating check-out time:', error);
+    console.error("Error updating check-out time:", error);
     throw error;
   }
 };
