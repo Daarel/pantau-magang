@@ -39,7 +39,7 @@ export default function InternDashboard() {
 
         <div className='relative z-10'>
           <h1 className='title_header'>
-            Selamat Datang, Dika Arnanda Putra!
+            Selamat Datang, {loading ? "-" : summaryData?.nama ?? "-"}
           </h1>
           <DashboardClock />
         </div>
