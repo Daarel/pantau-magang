@@ -19,6 +19,7 @@ import { supervisorModalInput } from "@/const";
 import DataTable from "@/components/DataTable";
 import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
+import { useModalQuery } from "@/hooks/useModalQuery";
 
 const columns: ColumnDef<DataColumn>[] = [
   {
@@ -85,41 +86,7 @@ interface AdminSupervisorProps {
 }
 
 const AdminSupervisor: FC<AdminSupervisorProps> = ({tableData}) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [open, setOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const modal = searchParams?.get("modal");
-    setOpen(modal === "open");
-  }, [searchParams]);
-
-  const handleToggleModal = () => {
-    const newOpen = !open;
-    setOpen(newOpen);
-
-    if (newOpen) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      router.replace(pathname);
-    }
-  };
-
-  const handleOpenChange = (newVal: boolean) => {
-    setOpen(newVal);
-
-    if (newVal) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("modal");
-      const next = params.toString()
-        ? `${pathname}?${params.toString()}`
-        : pathname;
-      router.replace(next);
-    }
-  };
+  const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
 
   const handleSubmit = () => {};
 
@@ -129,7 +96,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({tableData}) => {
         title='Daftar Supervisor'
         subtitle='List daftar supervisor aktif'
         label='Tambah Supervisor'
-        onAdd={handleToggleModal}
+        onAdd={toggleModal}
       />
       <DataTable data={tableData} columns={columns} />
       <CustomDialog
