@@ -2,7 +2,7 @@
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
-import { dataColumnSupervisor, type DataColumn } from "@/const/dummy";
+import { type DataColumn } from "@/const/dummy";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import { supervisorModalInput } from "@/const";
@@ -22,14 +22,14 @@ import TablePageHeader from "@/components/DataTableHeader";
 
 const columns: ColumnDef<DataColumn>[] = [
   {
-    accessorKey: "nomorInduk",
+    accessorKey: "nomor_induk",
     header: "Nomor Induk",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("nomorInduk")}</div>
+      <div className='capitalize'>{row.getValue("nomor_induk")}</div>
     ),
   },
   {
-    accessorKey: "namaLengkap",
+    accessorKey: "full_name",
     header: ({ column }) => {
       return (
         <Button
@@ -42,7 +42,7 @@ const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className='lowercase'>{row.getValue("namaLengkap")}</div>
+      <div className='lowercase'>{row.getValue("full_name")}</div>
     ),
   },
   {
@@ -53,10 +53,10 @@ const columns: ColumnDef<DataColumn>[] = [
     ),
   },
   {
-    accessorKey: "gedung",
+    accessorKey: "department",
     header: "Gedung",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("gedung")}</div>
+      <div className='capitalize'>{row.getValue("department")}</div>
     ),
   },
   {
@@ -87,7 +87,12 @@ const columns: ColumnDef<DataColumn>[] = [
   },
 ];
 
-export default function AdminSupervisor() {
+interface AdminSupervisorProps {
+  tableData: DataColumn[];
+}
+
+
+const AdminSupervisor: FC<AdminSupervisorProps> = ({tableData}) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -134,7 +139,7 @@ export default function AdminSupervisor() {
         label='Tambah Supervisor'
         onAdd={handleToggleModal}
       />
-      <DataTable data={dataColumnSupervisor} columns={columns} />
+      <DataTable data={tableData} columns={columns} />
       <CustomDialog
         open={open}
         onOpenChange={handleOpenChange}
@@ -145,3 +150,5 @@ export default function AdminSupervisor() {
     </>
   );
 }
+
+export default AdminSupervisor;

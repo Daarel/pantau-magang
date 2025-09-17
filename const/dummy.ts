@@ -1,11 +1,9 @@
-type Building = "Telematika" | "Arsip" | "Eksploitasi I" | "Forum Teknologi"; // comming soon.
-
 export type DataColumn = {
   id: string;
-  nomorInduk: number;
-  namaLengkap: string;
+  nomor_induk: number;
+  full_name: string;
   password: string;
-  gedung: Building;
+  department: string;
   pembimbing?: string;
   mulaiMagang?: string;
   selesaiMagang?: string;
@@ -14,90 +12,90 @@ export type DataColumn = {
 export const dataColumnIntern: DataColumn[] = [
   {
     id: "m5gr84i9",
-    nomorInduk: 2022071064,
-    namaLengkap: "Daarel Safa Fatillah",
+    nomor_induk: 2022071064,
+    full_name: "Daarel Safa Fatillah",
     password: "daarel123",
-    gedung: "Telematika",
+    department: "Telematika",
     pembimbing: "Yasdi Pramesti",
     mulaiMagang: "12-02-2024",
     selesaiMagang: "12-04-2025",
   },
   {
     id: "3u1reuv4",
-    nomorInduk: 2022071012,
-    namaLengkap: "Dika Arnanda Putra",
+    nomor_induk: 2022071012,
+    full_name: "Dika Arnanda Putra",
     password: "dika123",
-    gedung: "Telematika",
+    department: "Telematika",
     pembimbing: "Yasdi Pramesti",
     mulaiMagang: "12-02-2024",
     selesaiMagang: "12-04-2025",
   },
   {
     id: "derv1ws0",
-    nomorInduk: 2022071014,
-    namaLengkap: "Gregorius Rizcy Orlando Pradana",
+    nomor_induk: 2022071014,
+    full_name: "Gregorius Rizcy Orlando Pradana",
     password: "grego123",
-    gedung: "Telematika",
+    department: "Telematika",
     pembimbing: "Yasdi Pramesti",
     mulaiMagang: "12-02-2024",
     selesaiMagang: "12-04-2025",
   },
   {
     id: "5kma53ae",
-    nomorInduk: 20324329223,
-    namaLengkap: "M Bagas",
+    nomor_induk: 20324329223,
+    full_name: "M Bagas",
     password: "bagas123",
-    gedung: "Telematika",
+    department: "Telematika",
     pembimbing: "Yasdi Pramesti",
     mulaiMagang: "12-02-2024",
     selesaiMagang: "12-04-2025",
   },
   {
     id: "bhqecj4p",
-    nomorInduk: 2022242342,
-    namaLengkap: "John Doe",
+    nomor_induk: 2022242342,
+    full_name: "John Doe",
     password: "john123",
-    gedung: "Telematika",
+    department: "Telematika",
     pembimbing: "Yasdi Pramesti",
     mulaiMagang: "12-02-2024",
     selesaiMagang: "12-04-2025",
   },
 ];
 
-export const dataColumnSupervisor: DataColumn[] = [
-  {
-    id: "m5gr84i91",
-    nomorInduk: 2022071064,
-    namaLengkap: "Daarel Safa Fatillah",
-    password: "daarel123",
-    gedung: "Telematika",
-  },
-  {
-    id: "3u1reuv41",
-    nomorInduk: 2022071012,
-    namaLengkap: "Dika Arnanda Putra",
-    password: "dika123",
-    gedung: "Telematika",
-  },
-  {
-    id: "derv1ws01",
-    nomorInduk: 2022071014,
-    namaLengkap: "Gregorius Rizcy Orlando Pradana",
-    password: "grego123",
-    gedung: "Telematika",
-  },
-  {
-    id: "5kma53ae1",
-    nomorInduk: 20324329223,
-    namaLengkap: "M Bagas",
-    password: "bagas123",
-    gedung: "Telematika",
-  },
-  {
-    id: "bhqecj4p1",
-    nomorInduk: 2022242342,
-    namaLengkap: "John Doe",
-    password: "john123",
-    gedung: "Telematika",
-  },
-];
+// export const dataColumnSupervisor: DataColumn[] = [
+//   {
+//     id: "m5gr84i91",
+//     nomor_induk: 2022071064,
+//     full_name: "Daarel Safa Fatillah",
+//     password: "daarel123",
+//     department: "Telematika",
+//   },
+//   {
+//     id: "3u1reuv41",
+//     nomor_induk: 2022071012,
+//     full_name: "Dika Arnanda Putra",
+//     password: "dika123",
+//     department: "Telematika",
+//   },
+//   {
+//     id: "derv1ws01",
+//     nomor_induk: 2022071014,
+//     full_name: "Gregorius Rizcy Orlando Pradana",
+//     password: "grego123",
+//     department: "Telematika",
+//   },
+//   {
+//     id: "5kma53ae1",
+//     nomor_induk: 20324329223,
+//     full_name: "M Bagas",
+//     password: "bagas123",
+//     department: "Telematika",
+//   },
+//   {
+//     id: "bhqecj4p1",
+//     nomor_induk: 2022242342,
+//     full_name: "John Doe",
+//     password: "john123",
+//     department: "Telematika",
+//   },
+// ];

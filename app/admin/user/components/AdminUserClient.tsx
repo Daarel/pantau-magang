@@ -23,14 +23,14 @@ import { ColumnDef } from "@tanstack/react-table";
 
 const columns: ColumnDef<DataColumn>[] = [
   {
-    accessorKey: "nomorInduk",
+    accessorKey: "nomor_induk",
     header: "Nomor Induk",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("nomorInduk")}</div>
+      <div className='capitalize'>{row.getValue("nomor_induk")}</div>
     ),
   },
   {
-    accessorKey: "namaLengkap",
+    accessorKey: "full_name",
     header: ({ column }) => {
       return (
         <Button
@@ -43,7 +43,7 @@ const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className='lowercase'>{row.getValue("namaLengkap")}</div>
+      <div className='lowercase'>{row.getValue("full_name")}</div>
     ),
   },
   {
@@ -54,10 +54,10 @@ const columns: ColumnDef<DataColumn>[] = [
     ),
   },
   {
-    accessorKey: "gedung",
+    accessorKey: "department",
     header: "Gedung",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("gedung")}</div>
+      <div className='capitalize'>{row.getValue("department")}</div>
     ),
   },
   {
