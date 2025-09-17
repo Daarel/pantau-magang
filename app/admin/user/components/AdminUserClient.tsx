@@ -1,7 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { type FC } from "react";
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
@@ -20,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
+import { useModalQuery } from "@/hooks/useModalQuery";
 
 const columns: ColumnDef<DataColumn>[] = [
   {
@@ -114,41 +114,7 @@ interface AdminUserProps {
 }
 
 const AdminUser: FC<AdminUserProps> = ({tableData}) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [open, setOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const modal = searchParams?.get("modal");
-    setOpen(modal === "open");
-  }, [searchParams]);
-
-  const handleToggleModal = () => {
-    const newOpen = !open;
-    setOpen(newOpen);
-
-    if (newOpen) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      router.replace(pathname);
-    }
-  };
-
-  const handleOpenChange = (newVal: boolean) => {
-    setOpen(newVal);
-
-    if (newVal) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("modal");
-      const next = params.toString()
-        ? `${pathname}?${params.toString()}`
-        : pathname;
-      router.replace(next);
-    }
-  };
+  const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
 
   const handleSubmit = () => {};
 
@@ -158,7 +124,7 @@ const AdminUser: FC<AdminUserProps> = ({tableData}) => {
         title='Daftar Anak Magang'
         subtitle='List daftar anak magang aktif'
         label='Tambah User'
-        onAdd={handleToggleModal}
+        onAdd={toggleModal}
       />
       <DataTable data={tableData} columns={columns} />
       <CustomDialog

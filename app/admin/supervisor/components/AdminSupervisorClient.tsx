@@ -12,8 +12,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 
-import { FC, useEffect, useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { type FC } from "react";
 
 import { supervisorModalInput } from "@/const";
 import DataTable from "@/components/DataTable";
