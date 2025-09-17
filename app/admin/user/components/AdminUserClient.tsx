@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { type FC } from "react";
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
 
-import { dataColumnIntern, type DataColumn } from "@/const/dummy";
+import type { DataColumn } from "@/types/adminTable";
 
 import DataTable from "@/components/DataTable";
 import CustomDialog from "@/components/CustomDialog";
@@ -20,17 +19,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
+import { useModalQuery } from "@/hooks/useModalQuery";
 
 const columns: ColumnDef<DataColumn>[] = [
   {
-    accessorKey: "nomorInduk",
+    accessorKey: "nomor_induk",
     header: "Nomor Induk",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("nomorInduk")}</div>
+      <div className='capitalize'>{row.getValue("nomor_induk")}</div>
     ),
   },
   {
-    accessorKey: "namaLengkap",
+    accessorKey: "full_name",
     header: ({ column }) => {
       return (
         <Button
@@ -43,42 +43,42 @@ const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className='lowercase'>{row.getValue("namaLengkap")}</div>
+      <div className='lowercase'>{row.getValue("full_name")}</div>
     ),
   },
   {
-    accessorKey: "password",
-    header: "Password",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("password")}</div>
-    ),
-  },
-  {
-    accessorKey: "gedung",
+    accessorKey: "department",
     header: "Gedung",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("gedung")}</div>
+      <div className='capitalize'>{row.getValue("department")}</div>
     ),
   },
   {
-    accessorKey: "pembimbing",
+    accessorKey: "supervisor_name",
     header: "Pembimbing",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("pembimbing")}</div>
+      <div className='capitalize'>{row.getValue("supervisor_name")}</div>
     ),
   },
   {
-    accessorKey: "mulaiMagang",
+    accessorKey: "intern_start_date",
     header: "Mulai Magang",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("mulaiMagang")}</div>
+      <div className='capitalize'>{row.getValue("intern_start_date")}</div>
     ),
   },
   {
-    accessorKey: "selesaiMagang",
+    accessorKey: "intern_end_date",
     header: "Selesai Magang",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("selesaiMagang")}</div>
+      <div className='capitalize'>{row.getValue("intern_end_date")}</div>
+    ),
+  },
+  {
+    accessorKey: "institution",
+    header: "Asal Sekolah/Universitas",
+    cell: ({ row }) => (
+      <div className='capitalize'>{row.getValue("institution")}</div>
     ),
   },
   {
@@ -109,43 +109,12 @@ const columns: ColumnDef<DataColumn>[] = [
   },
 ];
 
-export default function AdminUser() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+interface AdminUserProps {
+  tableData: DataColumn[];
+}
 
-  const [open, setOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const modal = searchParams?.get("modal");
-    setOpen(modal === "open");
-  }, [searchParams]);
-
-  const handleToggleModal = () => {
-    const newOpen = !open;
-    setOpen(newOpen);
-
-    if (newOpen) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      router.replace(pathname);
-    }
-  };
-
-  const handleOpenChange = (newVal: boolean) => {
-    setOpen(newVal);
-
-    if (newVal) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("modal");
-      const next = params.toString()
-        ? `${pathname}?${params.toString()}`
-        : pathname;
-      router.replace(next);
-    }
-  };
+const AdminUser: FC<AdminUserProps> = ({tableData}) => {
+  const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
 
   const handleSubmit = () => {};
 
@@ -155,9 +124,9 @@ export default function AdminUser() {
         title='Daftar Anak Magang'
         subtitle='List daftar anak magang aktif'
         label='Tambah User'
-        onAdd={handleToggleModal}
+        onAdd={toggleModal}
       />
-      <DataTable data={dataColumnIntern} columns={columns} />
+      <DataTable data={tableData} columns={columns} />
       <CustomDialog
         open={open}
         onOpenChange={handleOpenChange}
@@ -168,3 +137,5 @@ export default function AdminUser() {
     </>
   );
 }
+
+export default AdminUser;

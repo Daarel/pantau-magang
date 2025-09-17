@@ -2,7 +2,7 @@
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
-import { dataColumnSupervisor, type DataColumn } from "@/const/dummy";
+import type { DataColumn } from "@/types/adminTable";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,24 +12,24 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { type FC } from "react";
 
 import { supervisorModalInput } from "@/const";
 import DataTable from "@/components/DataTable";
 import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
+import { useModalQuery } from "@/hooks/useModalQuery";
 
 const columns: ColumnDef<DataColumn>[] = [
   {
-    accessorKey: "nomorInduk",
+    accessorKey: "nomor_induk",
     header: "Nomor Induk",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("nomorInduk")}</div>
+      <div className='capitalize'>{row.getValue("nomor_induk")}</div>
     ),
   },
   {
-    accessorKey: "namaLengkap",
+    accessorKey: "full_name",
     header: ({ column }) => {
       return (
         <Button
@@ -42,21 +42,14 @@ const columns: ColumnDef<DataColumn>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className='lowercase'>{row.getValue("namaLengkap")}</div>
+      <div className='lowercase'>{row.getValue("full_name")}</div>
     ),
   },
   {
-    accessorKey: "password",
-    header: "Password",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("password")}</div>
-    ),
-  },
-  {
-    accessorKey: "gedung",
+    accessorKey: "department",
     header: "Gedung",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("gedung")}</div>
+      <div className='capitalize'>{row.getValue("department")}</div>
     ),
   },
   {
@@ -87,42 +80,12 @@ const columns: ColumnDef<DataColumn>[] = [
   },
 ];
 
-export default function AdminSupervisor() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [open, setOpen] = useState<boolean>(false);
+interface AdminSupervisorProps {
+  tableData: DataColumn[];
+}
 
-  useEffect(() => {
-    const modal = searchParams?.get("modal");
-    setOpen(modal === "open");
-  }, [searchParams]);
-
-  const handleToggleModal = () => {
-    const newOpen = !open;
-    setOpen(newOpen);
-
-    if (newOpen) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      router.replace(pathname);
-    }
-  };
-
-  const handleOpenChange = (newVal: boolean) => {
-    setOpen(newVal);
-
-    if (newVal) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("modal");
-      const next = params.toString()
-        ? `${pathname}?${params.toString()}`
-        : pathname;
-      router.replace(next);
-    }
-  };
+const AdminSupervisor: FC<AdminSupervisorProps> = ({tableData}) => {
+  const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
 
   const handleSubmit = () => {};
 
@@ -132,9 +95,9 @@ export default function AdminSupervisor() {
         title='Daftar Supervisor'
         subtitle='List daftar supervisor aktif'
         label='Tambah Supervisor'
-        onAdd={handleToggleModal}
+        onAdd={toggleModal}
       />
-      <DataTable data={dataColumnSupervisor} columns={columns} />
+      <DataTable data={tableData} columns={columns} />
       <CustomDialog
         open={open}
         onOpenChange={handleOpenChange}
@@ -145,3 +108,5 @@ export default function AdminSupervisor() {
     </>
   );
 }
+
+export default AdminSupervisor;

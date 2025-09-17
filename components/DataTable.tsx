@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 
-import type { DataColumn } from "@/const/dummy";
+import type { DataColumn } from "@/types/adminTable";
 
 interface DataTableProps {
   data: DataColumn[];
@@ -66,10 +66,10 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
         <Input
           placeholder='Filter Nama...'
           value={
-            (table.getColumn("namaLengkap")?.getFilterValue() as string) ?? ""
+            (table.getColumn("full_name")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("namaLengkap")?.setFilterValue(event.target.value)
+            table.getColumn("full_name")?.setFilterValue(event.target.value)
           }
           className='max-w-sm'
         />
