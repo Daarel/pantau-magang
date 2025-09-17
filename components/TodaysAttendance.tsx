@@ -5,12 +5,13 @@ import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
 // Components
 import { Button } from "@/components/ui/button";
-import { CheckOutModal } from "@/components/CheckOutModal";
-import { useAttendanceSummary } from "@/hooks/useDashboardData";
+import { CheckOutModal } from "@/components/CheckOutModal"
+import { useDashboardData } from '@/hooks/useDashboardData'
+import { capitalize } from '@/lib/utils';
 
 export default function TodaysAttendance() {
   const router = useRouter();
-  const { summaryData, loading, error } = useAttendanceSummary();
+  const { summaryData, loading, error } = useDashboardData()
   return (
     <div className='flex flex-col w-full md:w-1/2 border-2 gap-6 py-4 px-5 rounded-md'>
       {/* Header */}
@@ -24,21 +25,15 @@ export default function TodaysAttendance() {
         <div className='flex justify-between'>
           <h1>Status:</h1>
           {/* <Badge variant="default" className='bg-[#FEF9C3] text-[#854D0E]'>Belum Tercatat</Badge> */}
-          <Badge variant='default' className='bg-green-100 text-green-800'>
-            Hadir
-          </Badge>
+          <Badge variant="default" className='bg-green-100 text-green-800'>{capitalize(loading ? "-" : summaryData?.status ?? "-")}</Badge>
         </div>
         <div className='flex justify-between'>
           <h1>Check In:</h1>
-          <h1 className='font-semibold'>
-            {loading ? "-" : summaryData?.last_check_in ?? "-"}
-          </h1>
+          <h1 className='font-semibold'>{loading ? "-" : summaryData?.today_check_in ?? "-"}</h1>
         </div>
         <div className='flex justify-between'>
           <h1>Check Out:</h1>
-          <h1 className='font-semibold'>
-            {loading ? "-" : summaryData?.last_check_out ?? "-"}
-          </h1>
+          <h1 className='font-semibold'>{loading ? "-" : summaryData?.today_check_out ?? "-"}</h1>
         </div>
       </div>
       {/* Button Check In */}

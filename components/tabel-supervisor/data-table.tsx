@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="border-2 rounded-md p-4">
+    <div>
       <div>
         {title &&<h5 className="h5 font-semibold mb-4">{title}</h5>}
       </div>
@@ -90,12 +90,12 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center pb-4">
           {enableFilter && (
             <Input
-              placeholder="Filter names..."
-              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              placeholder="Filter keterangan..."
+              value={(table.getColumn("keterangan")?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
-                table.getColumn("name")?.setFilterValue(event.target.value)
+                table.getColumn("keterangan")?.setFilterValue(event.target.value)
               }
-              className="max-w-sm"
+              className="max-w-sm mt-4"
             />
           )}
           {enableColumnVisibility && <DataTableViewOptions table={table} />}
