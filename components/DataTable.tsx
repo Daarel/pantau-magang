@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 
-import type { DataColumn } from "@/const/dummy";
+import type { DataColumn } from "@/types/adminTable";
 
 interface DataTableProps {
   data: DataColumn[];

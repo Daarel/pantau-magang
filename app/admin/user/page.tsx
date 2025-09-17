@@ -16,19 +16,24 @@ export default async function AdminUserPage() {
   }
 
   const { data, error: errorGetData } = await supabase.from("users")
-    .select(`id, nomor_induk, full_name, password, department, users!inner (
-    full_name,
-    supervisor_id
-  ), intern_start_date, intern_end_date`);
+    .select(`id, nomor_induk, full_name, department, supervisor:supervisor_id (
+  id,
+  full_name
+), intern_start_date, intern_end_date, institution`);
 
   if (errorGetData) {
     console.error("Error fetching user data:", errorGetData);
   }
 
+  const flatData = (data ?? []).map((user: any) => ({
+    ...user,
+    supervisor_name: user.supervisor?.full_name ?? "-",
+  }));
+
   return (
     <Suspense fallback={<Loading />}>
       <div className='min-h-screen bg-gray-50 p-6'>
-        <AdminUserClient tableData={data ?? []} />
+        <AdminUserClient tableData={flatData ?? []} />
       </div>
     </Suspense>
   );

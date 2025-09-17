@@ -2,7 +2,7 @@
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
-import { type DataColumn } from "@/const/dummy";
+import type { DataColumn } from "@/types/adminTable";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,13 +46,6 @@ const columns: ColumnDef<DataColumn>[] = [
     ),
   },
   {
-    accessorKey: "password",
-    header: "Password",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("password")}</div>
-    ),
-  },
-  {
     accessorKey: "department",
     header: "Gedung",
     cell: ({ row }) => (
@@ -90,7 +83,6 @@ const columns: ColumnDef<DataColumn>[] = [
 interface AdminSupervisorProps {
   tableData: DataColumn[];
 }
-
 
 const AdminSupervisor: FC<AdminSupervisorProps> = ({tableData}) => {
   const router = useRouter();

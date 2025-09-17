@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
 
-import { dataColumnIntern, type DataColumn } from "@/const/dummy";
+import type { DataColumn } from "@/types/adminTable";
 
 import DataTable from "@/components/DataTable";
 import CustomDialog from "@/components/CustomDialog";
@@ -47,13 +47,6 @@ const columns: ColumnDef<DataColumn>[] = [
     ),
   },
   {
-    accessorKey: "password",
-    header: "Password",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("password")}</div>
-    ),
-  },
-  {
     accessorKey: "department",
     header: "Gedung",
     cell: ({ row }) => (
@@ -61,24 +54,31 @@ const columns: ColumnDef<DataColumn>[] = [
     ),
   },
   {
-    accessorKey: "pembimbing",
+    accessorKey: "supervisor_name",
     header: "Pembimbing",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("pembimbing")}</div>
+      <div className='capitalize'>{row.getValue("supervisor_name")}</div>
     ),
   },
   {
-    accessorKey: "mulaiMagang",
+    accessorKey: "intern_start_date",
     header: "Mulai Magang",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("mulaiMagang")}</div>
+      <div className='capitalize'>{row.getValue("intern_start_date")}</div>
     ),
   },
   {
-    accessorKey: "selesaiMagang",
+    accessorKey: "intern_end_date",
     header: "Selesai Magang",
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("selesaiMagang")}</div>
+      <div className='capitalize'>{row.getValue("intern_end_date")}</div>
+    ),
+  },
+  {
+    accessorKey: "institution",
+    header: "Asal Sekolah/Universitas",
+    cell: ({ row }) => (
+      <div className='capitalize'>{row.getValue("institution")}</div>
     ),
   },
   {
@@ -109,11 +109,14 @@ const columns: ColumnDef<DataColumn>[] = [
   },
 ];
 
-export default function AdminUser() {
+interface AdminUserProps {
+  tableData: DataColumn[];
+}
+
+const AdminUser: FC<AdminUserProps> = ({tableData}) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -157,7 +160,7 @@ export default function AdminUser() {
         label='Tambah User'
         onAdd={handleToggleModal}
       />
-      <DataTable data={dataColumnIntern} columns={columns} />
+      <DataTable data={tableData} columns={columns} />
       <CustomDialog
         open={open}
         onOpenChange={handleOpenChange}
@@ -168,3 +171,5 @@ export default function AdminUser() {
     </>
   );
 }
+
+export default AdminUser;

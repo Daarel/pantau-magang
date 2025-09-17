@@ -17,7 +17,8 @@ export default async function AdminUserPage() {
 
   const { data, error: errorGetData } = await supabase
     .from("users")
-    .select("id, nomor_induk, full_name, password, department");
+    .select("id, nomor_induk, full_name, department")
+    .eq("role", "supervisor");
 
   if (errorGetData) {
     console.error("Error fetching user data:", errorGetData);
@@ -25,7 +26,7 @@ export default async function AdminUserPage() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className='min-h-screen bg-gray-50 p-6'>
         <AdminSupervisorClient tableData={data ?? []} />
       </div>
     </Suspense>
