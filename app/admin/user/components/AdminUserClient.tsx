@@ -20,12 +20,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { type FC, useCallback, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface AdminUserProps {
   tableData: DataColumn[];
 }
 
 const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
+  const router = useRouter();
   const supabase = createClient();
 
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
@@ -34,7 +36,7 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
   const handleSubmit = () => {};
 
   const deleteByNIM = useCallback(
-    async (nomor_induk: number) => {
+    async (nomor_induk: number, onComplete?: () => void) => {
       setLoading(true);
       const { error } = await supabase
         .from("users")
@@ -47,6 +49,7 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
         console.error("Gagal hapus:", error.message);
       } else {
         console.log(`Data dengan NIM ${nomor_induk} berhasil dihapus`);
+        if (onComplete) onComplete();
       }
     },
     [supabase]
@@ -137,7 +140,10 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
                   <RiDeleteBin6Fill className='text-red-500' />
                   <Button
                     variant={null}
-                    onClick={() => deleteByNIM(nomor_induk)}
+                    onClick={() => deleteByNIM(nomor_induk, () => {
+                      console.log('done');
+                      router.refresh();
+                    })}
                     disabled={loading}
                     className='text-red-500'
                   >
@@ -150,7 +156,7 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteByNIM]
+    [loading, deleteByNIM, router]
   );
 
   return (

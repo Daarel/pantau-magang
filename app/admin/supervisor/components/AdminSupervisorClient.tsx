@@ -20,12 +20,14 @@ import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 interface AdminSupervisorProps {
   tableData: DataColumn[];
 }
 
 const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
+  const router = useRouter();
   const supabase = createClient();
 
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
@@ -34,7 +36,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const handleSubmit = () => {};
 
   const deleteByNIM = useCallback(
-    async (nomor_induk: number) => {
+    async (nomor_induk: number, onComplete?: () => void) => {
       setLoading(true);
       const { error } = await supabase
         .from("users")
@@ -47,6 +49,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         console.error("Gagal hapus:", error.message);
       } else {
         console.log(`Data dengan NIM ${nomor_induk} berhasil dihapus`);
+        if (onComplete) onComplete();
       }
     },
     [supabase]
@@ -110,7 +113,12 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                   <RiDeleteBin6Fill className='text-red-500' />
                   <Button
                     variant={null}
-                    onClick={() => deleteByNIM(nomor_induk)}
+                    onClick={() =>
+                      deleteByNIM(nomor_induk, () => {
+                        console.log("done");
+                        router.refresh();
+                      })
+                    }
                     disabled={loading}
                     className='text-red-500'
                   >
@@ -123,7 +131,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteByNIM]
+    [loading, deleteByNIM, router]
   );
 
   return (
