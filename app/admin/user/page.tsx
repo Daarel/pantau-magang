@@ -15,12 +15,15 @@ export default async function AdminUserPage() {
     redirect("/");
   }
 
-  const { data, error: errorGetData } = await supabase.from("users")
-    .select(`id, nomor_induk, full_name, department, supervisor:supervisor_id (
+  const { data, error: errorGetData } = await supabase
+    .from("users")
+    .select(
+      `id, nomor_induk, full_name, department, supervisor:supervisor_id (
   id,
   full_name
-), intern_start_date, intern_end_date, institution`);
-
+), intern_start_date, intern_end_date, institution`
+    )
+    .eq("role", "intern");
   if (errorGetData) {
     console.error("Error fetching user data:", errorGetData);
   }
