@@ -1,5 +1,6 @@
 import { useRouter } from "next/navigation";
 import { logoutUser } from "@/lib/auth/client";
+import { createClient } from "@/lib/supabase/client";
 
 import {
   DropdownMenu,
@@ -17,10 +18,11 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
+import Image from "next/image";
 import { FaUser } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
-import { useState, type FC } from "react";
+import { useState, useEffect, type FC } from "react";
 
 interface profileDropDown {
   username: string;
@@ -29,7 +31,37 @@ interface profileDropDown {
 
 const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
   const [openModal, setOpenModal] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("/avatar_fallback.png");
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      const { data, error } = await supabase
+        .from("users")
+        .select("photo_url, role")
+        .eq("email_auth", session.user.id)
+        .single();
+
+      if (error) {
+        console.error("Gagal ambil avatar:", error);
+        return;
+      }
+
+      setAvatarUrl(data?.photo_url || "/avatar_fallback.png");
+    };
+
+    fetchAvatar();
+
+    const handler = () => fetchAvatar();
+    window.addEventListener("profile-updated", handler);
+
+    return () => window.removeEventListener("profile-updated", handler);
+  }, []);
+
   const handleNavigate = (page: string) => {
     switch (page) {
       case "profile":
@@ -54,8 +86,11 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className='cursor-pointer'>
-            <AvatarImage src='https://i.pravatar.cc/100' alt='Profile' />
-            <AvatarFallback>D</AvatarFallback>
+            <Image 
+            src={avatarUrl}
+            width={40}
+            height={40} 
+            alt='Profile' />
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-56' align='end'>
@@ -103,3 +138,7 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
 };
 
 export default ProfileDropDown;
+function setRole(arg0: any) {
+  throw new Error("Function not implemented.");
+}
+
