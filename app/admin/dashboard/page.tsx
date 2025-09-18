@@ -128,7 +128,7 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <div className='relative space-y-2 mb-7 bg-purple-500 h-48 p-8 rounded-lg overflow-hidden'>
+      <div className='relative space-y-2 mb-7 bg-purple-500 min-h-48 p-8 rounded-lg overflow-hidden'>
         <Image
           src='/overlayBuilding.jpeg'
           alt='Overlay'

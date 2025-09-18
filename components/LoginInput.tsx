@@ -27,7 +27,7 @@ const LoginInput: FC<LoginInputProps> = (props) => {
         {showPassword ? (
           <AiOutlineEye className='h-5 w-5' />
         ) : (
-          <AiOutlineEyeInvisible className='h-5 w-5' />
+          <AiOutlineEyeInvisible className='h-5 w-5 z-10' />
         )}
       </button>
     </>

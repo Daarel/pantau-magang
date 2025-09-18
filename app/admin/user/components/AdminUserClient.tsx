@@ -1,12 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
 
-import { dataColumnIntern, type DataColumn } from "@/const/dummy";
+import type { DataColumn } from "@/types/adminTable";
 
 import DataTable from "@/components/DataTable";
 import CustomDialog from "@/components/CustomDialog";
@@ -20,134 +17,147 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
+import { useModalQuery } from "@/hooks/useModalQuery";
+import { type FC, useCallback, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
-const columns: ColumnDef<DataColumn>[] = [
-  {
-    accessorKey: "nomorInduk",
-    header: "Nomor Induk",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("nomorInduk")}</div>
-    ),
-  },
-  {
-    accessorKey: "namaLengkap",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nama Lengkap
-          <LuArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className='lowercase'>{row.getValue("namaLengkap")}</div>
-    ),
-  },
-  {
-    accessorKey: "password",
-    header: "Password",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("password")}</div>
-    ),
-  },
-  {
-    accessorKey: "gedung",
-    header: "Gedung",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("gedung")}</div>
-    ),
-  },
-  {
-    accessorKey: "pembimbing",
-    header: "Pembimbing",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("pembimbing")}</div>
-    ),
-  },
-  {
-    accessorKey: "mulaiMagang",
-    header: "Mulai Magang",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("mulaiMagang")}</div>
-    ),
-  },
-  {
-    accessorKey: "selesaiMagang",
-    header: "Selesai Magang",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("selesaiMagang")}</div>
-    ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: () => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
-              <RiMoreFill />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem>
-              <RiEdit2Line />
-              <span>Edit</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RiDeleteBin6Fill className='text-red-500' />
-              <span className='text-red-500'>Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+interface AdminUserProps {
+  tableData: DataColumn[];
+}
 
-export default function AdminUser() {
+const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const supabase = createClient();
 
-  const [open, setOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    const modal = searchParams?.get("modal");
-    setOpen(modal === "open");
-  }, [searchParams]);
-
-  const handleToggleModal = () => {
-    const newOpen = !open;
-    setOpen(newOpen);
-
-    if (newOpen) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      router.replace(pathname);
-    }
-  };
-
-  const handleOpenChange = (newVal: boolean) => {
-    setOpen(newVal);
-
-    if (newVal) {
-      router.replace(`${pathname}?modal=open`);
-    } else {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("modal");
-      const next = params.toString()
-        ? `${pathname}?${params.toString()}`
-        : pathname;
-      router.replace(next);
-    }
-  };
+  const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = () => {};
+
+  const deleteByNIM = useCallback(
+    async (nomor_induk: number, onComplete?: () => void) => {
+      setLoading(true);
+      const { error } = await supabase
+        .from("users")
+        .delete()
+        .eq("nomor_induk", nomor_induk);
+
+      setLoading(false);
+
+      if (error) {
+        console.error("Gagal hapus:", error.message);
+      } else {
+        console.log(`Data dengan NIM ${nomor_induk} berhasil dihapus`);
+        if (onComplete) onComplete();
+      }
+    },
+    [supabase]
+  );
+
+  const columns = useMemo<ColumnDef<DataColumn>[]>(
+    () => [
+      {
+        accessorKey: "nomor_induk",
+        header: "Nomor Induk",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("nomor_induk")}</div>
+        ),
+      },
+      {
+        accessorKey: "full_name",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant='ghost'
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Nama Lengkap
+              <LuArrowUpDown />
+            </Button>
+          );
+        },
+        cell: ({ row }) => (
+          <div className='lowercase'>{row.getValue("full_name")}</div>
+        ),
+      },
+      {
+        accessorKey: "department",
+        header: "Gedung",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("department")}</div>
+        ),
+      },
+      {
+        accessorKey: "supervisor_name",
+        header: "Pembimbing",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("supervisor_name")}</div>
+        ),
+      },
+      {
+        accessorKey: "intern_start_date",
+        header: "Mulai Magang",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("intern_start_date")}</div>
+        ),
+      },
+      {
+        accessorKey: "intern_end_date",
+        header: "Selesai Magang",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("intern_end_date")}</div>
+        ),
+      },
+      {
+        accessorKey: "institution",
+        header: "Asal Sekolah/Universitas",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("institution")}</div>
+        ),
+      },
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          const nomor_induk = row.original.nomor_induk;
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='ghost' className='h-8 w-8 p-0'>
+                  <span className='sr-only'>Open menu</span>
+                  <RiMoreFill />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuItem>
+                  <RiEdit2Line />
+                  <Button variant={null}>Edit</Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <RiDeleteBin6Fill className='text-red-500' />
+                  <Button
+                    variant={null}
+                    onClick={() => deleteByNIM(nomor_induk, () => {
+                      console.log('done');
+                      router.refresh();
+                    })}
+                    disabled={loading}
+                    className='text-red-500'
+                  >
+                    {loading ? "Deleting..." : "Delete"}
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
+    ],
+    [loading, deleteByNIM, router]
+  );
 
   return (
     <>
@@ -155,9 +165,9 @@ export default function AdminUser() {
         title='Daftar Anak Magang'
         subtitle='List daftar anak magang aktif'
         label='Tambah User'
-        onAdd={handleToggleModal}
+        onAdd={toggleModal}
       />
-      <DataTable data={dataColumnIntern} columns={columns} />
+      <DataTable data={tableData} columns={columns} />
       <CustomDialog
         open={open}
         onOpenChange={handleOpenChange}
@@ -167,4 +177,6 @@ export default function AdminUser() {
       />
     </>
   );
-}
+};
+
+export default AdminUser;
