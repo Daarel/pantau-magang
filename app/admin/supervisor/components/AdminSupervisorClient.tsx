@@ -12,82 +12,119 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 
-import { type FC } from "react";
+import { type FC, useCallback, useMemo, useState } from "react";
 
 import { supervisorModalInput } from "@/const";
 import DataTable from "@/components/DataTable";
 import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 import { useModalQuery } from "@/hooks/useModalQuery";
-
-const columns: ColumnDef<DataColumn>[] = [
-  {
-    accessorKey: "nomor_induk",
-    header: "Nomor Induk",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("nomor_induk")}</div>
-    ),
-  },
-  {
-    accessorKey: "full_name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nama Lengkap
-          <LuArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className='lowercase'>{row.getValue("full_name")}</div>
-    ),
-  },
-  {
-    accessorKey: "department",
-    header: "Gedung",
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue("department")}</div>
-    ),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: () => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
-              <RiMoreFill />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem>
-              <RiEdit2Line />
-              <span>Edit</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RiDeleteBin6Fill className='text-red-500' />
-              <span className='text-red-500'>Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+import { createClient } from "@/lib/supabase/client";
 
 interface AdminSupervisorProps {
   tableData: DataColumn[];
 }
 
-const AdminSupervisor: FC<AdminSupervisorProps> = ({tableData}) => {
+const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
+  const supabase = createClient();
+
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = () => {};
+
+  const deleteByNIM = useCallback(
+    async (nomor_induk: number) => {
+      setLoading(true);
+      const { error } = await supabase
+        .from("users")
+        .delete()
+        .eq("nomor_induk", nomor_induk);
+
+      setLoading(false);
+
+      if (error) {
+        console.error("Gagal hapus:", error.message);
+      } else {
+        console.log(`Data dengan NIM ${nomor_induk} berhasil dihapus`);
+      }
+    },
+    [supabase]
+  );
+
+  const columns = useMemo<ColumnDef<DataColumn>[]>(
+    () => [
+      {
+        accessorKey: "nomor_induk",
+        header: "Nomor Induk",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("nomor_induk")}</div>
+        ),
+      },
+      {
+        accessorKey: "full_name",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant='ghost'
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Nama Lengkap
+              <LuArrowUpDown />
+            </Button>
+          );
+        },
+        cell: ({ row }) => (
+          <div className='lowercase'>{row.getValue("full_name")}</div>
+        ),
+      },
+      {
+        accessorKey: "department",
+        header: "Gedung",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("department")}</div>
+        ),
+      },
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          const nomor_induk = row.original.nomor_induk;
+
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='ghost' className='h-8 w-8 p-0'>
+                  <span className='sr-only'>Open menu</span>
+                  <RiMoreFill />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuItem>
+                  <RiEdit2Line />
+                  <Button variant={null}>Edit</Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <RiDeleteBin6Fill className='text-red-500' />
+                  <Button
+                    variant={null}
+                    onClick={() => deleteByNIM(nomor_induk)}
+                    disabled={loading}
+                    className='text-red-500'
+                  >
+                    {loading ? "Deleting..." : "Delete"}
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
+    ],
+    [loading, deleteByNIM]
+  );
 
   return (
     <>
@@ -107,6 +144,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({tableData}) => {
       />
     </>
   );
-}
+};
 
 export default AdminSupervisor;
