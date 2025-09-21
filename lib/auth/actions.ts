@@ -10,7 +10,7 @@ async function getUserByNomorInduk(nomorInduk: string) {
 
   const { data, error } = await supabase
     .from("users")
-    .select("role, email, email_auth")
+    .select("role, email, auth_id")
     .eq("nomor_induk", nomorInduk)
     .single();
 
@@ -80,11 +80,14 @@ export async function resetPassword(formData: FormData) {
     throw new Error("Nomor Induk tidak ditemukan");
   }
 
-  const { email_auth } = userInfo;
+  const { auth_id } = userInfo;
 
-  const { data, error } = await supabaseAdmin.auth.admin.updateUserById(email_auth, {
-    password: loginData.password,
-  });
+  const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
+    auth_id,
+    {
+      password: loginData.password,
+    }
+  );
 
   if (error) {
     console.error("Gagal reset password:", error);

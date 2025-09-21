@@ -29,7 +29,7 @@ export default async function SupervisorDashboard() {
   const { data, error: errorGetUser } = await supabase
     .from("users")
     .select("id")
-    .eq("email_auth", user.id)
+    .eq("auth_id", user.id)
     .single();
 
   if (errorGetUser || !data) {
@@ -83,43 +83,44 @@ export default async function SupervisorDashboard() {
   pendingLeaves = pendingCount ?? 0;
 
   // ambil semua kehadiran intern supervisor ini
-const { data: attendanceData, error: attendanceError } = await supabase
-  .from("attendance")
-  .select("date, status, users!inner(supervisor_id)")
-  .eq("users.supervisor_id", data.id);
+  const { data: attendanceData, error: attendanceError } = await supabase
+    .from("attendance")
+    .select("date, status, users!inner(supervisor_id)")
+    .eq("users.supervisor_id", data.id);
 
-if (attendanceError) {
-  console.error("Error fetching attendance data:", attendanceError);
-}
+  if (attendanceError) {
+    console.error("Error fetching attendance data:", attendanceError);
+  }
 
-if (attendanceData && attendanceData.length > 0) {
-  // buat object untuk menyimpan jumlah hadir per tanggal
-  const attendancePerDay: Record<string, number> = {};
+  if (attendanceData && attendanceData.length > 0) {
+    // buat object untuk menyimpan jumlah hadir per tanggal
+    const attendancePerDay: Record<string, number> = {};
 
-  attendanceData.forEach((att: any) => {
-    if (att.status === "hadir") {
-      if (!attendancePerDay[att.date]) {
-        attendancePerDay[att.date] = 0;
+    attendanceData.forEach((att: any) => {
+      if (att.status === "hadir") {
+        if (!attendancePerDay[att.date]) {
+          attendancePerDay[att.date] = 0;
+        }
+        attendancePerDay[att.date] += 1; // tambah jumlah hadir
       }
-      attendancePerDay[att.date] += 1; // tambah jumlah hadir
-    }
-  });
+    });
 
-  const totalDays = Object.keys(attendancePerDay).length;
+    const totalDays = Object.keys(attendancePerDay).length;
 
-  // total hadir seluruh hari
-  const totalPresent = Object.values(attendancePerDay).reduce(
-    (sum, val) => sum + val,
-    0
-  );
+    // total hadir seluruh hari
+    const totalPresent = Object.values(attendancePerDay).reduce(
+      (sum, val) => sum + val,
+      0
+    );
 
-  // hitung avg attendance
-  avgAttendance = totalDays > 0 && totalInterns > 0 
-  ? (totalPresent / (totalDays * totalInterns)) * 100
-  : 0;
+    // hitung avg attendance
+    avgAttendance =
+      totalDays > 0 && totalInterns > 0
+        ? (totalPresent / (totalDays * totalInterns)) * 100
+        : 0;
 
-  avgAttendance = parseFloat(avgAttendance.toFixed(2));
-}
+    avgAttendance = parseFloat(avgAttendance.toFixed(2));
+  }
 
   // Ensure totalInterns is defined and in scope
   const stats = {
