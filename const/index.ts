@@ -11,6 +11,7 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { BsHouse } from "react-icons/bs";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import { FaRegFileAlt } from "react-icons/fa";
+import { PiPassword } from "react-icons/pi";
 
 import type { IconType } from "react-icons";
 
@@ -136,6 +137,7 @@ const adminMenu: MenuByRole[] = [
   { title: "Dashboard", path: "/admin/dashboard", Icon: BsHouse },
   { title: "User", path: "/admin/user", Icon: FaUser },
   { title: "Supervisor", path: "/admin/supervisor", Icon: FaUserTie },
+  { title: 'Reset Password', path: "/admin/reset", Icon: PiPassword }
 ];
 
 export {
