@@ -83,7 +83,7 @@ export const statusColor = (status: string): { class: string; text: string } => 
     case "alfa":
       return { class: "bg-red-100 text-red-800", text: "Alfa" };
     default:
-      return { class: "bg-gray-100 text-gray-800", text: status };
+      return { class: "bg-gray-100 text-gray-800", text: "Belum Tercatat" };
   }
 }
 
