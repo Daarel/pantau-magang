@@ -37,16 +37,48 @@ export default async function AdminDashboard() {
     redirect("/");
   }
 
-  // Mock data
+  const { data: summary, error } = await supabase
+    .from("users_summary")
+    .select("*");
 
+  if (!summary || error) {
+    throw new Error("cannot get data from view");
+  }
+
+  // Mock data
   const stats = {
-    totalUsers: 46,
-    activeInterns: 32,
-    supervisors: 8,
-    totalAttendance: 89,
-    departments: 12,
-    systemAlerts: 3,
+    totalUsers: summary[0]?.total_users ?? 0,
+    activeInterns: summary[0]?.total_intern ?? 0,
+    supervisors: summary[0]?.total_supervisor ?? 0,
+    departments: summary[0]?.total_departement ?? 0,
   };
+
+  const statCards = [
+    {
+      Icon: FaUsers,
+      title: "Total Users",
+      value: stats.totalUsers,
+      contentColor: "text-blue-600",
+    },
+    {
+      Icon: FaUserGraduate,
+      title: "Interns",
+      value: stats.activeInterns,
+      contentColor: "text-green-600",
+    },
+    {
+      Icon: FaUserTie,
+      title: "Supervisors",
+      value: stats.supervisors,
+      contentColor: "text-indigo-600",
+    },
+    {
+      Icon: FaBuilding,
+      title: "Departments",
+      value: stats.departments,
+      contentColor: "text-yellow-600",
+    },
+  ];
 
   const recentActivities: recentActivities[] = [
     {
@@ -83,33 +115,6 @@ export default async function AdminDashboard() {
       user: "Dr. Sarah Wil",
       time: "1 hour ago",
       type: "attendance",
-    },
-  ];
-
-  const statCards = [
-    {
-      Icon: FaUsers,
-      title: "Total Users",
-      value: stats.totalUsers,
-      contentColor: "text-blue-600",
-    },
-    {
-      Icon: FaUserGraduate,
-      title: "Interns",
-      value: stats.activeInterns,
-      contentColor: "text-green-600",
-    },
-    {
-      Icon: FaUserTie,
-      title: "Supervisors",
-      value: stats.supervisors,
-      contentColor: "text-indigo-600",
-    },
-    {
-      Icon: FaBuilding,
-      title: "Departments",
-      value: stats.departments,
-      contentColor: "text-yellow-600",
     },
   ];
 
