@@ -65,11 +65,19 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
         ),
       },
       {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div className='lowercase'>{row.getValue("email")}</div>
+        ),
+      },
+      {
         accessorKey: "full_name",
         header: ({ column }) => {
           return (
             <Button
               variant='ghost'
+              className="-m-3"
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
@@ -80,7 +88,7 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
           );
         },
         cell: ({ row }) => (
-          <div className='lowercase'>{row.getValue("full_name")}</div>
+          <div className='capitalize'>{row.getValue("full_name")}</div>
         ),
       },
       {
@@ -88,6 +96,13 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
         header: "Gedung",
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("department")}</div>
+        ),
+      },
+      {
+        accessorKey: "institution",
+        header: "Perguruan Tinggi",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("institution")}</div>
         ),
       },
       {
@@ -109,13 +124,6 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
         header: "Selesai Magang",
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("intern_end_date")}</div>
-        ),
-      },
-      {
-        accessorKey: "institution",
-        header: "Asal Sekolah/Universitas",
-        cell: ({ row }) => (
-          <div className='capitalize'>{row.getValue("institution")}</div>
         ),
       },
       {

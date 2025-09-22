@@ -70,6 +70,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
           return (
             <Button
               variant='ghost'
+              className='-m-3'
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
@@ -80,7 +81,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
           );
         },
         cell: ({ row }) => (
-          <div className='lowercase'>{row.getValue("full_name")}</div>
+          <div className='capitalize'>{row.getValue("full_name")}</div>
         ),
       },
       {

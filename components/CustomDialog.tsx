@@ -70,6 +70,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
                 type={field.type || "text"}
                 placeholder={field.placeholder}
                 className="my-4"
+                required
               />
             </div>
           ))}
