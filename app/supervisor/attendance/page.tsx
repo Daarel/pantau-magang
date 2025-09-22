@@ -16,7 +16,7 @@ export default async function AttendancePage() {
   const { data, error } = await supabase
     .from("users")
     .select("id")
-    .eq("email_auth", user.id)
+    .eq("auth_id", user.id)
     .single();
 
   if (error || !data) {

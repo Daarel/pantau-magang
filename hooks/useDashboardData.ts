@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { internSummary } from '@/types/dashboard'
-import { formatTimeStamp, formatTime } from "@/lib/utils"
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { internSummary } from "@/types/dashboard";
+import { formatTimeStamp, formatTime } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
 export function useDashboardData() {
@@ -17,7 +17,7 @@ export function useDashboardData() {
         const {
           data: { user },
         } = await supabase.auth.getUser();
-      
+
         if (!user) {
           redirect("/");
         }
@@ -25,9 +25,9 @@ export function useDashboardData() {
         const { data, error: errorGetUser } = await supabase
           .from("users")
           .select("id")
-          .eq("email_auth", user.id)
+          .eq("auth_id", user.id)
           .single();
-      
+
         if (errorGetUser || !data) {
           console.error("Error fetching intern data:", errorGetUser);
           redirect("/");
@@ -46,9 +46,19 @@ export function useDashboardData() {
           return;
         }
 
-        console.log("Raw data from Supabase:", dashboardData)
-        console.log("Raw start_time:", dashboardData?.start_time, "Type:", typeof dashboardData?.start_time)
-        console.log("Raw end_time:", dashboardData?.end_time, "Type:", typeof dashboardData?.end_time)
+        console.log("Raw data from Supabase:", dashboardData);
+        console.log(
+          "Raw start_time:",
+          dashboardData?.start_time,
+          "Type:",
+          typeof dashboardData?.start_time
+        );
+        console.log(
+          "Raw end_time:",
+          dashboardData?.end_time,
+          "Type:",
+          typeof dashboardData?.end_time
+        );
 
         if (dashboardData) {
           const formatted = {

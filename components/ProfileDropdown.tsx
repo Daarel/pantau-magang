@@ -37,13 +37,15 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
   useEffect(() => {
     const fetchAvatar = async () => {
       const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.user) return;
 
       const { data, error } = await supabase
         .from("users")
         .select("photo_url, role")
-        .eq("email_auth", session.user.id)
+        .eq("auth_id", session.user.id)
         .single();
 
       if (error) {
@@ -86,11 +88,7 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className='cursor-pointer'>
-            <Image 
-            src={avatarUrl}
-            width={40}
-            height={40} 
-            alt='Profile' />
+            <Image src={avatarUrl} width={40} height={40} alt='Profile' />
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-56' align='end'>
@@ -141,4 +139,3 @@ export default ProfileDropDown;
 function setRole(arg0: any) {
   throw new Error("Function not implemented.");
 }
-
