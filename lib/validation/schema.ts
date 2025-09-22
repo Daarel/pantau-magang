@@ -12,25 +12,26 @@ export const internSchema = z
     nomor_induk: z.string().min(1, "Nomor Induk wajib diisi"),
     email: z.string().email("Email tidak valid"),
     full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
+    password: z.string().min(1, "Password wajib diisi"),
     department: z.string().min(1, "Gedung wajib diisi"),
     institution: z.string().min(1, "Perguruan Tinggi wajib diisi"),
-    supervisor_name: z.string().min(1, "Pembimbing wajib diisi"),
-    intern_start_date: z.preprocess((val) => {
-      if (typeof val === "string" || val instanceof Date) return new Date(val);
-    }, z.date({ message: "Tanggal mulai magang tidak valid" })),
-    intern_end_date: z.preprocess((val) => {
-      if (typeof val === "string" || val instanceof Date) return new Date(val);
-    }, z.date({ message: "Tanggal selesai magang tidak valid" })),
+    nomor_induk_supervisor: z.string().min(1, "Pembimbing wajib diisi"),
+    intern_start_date: z.string().min(1, "Tanggal mulai magang wajib diisi"),
+    intern_end_date: z.string().min(1, "Tanggal selesai magang wajib diisi"),
   })
-  .refine((data) => data.intern_end_date >= data.intern_start_date, {
-    message: "Tanggal selesai magang tidak boleh kurang dari tanggal mulai",
-    path: ["intern_end_date"],
-  });
+  .refine(
+    (data) =>
+      new Date(data.intern_end_date) >= new Date(data.intern_start_date),
+    {
+      message: "Tanggal selesai magang tidak boleh kurang dari tanggal mulai",
+      path: ["intern_end_date"],
+    }
+  );
 
 export type InternInput = z.infer<typeof internSchema>;
 
 export const prepareForBackend = (data: InternInput) => ({
   ...data,
-  intern_start_date: formatDateToYMD(data.intern_start_date),
-  intern_end_date: formatDateToYMD(data.intern_end_date),
+  intern_start_date: formatDateToYMD(new Date(data.intern_start_date)),
+  intern_end_date: formatDateToYMD(new Date(data.intern_end_date)),
 });

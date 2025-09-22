@@ -16,7 +16,6 @@ import { type FC, useCallback, useMemo, useState } from "react";
 
 import { supervisorModalInput } from "@/const";
 import DataTable from "@/components/DataTable";
-import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { createClient } from "@/lib/supabase/client";
@@ -144,13 +143,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         onAdd={toggleModal}
       />
       <DataTable data={tableData} columns={columns} />
-      <CustomDialog
-        open={open}
-        onOpenChange={handleOpenChange}
-        title='Tambah Supervisor'
-        fields={supervisorModalInput}
-        onSubmit={handleSubmit}
-      />
+
     </>
   );
 };

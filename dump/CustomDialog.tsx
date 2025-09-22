@@ -10,7 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { IconType } from "react-icons";
-import { DialogDescription } from "@radix-ui/react-dialog";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  internSchema,
+  InternInput,
+  prepareForBackend,
+} from "@/lib/validation/schema";
+import { z } from 'zod'
 
 interface FieldConfig {
   name: string;
@@ -26,34 +34,40 @@ interface CustomDialogProps {
   open: boolean;
   title: string;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: Record<string, string>) => void;
 }
+
+type InternFormValues = z.infer<typeof internSchema>;
 
 const CustomDialog: FC<CustomDialogProps> = ({
   open,
   title,
   fields,
   onOpenChange,
-  onSubmit,
 }) => {
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data: Record<string, string> = {};
-    fields.forEach((field) => {
-      data[field.name] = formData.get(field.name)?.toString() ?? "";
-    });
-    onSubmit(data);
-  };
+// const { register, handleSubmit, formState: { errors } } = useForm<InternFormValues>({
+//   resolver: zodResolver(internSchema),
+//   defaultValues: {
+//     nomor_induk: "",
+//     email: "",
+//     full_name: "",
+//     department: "",
+//     institution: "",
+//     supervisor_name: "",
+//     intern_start_date: "", // string kosong
+//     intern_end_date: "",   // string kosong
+//   },
+// });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className='sm:max-w-[600px] max-h-[80vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="text-gray-500">Silahkan meng-input data supervisor</DialogDescription>
+          <DialogDescription className='text-gray-500'>
+            Silahkan meng-input data supervisor
+          </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form>
           {fields.map((field) => (
             <div key={field.name}>
               <Label htmlFor={field.name} className='flex items-center gap-2'>
@@ -69,7 +83,7 @@ const CustomDialog: FC<CustomDialogProps> = ({
                 name={field.name}
                 type={field.type || "text"}
                 placeholder={field.placeholder}
-                className="my-4"
+                className='my-4'
                 required
               />
             </div>

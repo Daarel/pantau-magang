@@ -2,11 +2,11 @@
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
+import InternFormDialog from "./InternFormDialog"
 
 import type { DataColumn } from "@/types/adminTable";
 
 import DataTable from "@/components/DataTable";
-import CustomDialog from "@/components/CustomDialog";
 import TablePageHeader from "@/components/DataTableHeader";
 import { internModalInput } from "@/const";
 import { Button } from "@/components/ui/button";
@@ -32,8 +32,6 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
 
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
   const [loading, setLoading] = useState<boolean>(false);
-
-  const handleSubmit = () => {};
 
   const deleteByNIM = useCallback(
     async (nomor_induk: number, onComplete?: () => void) => {
@@ -176,12 +174,11 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
         onAdd={toggleModal}
       />
       <DataTable data={tableData} columns={columns} />
-      <CustomDialog
+      <InternFormDialog
         open={open}
         onOpenChange={handleOpenChange}
         title='Tambah User'
         fields={internModalInput}
-        onSubmit={handleSubmit}
       />
     </>
   );
