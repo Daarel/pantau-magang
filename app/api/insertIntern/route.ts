@@ -19,17 +19,17 @@ export async function POST(req: NextRequest) {
     intern_end_date,
   } = body;
 
-  const { data: supervisorNomorInduk, error: errorSelectNomorInduk } =
-    await supabase
-      .from("users")
-      .select("id")
-      .eq("nomor_induk", nomor_induk_supervisor)
-      .single();
-    
-    console.log(supervisorNomorInduk);
+  const { data: supervisorByNIM, error: errorSupervisorByNIM } = await supabase
+    .from("users")
+    .select("id, role")
+    .eq("nomor_induk", nomor_induk_supervisor)
+    .single();
 
-  if (errorSelectNomorInduk)
-    return NextResponse.json({ error: errorSelectNomorInduk }, { status: 400 });
+  if (!supervisorByNIM)
+    return NextResponse.json({ error: errorSupervisorByNIM }, { status: 404 });
+
+  if (errorSupervisorByNIM)
+    return NextResponse.json({ error: errorSupervisorByNIM }, { status: 400 });
 
   const { data: signUpData, error: errorSignUp } =
     await supabaseAdmin.auth.admin.createUser({
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       role,
       intern_start_date,
       intern_end_date,
-      supervisor_id: supervisorNomorInduk.id,
+      supervisor_id: supervisorByNIM.id,
       department,
       institution,
       email,
