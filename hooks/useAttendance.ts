@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AttendanceIntern, AttendanceCheckIn } from "@/types/attendance";
+import { redirect } from "next/navigation";
 
 // Fetch data user (intern)
 export function useAttendanceData(activeTab: string) {
@@ -13,19 +14,24 @@ export function useAttendanceData(activeTab: string) {
     const fetchData = async () => {
       try {
         // Dapatkan user data dari localStorage
-        const userDataString = localStorage.getItem("user");
+        const {
+          data: { user },
+          error: authError,
+        } = await supabase.auth.getUser();
 
-        if (!userDataString) {
-          setError("User data not found in localStorage");
-          setLoading(false);
+        if (authError || !user) {
+          redirect("/");
           return;
         }
 
-        // Parse data user
-        const userData = JSON.parse(userDataString);
-        const user_id = userData.id;
+        // Dapatkan user_id dari tabel users berdasarkan auth_id
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("id")
+          .eq("auth_id", user.id)
+          .single();
 
-        if (!user_id) {
+        if (!userData) {
           setError("User ID not found in user data");
           setLoading(false);
           return;
@@ -35,7 +41,7 @@ export function useAttendanceData(activeTab: string) {
         let query = supabase
           .from("attendance")
           .select("*")
-          .eq("user_id", user_id);
+          .eq("user_id", userData.id);
 
         // Filter berdasarkan tab aktif jika bukan "Semua Riwayat"
         if (activeTab !== "Semua Riwayat") {
