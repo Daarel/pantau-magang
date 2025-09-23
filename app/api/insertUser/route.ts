@@ -6,30 +6,35 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient();
 
   const body = await req.json();
-  const {
-    nomor_induk,
-    email,
-    full_name,
-    password,
-    role,
-    department,
-    institution,
-    nomor_induk_supervisor,
-    intern_start_date,
-    intern_end_date,
-  } = body;
+    const {
+      nomor_induk,
+      email,
+      full_name,
+      password,
+      role,
+      department,
+      institution,
+      nomor_induk_supervisor,
+      intern_start_date,
+      intern_end_date,
+    } = body;
 
-  const { data: supervisorByNIM, error: errorSupervisorByNIM } = await supabase
-    .from("users")
-    .select("id, role")
-    .eq("nomor_induk", nomor_induk_supervisor)
-    .single();
+  let supervisorByNIM: { id: string; role: string } | null = null;
 
-  if (!supervisorByNIM?.id || supervisorByNIM.role !== 'supervisor')
-    return NextResponse.json({ error: errorSupervisorByNIM }, { status: 404 });
+  if (role !== "supervisor") {
+    const { data, error } = await supabase
+      .from("users")
+      .select("id, role")
+      .eq("nomor_induk", nomor_induk_supervisor)
+      .single();
 
-  if (errorSupervisorByNIM)
-    return NextResponse.json({ error: errorSupervisorByNIM }, { status: 400 });
+    if (!data?.id || data.role !== "supervisor")
+      return NextResponse.json({ error }, { status: 404 });
+
+    if (error) return NextResponse.json({ error }, { status: 400 });
+
+    supervisorByNIM = data;
+  }
 
   const { data: signUpData, error: errorSignUp } =
     await supabaseAdmin.auth.admin.createUser({
@@ -48,7 +53,7 @@ export async function POST(req: NextRequest) {
       role,
       intern_start_date,
       intern_end_date,
-      supervisor_id: supervisorByNIM.id,
+      supervisor_id: supervisorByNIM?.id ?? null,
       department,
       institution,
       email,

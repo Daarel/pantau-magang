@@ -4,7 +4,7 @@ import { useState, type FC, type InputHTMLAttributes } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Input } from "@/components/ui/input";
 import { useFormStatus } from "react-dom";
-
+import clsx from "clsx";
 
 interface LoginInputProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
@@ -26,7 +26,10 @@ const LoginInput: FC<LoginInputProps> = (props) => {
         type='button'
         onClick={togglePasswordVisibility}
         disabled={pending}
-        className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer'
+        className={clsx(
+          "absolute right-3 top-1/2 -translate-y-1/2 transform cursor-pointer text-gray-400",
+          !pending && "hover:text-gray-600"
+        )}
       >
         {showPassword ? (
           <AiOutlineEye className='h-5 w-5' />
