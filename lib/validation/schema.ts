@@ -7,10 +7,27 @@ const formatDateToYMD = (date: Date) => {
   return `${y}-${m}-${d}`;
 };
 
+export const insertDataToLowerCase = (data: InternInput) => {
+  const lowercasedData = Object.fromEntries(
+    Object.entries(data).map(([key, value]) => [
+      key,
+      typeof value === "string" ? value.toLowerCase() : value,
+    ])
+  );
+
+  return {
+    ...lowercasedData,
+    intern_start_date: formatDateToYMD(new Date(data.intern_start_date)),
+    intern_end_date: formatDateToYMD(new Date(data.intern_end_date)),
+  };
+};
+
+export type InternInput = z.infer<typeof internSchema>;
+
 export const internSchema = z
   .object({
     nomor_induk: z.string().min(1, "Nomor Induk wajib diisi"),
-    email: z.string().email("Email tidak valid"),
+    email: z.email("Email tidak valid"),
     full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
     password: z.string().min(1, "Password wajib diisi"),
     department: z.string().min(1, "Gedung wajib diisi"),
@@ -28,10 +45,11 @@ export const internSchema = z
     }
   );
 
-export type InternInput = z.infer<typeof internSchema>;
+export type SupervisorInput = z.infer<typeof supervisorSchema>;
 
-export const prepareForBackend = (data: InternInput) => ({
-  ...data,
-  intern_start_date: formatDateToYMD(new Date(data.intern_start_date)),
-  intern_end_date: formatDateToYMD(new Date(data.intern_end_date)),
+export const supervisorSchema = z.object({
+  nomor_induk: z.string().min(1, "Nomor Induk wajib diisi"),
+  email: z.email("Email tidak valid"),
+  full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
+  department: z.string().min(1, "Gedung wajib diisi"),
 });

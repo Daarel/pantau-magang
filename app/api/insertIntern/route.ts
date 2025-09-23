@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     .eq("nomor_induk", nomor_induk_supervisor)
     .single();
 
-  if (!supervisorByNIM)
+  if (!supervisorByNIM?.id || supervisorByNIM.role !== 'supervisor')
     return NextResponse.json({ error: errorSupervisorByNIM }, { status: 404 });
 
   if (errorSupervisorByNIM)

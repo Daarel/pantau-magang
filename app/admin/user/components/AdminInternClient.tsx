@@ -2,7 +2,7 @@
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
-import InternFormDialog from "./InternFormDialog"
+import InternFormDialog from "./InternFormDialog";
 
 import type { DataColumn } from "@/types/adminTable";
 
@@ -26,7 +26,7 @@ interface AdminUserProps {
   tableData: DataColumn[];
 }
 
-const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
+const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   const router = useRouter();
   const supabase = createClient();
 
@@ -75,7 +75,7 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
           return (
             <Button
               variant='ghost'
-              className="-m-3"
+              className='-m-3'
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
@@ -146,10 +146,12 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
                   <RiDeleteBin6Fill className='text-red-500' />
                   <Button
                     variant={null}
-                    onClick={() => deleteByNIM(nomor_induk, () => {
-                      console.log('done');
-                      router.refresh();
-                    })}
+                    onClick={() =>
+                      deleteByNIM(nomor_induk, () => {
+                        console.log("done");
+                        router.refresh();
+                      })
+                    }
                     disabled={loading}
                     className='text-red-500'
                   >
@@ -173,7 +175,9 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
         label='Tambah User'
         onAdd={toggleModal}
       />
-      <DataTable data={tableData} columns={columns} />
+      <div>
+        <DataTable data={tableData} columns={columns} />
+      </div>
       <InternFormDialog
         open={open}
         onOpenChange={handleOpenChange}
@@ -184,4 +188,4 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
   );
 };
 
-export default AdminUser;
+export default AdminInternClient;

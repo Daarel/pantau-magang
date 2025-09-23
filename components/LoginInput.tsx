@@ -3,6 +3,8 @@
 import { useState, type FC, type InputHTMLAttributes } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Input } from "@/components/ui/input";
+import { useFormStatus } from "react-dom";
+
 
 interface LoginInputProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
@@ -10,6 +12,7 @@ interface LoginInputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const LoginInput: FC<LoginInputProps> = (props) => {
+  const { pending } = useFormStatus();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const togglePasswordVisibility = () => {
@@ -22,6 +25,7 @@ const LoginInput: FC<LoginInputProps> = (props) => {
       <button
         type='button'
         onClick={togglePasswordVisibility}
+        disabled={pending}
         className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer'
       >
         {showPassword ? (

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import AdminUserClient from "./components/AdminUserClient";
+import AdminInternClient from "./components/AdminInternClient";
 import Loading from "../loading";
 
 import { redirect } from "next/navigation";
@@ -35,7 +35,7 @@ export default async function AdminUserPage() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className='min-h-screen bg-gray-50 p-6'>
+      <div className='min-h-screen bg-gray-50 p-6 overflow-x-auto'>
         <AdminUserClient tableData={flatData ?? []} />
       </div>
     </Suspense>
