@@ -12,6 +12,7 @@ import { BsHouse } from "react-icons/bs";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import { FaRegFileAlt } from "react-icons/fa";
 import { PiPassword } from "react-icons/pi";
+import { MdEmail } from "react-icons/md";
 
 import type { IconType } from "react-icons";
 
@@ -32,6 +33,12 @@ const supervisorModalInput: ModalField[] = [
     label: "Nama Supervisor",
     placeholder: "Masukkan nama",
     Icon: FaUser,
+  },
+  {
+    name: "email",
+    label: "Email",
+    placeholder: "Masukkan Email",
+    Icon: MdEmail,
   },
   {
     name: "nomorIndukPerusahaan",
@@ -61,6 +68,12 @@ const internModalInput: ModalField[] = [
     label: "Nama User",
     placeholder: "Masukkan nama lengkap",
     Icon: FaUser,
+  },
+  {
+    name: "email",
+    label: "Email",
+    placeholder: "Masukkan Email",
+    Icon: MdEmail,
   },
   {
     name: "nomorInduk",
@@ -137,7 +150,7 @@ const adminMenu: MenuByRole[] = [
   { title: "Dashboard", path: "/admin/dashboard", Icon: BsHouse },
   { title: "User", path: "/admin/user", Icon: FaUser },
   { title: "Supervisor", path: "/admin/supervisor", Icon: FaUserTie },
-  { title: 'Reset Password', path: "/admin/reset", Icon: PiPassword }
+  { title: "Reset Password", path: "/admin/reset", Icon: PiPassword },
 ];
 
 export {
