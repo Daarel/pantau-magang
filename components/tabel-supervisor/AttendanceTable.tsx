@@ -32,7 +32,7 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
     `
     )
     .eq("users.supervisor_id", supervisorId)
-    .or("dispensation.eq.approved,dispensation.eq.n_approved,dispensation.eq.-")
+    .or("dispensation.eq.approved,dispensation.eq.n_approved,dispensation.is.null")
     .order("date", { ascending: false });
 
   if (error) {
@@ -123,7 +123,7 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
     )
     .eq("users.supervisor_id", supervisorId)
     .eq("date", today)
-    .or("dispensation.eq.approved,dispensation.eq.n_approved,dispensation.eq.-")
+    .or("dispensation.eq.approved,dispensation.eq.n_approved,dispensation.is.null")
     .order("date", { ascending: false });
 
   if (error) {

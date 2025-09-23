@@ -4,13 +4,12 @@ import { useEffect, useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button"; // 🔹 tombol edit & hapus
+import { Button } from "@/components/ui/button";
 import { MdEdit, MdDelete } from "react-icons/md";
 
+
 export default function Profile() {
-  const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(
-    null
-  );
+  const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(null);
   const [profileData, setProfileData] = useState<any>(null);
   const fallbackAvatar = "/avatar_fallback.png";
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -19,16 +18,12 @@ export default function Profile() {
     const getUserProfile = async () => {
       const supabase = createClient();
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) return;
 
       const { data, error } = await supabase
         .from("users")
-        .select(
-          "id, full_name, nomor_induk, department, role, photo_url, institution, intern_start_date, intern_end_date"
-        )
+        .select("id, full_name, nomor_induk, department, role, photo_url, institution, intern_start_date, intern_end_date")
         .eq("auth_id", session.user.id)
         .single();
 
@@ -50,26 +45,21 @@ export default function Profile() {
     ? `${profileData.photo_url}?t=${Date.now()}`
     : fallbackAvatar;
 
-  // 📌 Fungsi upload avatar
+  // 📌 Upload avatar
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const supabase = createClient();
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // 🔹 Cek ukuran file (max 2MB)
-    const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+    const MAX_SIZE = 2 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
-      console.error("Gagal upload: ukuran file melebihi 2MB");
       alert("Ukuran foto maksimal 2MB. Silakan pilih file lain.");
       return;
     }
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) return;
 
-    // 🔹 Hapus foto lama kalau ada
     if (profileData.photo_url) {
       try {
         const oldPath = profileData.photo_url.split("/").pop();
@@ -81,7 +71,6 @@ export default function Profile() {
       }
     }
 
-    // 🔹 Generate nama unik
     const uniqueSuffix = `${Date.now()}-${crypto.randomUUID()}`;
     const ext = file.name.split(".").pop();
     const fileName = `${session.user.id}-${uniqueSuffix}.${ext}`;
@@ -113,12 +102,12 @@ export default function Profile() {
 
     setProfileData((prev: any) => ({
       ...prev,
-      photo_url: `${publicUrl}?t=${Date.now()}`,
+      photo_url: `${publicUrl}?t=${Date.now()}`
     }));
-    // ✅ Trigger event supaya navbar ikut refresh
     window.dispatchEvent(new Event("profile-updated"));
   };
-  // 📌 Fungsi hapus avatar
+
+  // 📌 Hapus avatar
   const handleDelete = async () => {
     const supabase = createClient();
 
@@ -145,47 +134,50 @@ export default function Profile() {
 
     setProfileData((prev: any) => ({
       ...prev,
-      photo_url: null,
+      photo_url: null
     }));
-    // ✅ Trigger event supaya navbar ikut refresh
     window.dispatchEvent(new Event("profile-updated"));
   };
 
   return (
     <>
-      <h1 className='title_header text-black'>Profil</h1>
-      <p className='text-gray-500'>Informasi tentang saya</p>
-      <div className='flex justify-center items-center flex-col'>
+      <h1 className="h4 font-semibold">Profile</h1>
+      <p className="text-gray-500">Informasi tentang saya</p>
+      <div className="flex justify-center items-center flex-col">
         <Card>
-          <CardContent className='flex flex-col justify-center items-center'>
-            <div className='relative'>
-              <Image
-                src={avatarUrl}
-                width={300}
-                height={300}
-                alt='foto profil Anda'
-                className='rounded-full object-cover'
-              />
-              <div className='absolute bottom-2 right-2 flex gap-2'>
-                <Button size='sm' onClick={() => fileInputRef.current?.click()}>
+          <CardContent className="flex flex-col justify-center items-center">
+            {/* 🔹 Avatar bulat rapi + tombol tidak terpotong */}
+            <div className="relative w-[300px] h-[300px]">
+              <div className="relative w-[300px] h-[300px] rounded-full overflow-hidden">
+                <Image
+                  src={avatarUrl}
+                  fill
+                  alt="foto profil Anda"
+                  className="object-cover"
+                />
+              </div>
+
+              <div className="absolute bottom-2 right-2 flex gap-2">
+                <Button size="sm" onClick={() => fileInputRef.current?.click()}>
                   <MdEdit />
                 </Button>
-                <Button size='sm' variant='destructive' onClick={handleDelete}>
+                <Button size="sm" variant="destructive" onClick={handleDelete}>
                   <MdDelete />
                 </Button>
               </div>
             </div>
 
             <input
-              type='file'
-              accept='image/*'
+              type="file"
+              accept="image/*"
               ref={fileInputRef}
-              className='hidden'
+              className="hidden"
               onChange={handleUpload}
             />
 
-            <div className='flex flex-row mt-5 gap-10'>
-              <ul className='flex flex-col items-start'>
+            {/* 🔹 Info User */}
+            <div className="flex flex-row mt-5 gap-10">
+              <ul className="flex flex-col items-start">
                 <li>
                   <p>Nama Lengkap: </p>
                   <p>Nomor Induk: </p>
@@ -195,9 +187,7 @@ export default function Profile() {
                       <p>Periode Magang: </p>
                     </>
                   )}
-                  {(role === "supervisor" || role === "admin") && (
-                    <p>Gedung: </p>
-                  )}
+                  {(role === "supervisor" || role === "admin") && <p>Gedung: </p>}
                 </li>
               </ul>
               <ul>
@@ -208,8 +198,8 @@ export default function Profile() {
                     <>
                       <p>{profileData.institution}</p>
                       <p>
-                        {new Date(profileData.intern_start_date).toDateString()}{" "}
-                        - {new Date(profileData.intern_end_date).toDateString()}
+                        {new Date(profileData.intern_start_date).toDateString()} -{" "}
+                        {new Date(profileData.intern_end_date).toDateString()}
                       </p>
                     </>
                   )}
