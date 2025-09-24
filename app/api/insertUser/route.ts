@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     await supabaseAdmin.auth.admin.createUser({
       email,
       password,
+      email_confirm: true,
       user_metadata: { full_name, role },
     });
 

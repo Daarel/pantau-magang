@@ -35,7 +35,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
     async (nomor_induk: number, onComplete?: () => void) => {
       setLoading(true);
 
-      const res = await fetch("/api/delete-user", {
+      const res = await fetch("/api/deleteUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nomor_induk }),
