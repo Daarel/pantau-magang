@@ -36,7 +36,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
       setLoading(true);
 
       const res = await fetch("/api/deleteUser", {
-        method: "POST",
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nomor_induk }),
       });
