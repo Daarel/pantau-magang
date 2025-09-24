@@ -35,11 +35,10 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
     async (nomor_induk: number, onComplete?: () => void) => {
       setLoading(true);
 
-      const res = await fetch("/api/deleteUser", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nomor_induk }),
+      const res = await fetch(`/api/deleteUser?nomor_induk=${nomor_induk}`, {
+        method: "DELETE",
       });
+      
       setLoading(false);
 
       if (!res.ok) {

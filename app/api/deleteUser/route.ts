@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function DELETE(req: NextRequest) {
-  const { nomor_induk } = await req.json();
+  const { searchParams } = new URL(req.url);
+  const nomor_induk = searchParams.get("nomor_induk");
   const supabase = await createClient();
 
   const { data: userData, error: fetchError } = await supabase
@@ -41,5 +42,5 @@ export async function DELETE(req: NextRequest) {
     );
   }
 
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ success: true });
 }
