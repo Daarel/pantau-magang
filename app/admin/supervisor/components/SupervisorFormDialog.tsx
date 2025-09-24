@@ -1,15 +1,9 @@
 import type { FC } from "react";
 import type { IconType } from "react-icons";
 
-import {
-  FaUser,
-  FaUserTie,
-  FaIdCardAlt,
-  FaBuilding,
-  FaCalendarAlt,
-} from "react-icons/fa";
+import { FaUser, FaIdCardAlt, FaBuilding } from "react-icons/fa";
 import { PiPassword } from "react-icons/pi";
-import { MdEmail, MdSchool } from "react-icons/md";
+import { MdEmail } from "react-icons/md";
 
 import {
   Dialog,
@@ -26,12 +20,12 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  internSchema,
-  InternInput,
+  supervisorSchema,
+  SupervisorInput,
   insertDataToLowerCase,
 } from "@/lib/validation/schema";
 
-interface InternFormDialogProps {
+interface SupervisorFormDialogProps {
   fields: FieldConfig[];
   open: boolean;
   title: string;
@@ -47,7 +41,7 @@ interface FieldConfig {
   iconClassName?: string;
 }
 
-const InternFormDialog: FC<InternFormDialogProps> = ({
+const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
   open,
   onOpenChange,
 }) => {
@@ -55,12 +49,19 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<InternInput>({
-    resolver: zodResolver(internSchema),
+  } = useForm<SupervisorInput>({
+    resolver: zodResolver(supervisorSchema),
   });
 
-  const onSubmit = async (data: InternInput) => {
-    const payload = { ...insertDataToLowerCase(data), role: "intern" };
+  const onSubmit = async (data: SupervisorInput) => {
+    const payload = {
+      ...insertDataToLowerCase(data),
+      role: "supervisor",
+      institution: null,
+      nomor_induk_supervisor: null,
+      intern_start_date: null,
+      intern_end_date: null,
+    };
 
     try {
       const res = await fetch("/api/insertUser", {
@@ -81,7 +82,7 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
 
       console.log("User berhasil ditambahkan:", result.data);
       alert("User berhasil ditambahkan!");
-      onOpenChange(false); // tutup dialog setelah submit sukses
+      onOpenChange(false);
     } catch (err) {
       console.error(err);
       alert("Terjadi kesalahan jaringan");
@@ -111,7 +112,11 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-1'
               required
             />
-            {errors.nomor_induk && <p className="text-sm text-red-500">{errors.nomor_induk.message}</p>}
+            {errors.nomor_induk && (
+              <p className='text-sm text-red-500'>
+                {errors.nomor_induk.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -128,7 +133,9 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+            {errors.email && (
+              <p className='text-sm text-red-500'>{errors.email.message}</p>
+            )}
           </div>
 
           <div>
@@ -144,7 +151,9 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.full_name && <p className="text-sm text-red-500">{errors.full_name.message}</p>}
+            {errors.full_name && (
+              <p className='text-sm text-red-500'>{errors.full_name.message}</p>
+            )}
           </div>
 
           <div>
@@ -160,7 +169,9 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+            {errors.password && (
+              <p className='text-sm text-red-500'>{errors.password.message}</p>
+            )}
           </div>
 
           <div>
@@ -176,75 +187,11 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.department && <p className="text-sm text-red-500">{errors.department.message}</p>}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
-                <MdSchool className='w-4 h-4' />
-              </span>
-              Perguruan Tinggi
-            </Label>
-            <Input
-              {...register("institution")}
-              placeholder='Masukkan asal perguruan tinggi'
-              className='my-2'
-              required
-            />
-            {errors.institution && <p className="text-sm text-red-500">{errors.institution.message}</p>}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
-                <FaUserTie className='w-4 h-4' />
-              </span>
-              Nomor Induk Pembimbing
-            </Label>
-            <Input
-              {...register("nomor_induk_supervisor")}
-              placeholder='Masukkan Nomor Induk Pembimbing'
-              className='my-2'
-              required
-            />
-            {errors.nomor_induk_supervisor && <p className="text-sm text-red-500">{errors.nomor_induk_supervisor.message}</p>}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
-                <FaCalendarAlt className='w-4 h-4' />
-              </span>
-              Mulai Magang
-            </Label>
-            <Input
-              type='date'
-              {...register("intern_start_date")}
-              placeholder='Masukkan tanggal mulai magang'
-              className='my-2'
-              required
-            />
-            {errors.intern_start_date && (
-              <p className="text-sm text-red-500">{errors.intern_start_date.message}</p>
+            {errors.department && (
+              <p className='text-sm text-red-500'>
+                {errors.department.message}
+              </p>
             )}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
-                <FaCalendarAlt className='w-4 h-4' />
-              </span>
-              Selesai Magang
-            </Label>
-            <Input
-              type='date'
-              {...register("intern_end_date")}
-              placeholder='Masukkan tanggal selesai magang'
-              className='my-2'
-              required
-            />
-            {errors.intern_end_date && <p className="text-sm text-red-500">{errors.intern_end_date.message}</p>}
           </div>
 
           <DialogFooter>
@@ -256,4 +203,4 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
   );
 };
 
-export default InternFormDialog;
+export default SupervisorFormDialog;

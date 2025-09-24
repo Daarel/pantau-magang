@@ -2,7 +2,7 @@
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
-import InternFormDialog from "./InternFormDialog"
+import InternFormDialog from "./InternFormDialog";
 
 import type { DataColumn } from "@/types/adminTable";
 
@@ -19,16 +19,14 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { type FC, useCallback, useMemo, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 interface AdminUserProps {
   tableData: DataColumn[];
 }
 
-const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
+const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   const router = useRouter();
-  const supabase = createClient();
 
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,21 +34,24 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
   const deleteByNIM = useCallback(
     async (nomor_induk: number, onComplete?: () => void) => {
       setLoading(true);
-      const { error } = await supabase
-        .from("users")
-        .delete()
-        .eq("nomor_induk", nomor_induk);
+
+      const res = await fetch("/api/deleteUser", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nomor_induk }),
+      });
 
       setLoading(false);
 
-      if (error) {
-        console.error("Gagal hapus:", error.message);
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Gagal menghapus: ", err.error);
       } else {
-        console.log(`Data dengan NIM ${nomor_induk} berhasil dihapus`);
+        console.log(`User dengan NIM ${nomor_induk} berhasil dihapus`);
         if (onComplete) onComplete();
       }
     },
-    [supabase]
+    []
   );
 
   const columns = useMemo<ColumnDef<DataColumn>[]>(
@@ -75,7 +76,7 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
           return (
             <Button
               variant='ghost'
-              className="-m-3"
+              className='-m-3'
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
@@ -146,10 +147,12 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
                   <RiDeleteBin6Fill className='text-red-500' />
                   <Button
                     variant={null}
-                    onClick={() => deleteByNIM(nomor_induk, () => {
-                      console.log('done');
-                      router.refresh();
-                    })}
+                    onClick={() =>
+                      deleteByNIM(nomor_induk, () => {
+                        console.log("done");
+                        router.refresh();
+                      })
+                    }
                     disabled={loading}
                     className='text-red-500'
                   >
@@ -173,7 +176,9 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
         label='Tambah User'
         onAdd={toggleModal}
       />
-      <DataTable data={tableData} columns={columns} />
+      <div>
+        <DataTable data={tableData} columns={columns} />
+      </div>
       <InternFormDialog
         open={open}
         onOpenChange={handleOpenChange}
@@ -184,4 +189,4 @@ const AdminUser: FC<AdminUserProps> = ({ tableData }) => {
   );
 };
 
-export default AdminUser;
+export default AdminInternClient;

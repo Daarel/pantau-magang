@@ -15,10 +15,10 @@ import { Button } from "@/components/ui/button";
 import { type FC, useCallback, useMemo, useState } from "react";
 
 import { supervisorModalInput } from "@/const";
+import SupervisorFormDialog from "./SupervisorFormDialog";
 import DataTable from "@/components/DataTable";
 import TablePageHeader from "@/components/DataTableHeader";
 import { useModalQuery } from "@/hooks/useModalQuery";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 interface AdminSupervisorProps {
@@ -27,31 +27,30 @@ interface AdminSupervisorProps {
 
 const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const router = useRouter();
-  const supabase = createClient();
 
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSubmit = () => {};
-
   const deleteByNIM = useCallback(
     async (nomor_induk: number, onComplete?: () => void) => {
       setLoading(true);
-      const { error } = await supabase
-        .from("users")
-        .delete()
-        .eq("nomor_induk", nomor_induk);
 
+      const res = await fetch("/api/deleteUser", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nomor_induk }),
+      });
       setLoading(false);
 
-      if (error) {
-        console.error("Gagal hapus:", error.message);
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Gagal menghapus: ", err.error);
       } else {
-        console.log(`Data dengan NIM ${nomor_induk} berhasil dihapus`);
+        console.log(`User dengan NIM ${nomor_induk} berhasil dihapus`);
         if (onComplete) onComplete();
       }
     },
-    [supabase]
+    []
   );
 
   const columns = useMemo<ColumnDef<DataColumn>[]>(
@@ -59,8 +58,13 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
       {
         accessorKey: "nomor_induk",
         header: "Nomor Induk",
+        cell: ({ row }) => <div>{row.getValue("nomor_induk")}</div>,
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
         cell: ({ row }) => (
-          <div className='capitalize'>{row.getValue("nomor_induk")}</div>
+          <div className='lowercase'>{row.getValue("email")}</div>
         ),
       },
       {
@@ -143,7 +147,12 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         onAdd={toggleModal}
       />
       <DataTable data={tableData} columns={columns} />
-
+      <SupervisorFormDialog
+        open={open}
+        onOpenChange={handleOpenChange}
+        title='Tambah User'
+        fields={supervisorModalInput}
+      />
     </>
   );
 };
