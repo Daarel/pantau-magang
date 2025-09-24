@@ -1,5 +1,4 @@
 import { useRouter } from "next/navigation";
-import { logoutUser } from "@/lib/auth/client";
 import { createClient } from "@/lib/supabase/client";
 
 import {
@@ -33,6 +32,7 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
   const [openModal, setOpenModal] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("/avatar_fallback.png");
   const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     const fetchAvatar = async () => {
@@ -64,14 +64,18 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
     return () => window.removeEventListener("profile-updated", handler);
   }, []);
 
-  const handleNavigate = (page: string) => {
+  const handleNavigate = async (page: string) => {
     switch (page) {
       case "profile":
         router.push("/profile");
         break;
       case "logout":
-        logoutUser();
-        router.push("/");
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error("Logout error:", error.message);
+        } else {
+          router.push("/");
+        }
         break;
     }
   };
