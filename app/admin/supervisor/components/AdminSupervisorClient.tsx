@@ -60,13 +60,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         cell: ({ row }) => <div>{row.getValue("nomor_induk")}</div>,
       },
       {
-        accessorKey: "email",
-        header: "Email",
-        cell: ({ row }) => (
-          <div className='lowercase'>{row.getValue("email")}</div>
-        ),
-      },
-      {
         accessorKey: "full_name",
         header: ({ column }) => {
           return (
@@ -76,7 +69,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
-            >
+              >
               Nama Lengkap
               <LuArrowUpDown />
             </Button>
@@ -84,6 +77,13 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         },
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("full_name")}</div>
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div className='lowercase'>{row.getValue("email")}</div>
         ),
       },
       {
