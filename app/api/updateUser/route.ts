@@ -6,7 +6,6 @@ export async function PUT(req: NextRequest) {
   const supabase = await createClient();
   try {
     const body = await req.json();
-    // harus mengirim misalkan id atau auth_id sebagai nilai yang immutable
     const {
       id,
       nomor_induk,

@@ -55,7 +55,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
 
   async function updateById(user: DataColumn, onComplete?: () => void) {
     try {
-      const res = await fetch("/api/updateUser", {
+      const res = await fetch(`/api/updateUser`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -166,13 +166,13 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
                   <Button
                     variant={null}
                     onClick={() =>
-                      updateById(user, () => {
+                      updateById(row.original, () => {
                         console.log("done");
                         router.refresh();
                       })
                     }
                     disabled={loadingEdit}
-                    >
+                  >
                     {loadingEdit ? "Editing..." : "Edit"}
                   </Button>
                 </DropdownMenuItem>
@@ -198,7 +198,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         },
       },
     ],
-    [ deleteById, loadingDelete, loadingEdit, router]
+    [deleteById, loadingDelete, loadingEdit, router]
   );
 
   return (

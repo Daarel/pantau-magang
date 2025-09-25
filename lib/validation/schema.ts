@@ -26,7 +26,6 @@ export const insertDataToLowerCase = <T extends Record<string, any>>(data: T): T
   };
 };
 
-
 export type InternInput = z.infer<typeof internSchema>;
 
 export const internSchema = z
