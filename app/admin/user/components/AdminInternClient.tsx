@@ -32,10 +32,10 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const deleteByNIM = useCallback(
-    async (nomor_induk: number, onComplete?: () => void) => {
+    async (id: string, onComplete?: () => void) => {
       setLoading(true);
 
-      const res = await fetch(`/api/deleteUser?nomor_induk=${nomor_induk}`, {
+      const res = await fetch(`/api/deleteUser?id=${id}`, {
         method: "DELETE",
       });
 
@@ -45,12 +45,34 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
       } else {
-        console.log(`User dengan NIM ${nomor_induk} berhasil dihapus`);
+        console.log("User berhasil dihapus.");
         if (onComplete) onComplete();
       }
     },
     []
   );
+
+  async function updateUser(user: DataColumn[]) {
+    try {
+      const res = await fetch("/api/updateUser", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal update user");
+      }
+
+      console.log("User berhasil diupdate:", data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   const columns = useMemo<ColumnDef<DataColumn>[]>(
     () => [
@@ -127,7 +149,8 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-          const nomor_induk = row.original.nomor_induk;
+          const id = row.original.id;
+
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -146,7 +169,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
                   <Button
                     variant={null}
                     onClick={() =>
-                      deleteByNIM(nomor_induk, () => {
+                      deleteByNIM(id, () => {
                         console.log("done");
                         router.refresh();
                       })

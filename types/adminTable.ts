@@ -1,9 +1,12 @@
 export type DataColumn = {
   id: string;
   nomor_induk: number;
+  email: string;
+  role?: string,
   full_name: string;
   department: string;
-  supervisor_name?: string;
-  intern_start_date?: string;
-  intern_end_date?: string;
+  institution?: string;
+  supervisor_id?: string;
+  intern_start_date?: Date;
+  intern_end_date?: Date;
 };

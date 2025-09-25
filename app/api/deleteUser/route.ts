@@ -4,13 +4,13 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function DELETE(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const nomor_induk = searchParams.get("nomor_induk");
+  const id = searchParams.get("id");
   const supabase = await createClient();
 
   const { data: userData, error: fetchError } = await supabase
     .from("users")
-    .select("id, auth_id")
-    .eq("nomor_induk", nomor_induk)
+    .select("auth_id")
+    .eq("id", id)
     .single();
 
   if (fetchError || !userData) {
@@ -31,7 +31,7 @@ export async function DELETE(req: NextRequest) {
   const { error: tableError } = await supabase
     .from("users")
     .delete()
-    .eq("nomor_induk", nomor_induk);
+    .eq("id", id);
 
   if (tableError) {
     return NextResponse.json(

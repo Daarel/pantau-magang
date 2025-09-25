@@ -32,20 +32,20 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const deleteByNIM = useCallback(
-    async (nomor_induk: number, onComplete?: () => void) => {
+    async (id: string, onComplete?: () => void) => {
       setLoading(true);
 
-      const res = await fetch(`/api/deleteUser?nomor_induk=${nomor_induk}`, {
+      const res = await fetch(`/api/deleteUser?id=${id}`, {
         method: "DELETE",
       });
-      
+
       setLoading(false);
 
       if (!res.ok) {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
       } else {
-        console.log(`User dengan NIM ${nomor_induk} berhasil dihapus`);
+        console.log("User berhasil dihapus.");
         if (onComplete) onComplete();
       }
     },
@@ -69,7 +69,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
               onClick={() =>
                 column.toggleSorting(column.getIsSorted() === "asc")
               }
-              >
+            >
               Nama Lengkap
               <LuArrowUpDown />
             </Button>
@@ -97,7 +97,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-          const nomor_induk = row.original.nomor_induk;
+          const id = row.original.id;
 
           return (
             <DropdownMenu>
@@ -117,7 +117,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                   <Button
                     variant={null}
                     onClick={() =>
-                      deleteByNIM(nomor_induk, () => {
+                      deleteByNIM(id, () => {
                         console.log("done");
                         router.refresh();
                       })
