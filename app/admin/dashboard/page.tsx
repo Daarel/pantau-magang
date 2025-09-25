@@ -143,7 +143,7 @@ export default async function AdminDashboard() {
         />
 
         <div className='relative z-10'>
-          <h1 className='title_header max-sm:text-3xl'>
+          <h1 className='title_header max-sm:text-3xl capitalize'>
             Selamat Datang, {user?.user_metadata.full_name}!
           </h1>
           <DashboardClock />

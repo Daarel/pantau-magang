@@ -38,7 +38,7 @@ export default function InternDashboard() {
         />
 
         <div className='relative z-10'>
-          <h1 className='title_header'>
+          <h1 className='title_header capitalize'>
             Selamat Datang, {loading ? "-" : summaryData?.nama ?? "-"}
           </h1>
           <DashboardClock />

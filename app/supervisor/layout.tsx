@@ -47,7 +47,7 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="flex flex-col w-full h-screen">
+      <div className="flex flex-col w-full h-screen capitalize">
         <Navbar />
         <div className="flex flex-1 overflow-auto">
           <Sidebar>
