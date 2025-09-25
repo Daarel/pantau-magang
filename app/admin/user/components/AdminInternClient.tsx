@@ -29,17 +29,18 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   const router = useRouter();
 
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [loadingEdit, setLoadingEdit] = useState<boolean>(false);
 
-  const deleteByNIM = useCallback(
+  const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
-      setLoading(true);
+      setLoadingDelete(true);
 
       const res = await fetch(`/api/deleteUser?id=${id}`, {
         method: "DELETE",
       });
 
-      setLoading(false);
+      setLoadingDelete(false);
 
       if (!res.ok) {
         const err = await res.json();
@@ -52,7 +53,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
     []
   );
 
-  async function updateUser(user: DataColumn[]) {
+  async function updateById(user: DataColumn, onComplete?: () => void) {
     try {
       const res = await fetch("/api/updateUser", {
         method: "PUT",
@@ -162,22 +163,33 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
               <DropdownMenuContent align='end'>
                 <DropdownMenuItem>
                   <RiEdit2Line />
-                  <Button variant={null}>Edit</Button>
+                  <Button
+                    variant={null}
+                    onClick={() =>
+                      updateById(user, () => {
+                        console.log("done");
+                        router.refresh();
+                      })
+                    }
+                    disabled={loadingEdit}
+                    >
+                    {loadingEdit ? "Editing..." : "Edit"}
+                  </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <RiDeleteBin6Fill className='text-red-500' />
                   <Button
                     variant={null}
                     onClick={() =>
-                      deleteByNIM(id, () => {
+                      deleteById(id, () => {
                         console.log("done");
                         router.refresh();
                       })
                     }
-                    disabled={loading}
+                    disabled={loadingDelete}
                     className='text-red-500'
                   >
-                    {loading ? "Deleting..." : "Delete"}
+                    {loadingDelete ? "Deleting..." : "Delete"}
                   </Button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -186,7 +198,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteByNIM, router]
+    [ deleteById, loadingDelete, loadingEdit, router]
   );
 
   return (

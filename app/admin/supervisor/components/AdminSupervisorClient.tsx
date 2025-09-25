@@ -31,7 +31,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const deleteByNIM = useCallback(
+  const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
       setLoading(true);
 
@@ -117,7 +117,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                   <Button
                     variant={null}
                     onClick={() =>
-                      deleteByNIM(id, () => {
+                      deleteById(id, () => {
                         console.log("done");
                         router.refresh();
                       })
@@ -134,7 +134,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteByNIM, router]
+    [loading, deleteById, router]
   );
 
   return (
