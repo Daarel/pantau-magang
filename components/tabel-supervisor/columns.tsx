@@ -42,17 +42,19 @@ export type Dashboard = {
 const supabase = createClient();
 
 // Header name
-export const columns = (onActionComplete: () => void): ColumnDef<Attendance>[] => [
+export const columns = (
+  onActionComplete: () => void
+): ColumnDef<Attendance>[] => [
   {
     accessorKey: "name",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Name' />;
+      return <DataTableColumnHeader column={column} title="Name" />;
     },
   },
   {
     accessorKey: "status",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Status' />;
+      return <DataTableColumnHeader column={column} title="Status" />;
     },
     // Tambahkan cell rendering dengan styling kondisional
     cell: ({ row }) => {
@@ -90,114 +92,121 @@ export const columns = (onActionComplete: () => void): ColumnDef<Attendance>[] =
     accessorKey: "date",
     // Sorting by institution name
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Date' />;
+      return <DataTableColumnHeader column={column} title="Date" />;
     },
   },
   {
     accessorKey: "keterangan",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Keterangan' />
+      <DataTableColumnHeader column={column} title="Keterangan" />
     ),
   },
   {
     accessorKey: "check_in_time",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Check In' />;
+      return <DataTableColumnHeader column={column} title="Check In" />;
     },
   },
   {
     accessorKey: "check_out_time",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Check Out' />;
+      return <DataTableColumnHeader column={column} title="Check Out" />;
     },
   },
   {
-  id: "actions",
-  cell: ({ row }) => {
-    const handleUpdateStatus = async (newStatus: string) => {
-      try {
-        const { error } = await supabase
-          .from("attendance") // pastikan nama tabel bener
-          .update({ status: newStatus })
-          .eq("id", row.original.id); // wajib ada id di dataset
+    id: "actions",
+    cell: ({ row }) => {
+      const handleUpdateStatus = async (newStatus: string) => {
+        try {
+          const { error } = await supabase
+            .from("attendance") // pastikan nama tabel bener
+            .update({ status: newStatus })
+            .eq("id", row.original.id); // wajib ada id di dataset
 
-        if (error) {
-          console.error("Gagal update status:", error);
-        } else {
-          console.log(`Status updated to ${newStatus} for`, row.original);
+          if (error) {
+            console.error("Gagal update status:", error);
+          } else {
+            console.log(`Status updated to ${newStatus} for`, row.original);
 
-          // 🔄 update langsung di UI tanpa reload
-          row.original.status = newStatus;
-          onActionComplete();
+            // 🔄 update langsung di UI tanpa reload
+            row.original.status = newStatus;
+            onActionComplete();
+          }
+        } catch (err) {
+          console.error("Unexpected error:", err);
         }
-      } catch (err) {
-        console.error("Unexpected error:", err);
-      }
-    };
+      };
 
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className='p-2 rounded-full hover:bg-gray-100 cursor-pointer'>
-            <FiMoreHorizontal className='w-5 h-5' />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem
-            onClick={() => handleUpdateStatus("hadir")}
-            className='cursor-pointer bg-green-100 text-green-800 w-full py-1 rounded-full flex justify-center font-medium mb-1'
-          >
-            Hadir
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => handleUpdateStatus("sakit")}
-            className='cursor-pointer bg-yellow-100 text-yellow-800 w-full py-1 rounded-full flex justify-center font-medium mb-1'
-          >
-            Sakit
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => handleUpdateStatus("izin")}
-            className='cursor-pointer bg-blue-100 text-blue-800 w-full py-1 rounded-full flex justify-center font-medium mb-1'
-          >
-            Izin
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => handleUpdateStatus("alfa")}
-            className='cursor-pointer bg-red-100 text-red-800 w-full py-1 rounded-full flex justify-center font-medium mb-1'
-          >
-            Alfa
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-2 rounded-full hover:bg-gray-100 cursor-pointer">
+              <FiMoreHorizontal className="w-5 h-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              onClick={() => handleUpdateStatus("hadir")}
+              className="cursor-pointer bg-green-100 text-green-800 w-full py-1 rounded-full flex justify-center font-medium mb-1"
+            >
+              Hadir
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleUpdateStatus("sakit")}
+              className="cursor-pointer bg-yellow-100 text-yellow-800 w-full py-1 rounded-full flex justify-center font-medium mb-1"
+            >
+              Sakit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleUpdateStatus("izin")}
+              className="cursor-pointer bg-blue-100 text-blue-800 w-full py-1 rounded-full flex justify-center font-medium mb-1"
+            >
+              Izin
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleUpdateStatus("alfa")}
+              className="cursor-pointer bg-red-100 text-red-800 w-full py-1 rounded-full flex justify-center font-medium mb-1"
+            >
+              Alfa
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
-},
 ];
 
 // 👉 Columns khusus untuk Reports Page
-export const reportColumns = (onActionComplete: () => void): ColumnDef<Report>[] => [
+export const reportColumns = (
+  onActionComplete: () => void
+): ColumnDef<Report>[] => [
   {
     accessorKey: "file",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='File' />
+      <DataTableColumnHeader column={column} title="File" />
     ),
     cell: ({ row }) => {
       const file = row.getValue("file") as string | undefined;
+      const fullName = row.original.name as string | undefined;
+
       if (!file) {
-        return <span className='text-gray-400'>-</span>;
+        return <span className="text-gray-400">-</span>;
       }
 
       // ambil hanya nama file (tanpa path)
       const fileName = file.split("/").pop() || file;
+      const extension = fileName.includes(".")
+      ? fileName.split(".").pop()?.toUpperCase()
+      : "";
 
       return (
         <a
           href={file}
-          target='_blank'
-          rel='noopener noreferrer'
-          className='text-blue-600 underline'
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
         >
-          {fileName}
+          {fullName ? `${fullName}.${extension}` : fileName}
         </a>
       );
     },
@@ -205,13 +214,13 @@ export const reportColumns = (onActionComplete: () => void): ColumnDef<Report>[]
   {
     accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Name' />
+      <DataTableColumnHeader column={column} title="Name" />
     ),
   },
   {
     accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Status' />
+      <DataTableColumnHeader column={column} title="Status" />
     ),
 
     cell: ({ row }) => {
@@ -242,7 +251,7 @@ export const reportColumns = (onActionComplete: () => void): ColumnDef<Report>[]
   {
     accessorKey: "keterangan",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Keterangan' />
+      <DataTableColumnHeader column={column} title="Keterangan" />
     ),
   },
   {
@@ -250,8 +259,8 @@ export const reportColumns = (onActionComplete: () => void): ColumnDef<Report>[]
     cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className='p-2 rounded-full hover:bg-gray-100 cursor-pointer'>
-            <FiMoreHorizontal className='w-5 h-5' />
+          <button className="p-2 rounded-full hover:bg-gray-100 cursor-pointer">
+            <FiMoreHorizontal className="w-5 h-5" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -270,9 +279,9 @@ export const reportColumns = (onActionComplete: () => void): ColumnDef<Report>[]
                 onActionComplete();
               }
             }}
-            className='cursor-pointer'
+            className="cursor-pointer"
           >
-            <BiSolidCheckCircle className='mr-2 h-4 w-4 text-green-600' />
+            <BiSolidCheckCircle className="mr-2 h-4 w-4 text-green-600" />
             Approve
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -285,17 +294,17 @@ export const reportColumns = (onActionComplete: () => void): ColumnDef<Report>[]
                 })
                 .eq("id", row.original.id);
 
-            if (error) {
-              console.error("Error rejecting:", error);
-            } else {
-              console.log("Rejected:", row.original);
-              // TODO: trigger refresh data kalau mau auto update
-              onActionComplete();
-            }
-          }} 
-          className="cursor-pointer"
+              if (error) {
+                console.error("Error rejecting:", error);
+              } else {
+                console.log("Rejected:", row.original);
+                // TODO: trigger refresh data kalau mau auto update
+                onActionComplete();
+              }
+            }}
+            className="cursor-pointer"
           >
-            <BiSolidXCircle className='mr-2 h-4 w-4 text-red-600' />
+            <BiSolidXCircle className="mr-2 h-4 w-4 text-red-600" />
             Reject
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -308,13 +317,13 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Name' />;
+      return <DataTableColumnHeader column={column} title="Name" />;
     },
   },
   {
     accessorKey: "status",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Status' />;
+      return <DataTableColumnHeader column={column} title="Status" />;
     },
     // Tambahkan cell rendering dengan styling kondisional
     cell: ({ row }) => {
@@ -352,19 +361,19 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
     accessorKey: "institutions",
     // Sorting by institution name
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Institution' />;
+      return <DataTableColumnHeader column={column} title="Institution" />;
     },
   },
   {
     accessorKey: "check_in_time",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Check In' />;
+      return <DataTableColumnHeader column={column} title="Check In" />;
     },
   },
   {
     accessorKey: "check_out_time",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Check Out' />;
+      return <DataTableColumnHeader column={column} title="Check Out" />;
     },
   },
 ];
