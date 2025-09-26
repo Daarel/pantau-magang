@@ -13,11 +13,7 @@ export function useAttendanceData(activeTab: string) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Dapatkan user data dari localStorage
-        const {
-          data: { user },
-          error: authError,
-        } = await supabase.auth.getUser();
+        const { data: { user }, error: authError, } = await supabase.auth.getUser();
 
         if (authError || !user) {
           redirect("/");

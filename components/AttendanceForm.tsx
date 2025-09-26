@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from 'next/navigation';
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -79,12 +78,10 @@ export function AttendanceForm() {
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceCheckIn[]>([])
   const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error' | 'approved'>('idle')
   const [userLocation, setUserLocation] = useState<UserLocation  | null>(null)
-  // const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [photoFile, setPhotoFile] = useState<File | null>(null)
-  // const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [fileFile, setFileFile] = useState<File | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
-  const router = useRouter();
+  // const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const defaultValuesRef = useRef({
@@ -146,7 +143,7 @@ export function AttendanceForm() {
         setIsSubmitting(false);
         return;
       }
-      
+
       const user_id = userData.id;
 
       let imageUrl = "";
@@ -412,7 +409,8 @@ export function AttendanceForm() {
               className="w-full active:bg-black/90 transition-colors duration-100 shadow"
               disabled={
                 isSubmitting || 
-                (form.watch("status") === "hadir" && (locationStatus !== "approved" && form.watch("imageUrl") == null)) ||
+                (form.watch("status") === "hadir" && 
+                  (locationStatus !== "approved" || photoFile === null)) ||
                 ((form.watch("status") === "izin" || form.watch("status") === "sakit") &&
                   ((form.watch("description") ?? "").trim() === ""))
               }

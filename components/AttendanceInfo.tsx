@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, XCircle, AlertCircle, MinusCircle } from "lucide-react"
 
-type PresensiStatus = "hadir" | "sakit" | "izin" | "alfa"
+type PresensiStatus = "hadir" | "sakit" | "izin" | "alfa" | null
 
 interface PresensiInfoProps {
   status: PresensiStatus
@@ -32,11 +32,16 @@ export const AttendanceInfo: React.FC<PresensiInfoProps> = ({ status }) => {
           icon: <MinusCircle className="w-15 md:w-20 h-15 md:h-20 text-blue-600" />,
         }
       case "alfa":
-      default:
         return {
           label: "Anda tidak presensi (Alfa)",
           color: " text-red-700",
           icon: <XCircle className="w-15 md:w-20 h-15 md:h-20 text-red-600" />,
+        }
+      default:
+        return {
+          label: "Presensi belum dibuka",
+          color: " text-gray-700",
+          icon: <XCircle className="w-15 md:w-20 h-15 md:h-20 text-gray-600" />,
         }
     }
   }
