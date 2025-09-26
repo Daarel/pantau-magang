@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { TbCameraPlus } from 'react-icons/tb';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { toast } from "sonner";
+import { FaTrash } from 'react-icons/fa';
 
 interface PhotoUploadProps {
   onPhotoChange: (file: File | null) => void;
@@ -15,14 +16,6 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // useEffect(() => {
-  //   const savedPhoto = localStorage.getItem('attendancePhoto');
-  //   if (savedPhoto) {
-  //     setPreviewUrl(savedPhoto);
-  //     onPhotoChange(null, savedPhoto);
-  //   }
-  // }, [onPhotoChange]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -44,16 +37,6 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
       onPhotoChange(file);
-      // const reader = new FileReader();
-      // reader.onload = () => {
-      //   const result = reader.result as string;
-      //   setPreviewUrl(result);
-      //   onPhotoChange(file, result);
-        
-      //   // Save to localStorage
-      //   // localStorage.setItem('attendancePhoto', result);
-      // };
-      // reader.readAsDataURL(file);
     }
   };
 
@@ -78,7 +61,7 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
       />
       
       {previewUrl ? (
-        <div className="flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 overflow-hidden">
+        <div className="relative flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 overflow-hidden">
           <img
             src={previewUrl}
             alt="Preview"
@@ -86,12 +69,12 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
           />
           <Button
             type='button'
-            variant="destructive"
+            // variant="destructive"
             size="sm"
-            className="absolute top-2 right-2"
+            className="absolute top-1 right-1 bg-red-400/70 hover:bg-red-500/90 text-white/80 hover:text-white p-1 rounded-lg"
             onClick={(e) => { e.preventDefault(); removePhoto(); }}
           >
-            Hapus
+            <FaTrash />
           </Button>
         </div>
       ) : (

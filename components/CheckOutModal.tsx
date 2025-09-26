@@ -14,9 +14,11 @@ import {
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner";
 import { UpdateCheckOutTime } from "@/hooks/useAttendance";
+import { createClient } from '@/lib/supabase/client'
 
 export function CheckOutModal() {
   const router = useRouter();
+  const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,12 +26,20 @@ export function CheckOutModal() {
     setIsLoading(true);
     try {
       // Dapatkan user data dari localStorage
-      const userDataString = localStorage.getItem('user');
-      if (!userDataString) {
-        throw new Error('Data user tidak ditemukan');
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        toast.error('User not authenticated');
+        return;
       }
 
-      const userData = JSON.parse(userDataString);
+      // Dapatkan user_id dari tabel users berdasarkan auth_id
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("auth_id", user.id)
+        .single();
+
       const userId = userData.id;
 
       if (!userId) {

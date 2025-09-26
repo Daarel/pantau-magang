@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from 'next/navigation';
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -36,7 +35,6 @@ import { FileUpload } from "./FileUpload"
 import { LocationButton } from "./FLocationButton"
 import { getCurrentLocation, UserLocation } from "../lib/helper/geolocation.helpers"
 import { uploadPhoto, uploadFile } from "../lib/helper/upload.helpers"
-import { truncate } from "fs/promises"
 
 const locationSchema = z.object({
   latitude: z.number().optional(),
@@ -80,12 +78,10 @@ export function AttendanceForm() {
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceCheckIn[]>([])
   const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error' | 'approved'>('idle')
   const [userLocation, setUserLocation] = useState<UserLocation  | null>(null)
-  const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [photoFile, setPhotoFile] = useState<File | null>(null)
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [fileFile, setFileFile] = useState<File | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
-  const router = useRouter();
+  // const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const defaultValuesRef = useRef({
@@ -126,16 +122,28 @@ export function AttendanceForm() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsSubmitting(true);
-    // const isApproved = data.location?.approved ?? false;
-
     try {
-      const userDataString = localStorage.getItem('user');
-      if (!userDataString) {
-        toast.error('User data not found');
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        toast.error('User not authenticated');
+        setIsSubmitting(false);
         return;
       }
-      
-      const userData = JSON.parse(userDataString);
+
+      // Dapatkan user_id dari tabel users berdasarkan auth_id
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("auth_id", user.id)
+        .single();
+
+      if (userError || !userData) {
+        toast.error('User data not found');
+        setIsSubmitting(false);
+        return;
+      }
+
       const user_id = userData.id;
 
       let imageUrl = "";
@@ -401,7 +409,8 @@ export function AttendanceForm() {
               className="w-full active:bg-black/90 transition-colors duration-100 shadow"
               disabled={
                 isSubmitting || 
-                (form.watch("status") === "hadir" && (locationStatus !== "approved" && form.watch("imageUrl") == null)) ||
+                (form.watch("status") === "hadir" && 
+                  (locationStatus !== "approved" || photoFile === null)) ||
                 ((form.watch("status") === "izin" || form.watch("status") === "sakit") &&
                   ((form.watch("description") ?? "").trim() === ""))
               }
