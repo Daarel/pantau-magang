@@ -26,10 +26,37 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
 
   // cek apakah ada data pending
   async function fetchPending() {
-    const { count, error } = await createClient()
+    const supabase = createClient();
+
+    // ambil user login
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      console.error("Error fetching user:", authError);
+      return;
+    }
+
+    // ambil id supervisor dari tabel users
+    const { data: supervisorData, error: userError } = await supabase
+      .from("users")
+      .select("id")
+      .eq("auth_id", user.id)
+      .single();
+
+    if (userError || !supervisorData) {
+      console.error("Error fetching supervisor data:", userError);
+      return;
+    }
+
+    // filter attendance berdasarkan supervisor_id
+    const { count, error } = await supabase
       .from("attendance")
-      .select("id", { count: "exact", head: true })
-      .eq("dispensation", "pending");
+      .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+      .eq("dispensation", "pending")
+      .eq("users.supervisor_id", supervisorData.id);
 
     if (error) {
       console.error("Error fetching pending leaves:", error);
@@ -41,7 +68,7 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
   useEffect(() => {
     fetchPending();
     // auto refresh setiap 10 detik
-    const interval = setInterval(fetchPending, 1000);
+    const interval = setInterval(fetchPending, 10000);
     return () => clearInterval(interval);
   }, []);
 

@@ -38,8 +38,15 @@ export default async function InternProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Daftar Intern Anda</h1>
+    <div className="min-h-screen p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="h4 font-semibold">Daftar Intern Anda</h1>
+          <p className="text-gray-500">
+                Profile peserta magang
+          </p>
+        </div>
+      </div>
 
       {(!interns || interns.length === 0) && (
         <p className="text-gray-600">Belum ada intern yang terdaftar.</p>
