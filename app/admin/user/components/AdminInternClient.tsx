@@ -30,7 +30,8 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
 
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [loadingEdit, setLoadingEdit] = useState<boolean>(false);
+  const [editData, setEditData] = useState<DataColumn | null>(null);
+
 
   const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
@@ -167,13 +168,12 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
                     variant={null}
                     onClick={() =>
                       updateById(row.original, () => {
-                        console.log("done");
-                        router.refresh();
+                        setEditData(row.original);
+                        handleOpenChange(true)
                       })
                     }
-                    disabled={loadingEdit}
                   >
-                    {loadingEdit ? "Editing..." : "Edit"}
+                    Edit
                   </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
@@ -198,7 +198,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         },
       },
     ],
-    [deleteById, loadingDelete, loadingEdit, router]
+    [deleteById, loadingDelete, router]
   );
 
   return (
@@ -214,9 +214,24 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
       </div>
       <InternFormDialog
         open={open}
-        onOpenChange={handleOpenChange}
-        title='Tambah User'
+        onOpenChange={(val) => {
+          if (!val) setEditData(null); // reset kalau close
+          handleOpenChange(val);
+        }}
+        title={editData ? "Edit User" : "Tambah User"}
         fields={internModalInput}
+        initialData={editData ?? undefined}
+        onSubmit={async (values) => {
+          if (editData) {
+            // edit mode
+            await updateById({ ...values, id: editData.id }, () =>
+              router.refresh()
+            );
+          } else {
+            // insert mode
+            await insertUser(values, () => router.refresh()); // bikin insertUser mirip updateById
+          }
+        }}
       />
     </>
   );
