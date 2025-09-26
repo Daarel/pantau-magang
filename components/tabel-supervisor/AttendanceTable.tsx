@@ -70,6 +70,7 @@ async function getReportData(supervisorId: string): Promise<Report[]> {
       id,
       status,
       notes,
+      file_url,
       dispensation,
       users!inner (
         full_name,
@@ -88,7 +89,7 @@ async function getReportData(supervisorId: string): Promise<Report[]> {
 
   return (data ?? []).map((att: any) => ({
     id: att.id,
-    file: `report_${att.users?.full_name?.toLowerCase()}.pdf`, // sementara generate nama file
+    file: att.file_url, // sementara generate nama file
     name: att.users?.full_name ?? "Unknown",
     status: att.status.charAt(0).toUpperCase() + att.status.slice(1),
     keterangan: att.notes ?? "-",
