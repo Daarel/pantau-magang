@@ -81,9 +81,9 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[600px] max-h-[80vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle>Tambah Anak Magang</DialogTitle>
+          <DialogTitle>Tambah Supervisor</DialogTitle>
           <DialogDescription className='text-gray-500'>
-            Silahkan input data anak magang
+            Silahkan input supervisor
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>

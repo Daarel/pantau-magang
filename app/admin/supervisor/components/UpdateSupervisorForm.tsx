@@ -92,9 +92,9 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[600px] max-h-[80vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle>Edit Anak Magang</DialogTitle>
+          <DialogTitle>Edit Supervisor</DialogTitle>
           <DialogDescription className='text-gray-500'>
-            Silahkan Edit data anak magang
+            Silahkan Edit data supervisor
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>
