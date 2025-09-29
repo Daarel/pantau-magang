@@ -14,12 +14,12 @@ import { Button } from "@/components/ui/button";
 
 import { type FC, useCallback, useMemo, useState } from "react";
 
-import { supervisorModalInput } from "@/const";
-import SupervisorFormDialog from "./SupervisorFormDialog";
+import InsertSupervisorForm from "./InsertSupervisorForm";
 import DataTable from "@/components/DataTable";
 import TablePageHeader from "@/components/DataTableHeader";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { useRouter } from "next/navigation";
+import UpdateSupervisorForm from "./UpdateSupervisorForm";
 
 interface AdminSupervisorProps {
   tableData: DataColumn[];
@@ -28,8 +28,14 @@ interface AdminSupervisorProps {
 const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const router = useRouter();
 
-  const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
+  const { open: insertOpen, toggleModal: toggleInsert } =
+    useModalQuery("modalInsert");
+  const { open: editOpen, toggleModal: toggleEdit } =
+    useModalQuery("modalEdit");
+
   const [loading, setLoading] = useState<boolean>(false);
+  // 🔹 Tambahkan state untuk data yang sedang diedit
+  const [editData, setEditData] = useState<DataColumn | null>(null);
 
   const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
@@ -99,6 +105,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         enableHiding: false,
         cell: ({ row }) => {
           const id = row.original.id;
+          const userData = row.original;
 
           return (
             <DropdownMenu>
@@ -109,17 +116,36 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
-                <DropdownMenuItem>
-                  <RiEdit2Line />
-                  <Button variant={null}>Edit</Button>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setEditData(userData);
+                    toggleEdit();
+                  }}
+                >
+                  <RiEdit2Line className='mr-2' />
+                  Edit
+                  {/* <RiEdit2Line />
+                  <Button onClick={() => {
+                      setEditData(userData);
+                      toggleEdit();
+                    }} variant={null}>
+                    Edit
+                  </Button> */}
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <RiDeleteBin6Fill className='text-red-500' />
+                <DropdownMenuItem
+                  onSelect={() =>
+                    deleteById(id, () => {
+                      router.refresh();
+                    })
+                  }
+                >
+                  <RiDeleteBin6Fill className='mr-2 text-red-500' />
+                  {loading ? "Deleting..." : "Delete"}
+                  {/* <RiDeleteBin6Fill className='text-red-500' />
                   <Button
                     variant={null}
                     onClick={() =>
                       deleteById(id, () => {
-                        console.log("done");
                         router.refresh();
                       })
                     }
@@ -127,7 +153,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                     className='text-red-500'
                   >
                     {loading ? "Deleting..." : "Delete"}
-                  </Button>
+                  </Button> */}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -135,7 +161,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteById, router]
+    [loading, deleteById, router, toggleEdit]
   );
 
   return (
@@ -144,14 +170,14 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         title='Daftar Supervisor'
         subtitle='List daftar supervisor aktif'
         label='Tambah Supervisor'
-        onAdd={toggleModal}
+        onAdd={toggleInsert}
       />
       <DataTable data={tableData} columns={columns} />
-      <SupervisorFormDialog
-        open={open}
-        onOpenChange={handleOpenChange}
-        title='Tambah User'
-        fields={supervisorModalInput}
+      <InsertSupervisorForm open={insertOpen} onOpenChange={toggleInsert} />
+      <UpdateSupervisorForm
+        open={editOpen}
+        onOpenChange={toggleEdit}
+        defaultData={editData}
       />
     </>
   );

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-export async function PUT(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
   const supabase = await createClient();
   try {
     const body = await req.json();

@@ -1,8 +1,6 @@
-import type { FC } from "react";
-import type { IconType } from "react-icons";
+import { useEffect, type FC } from "react";
 
 import { FaUser, FaIdCardAlt, FaBuilding } from "react-icons/fa";
-import { PiPassword } from "react-icons/pi";
 import { MdEmail } from "react-icons/md";
 
 import {
@@ -20,52 +18,53 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  supervisorSchema,
-  SupervisorInput,
+  supervisorUpdateSchema,
+  SupervisorUpdate,
   insertDataToLowerCase,
 } from "@/lib/validation/schema";
 
-interface SupervisorFormDialogProps {
-  fields: FieldConfig[];
+interface UpdateSupervisorFormProps {
   open: boolean;
-  title: string;
   onOpenChange: (open: boolean) => void;
+  defaultData: any;
 }
 
-interface FieldConfig {
-  name: string;
-  placeholder: string;
-  label: string;
-  type?: string;
-  Icon: IconType;
-  iconClassName?: string;
-}
-
-const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
+const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
   open,
   onOpenChange,
+  defaultData,
 }) => {
+  console.log(defaultData);
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<SupervisorInput>({
-    resolver: zodResolver(supervisorSchema),
+  } = useForm<SupervisorUpdate>({
+    resolver: zodResolver(supervisorUpdateSchema),
   });
 
-  const onSubmit = async (data: SupervisorInput) => {
+  useEffect(() => {
+    if (defaultData) {
+      reset({
+        nomor_induk: defaultData.nomor_induk || "",
+        email: defaultData.email || "",
+        full_name: defaultData.full_name || "",
+        department: defaultData.department || "",
+      });
+    }
+  }, [defaultData, reset]);
+
+  const onSubmit = async (data: SupervisorUpdate) => {
     const payload = {
       ...insertDataToLowerCase(data),
-      role: "supervisor",
-      institution: null,
-      nomor_induk_supervisor: null,
-      intern_start_date: null,
-      intern_end_date: null,
+      auth_id: defaultData.auth_id,
     };
 
     try {
-      const res = await fetch("/api/insertUser", {
-        method: "POST",
+      const res = await fetch(`/api/supervisor`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -75,13 +74,13 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
       const result = await res.json();
 
       if (!res.ok) {
-        console.error("Error:", result.error);
-        alert(`Gagal menambah user: ${result.error}`);
+        console.error("Error: ", result.error);
+        alert(`Gagal update user`);
         return;
       }
 
-      console.log("User berhasil ditambahkan:", result.data);
-      alert("User berhasil ditambahkan!");
+      console.log("User berhasil di-update:", result.data);
+      alert("User berhasil di-update!");
       onOpenChange(false);
     } catch (err) {
       console.error(err);
@@ -93,9 +92,9 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[600px] max-h-[80vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle>Tambah Anak Magang</DialogTitle>
+          <DialogTitle>Edit Anak Magang</DialogTitle>
           <DialogDescription className='text-gray-500'>
-            Silahkan input data anak magang
+            Silahkan Edit data anak magang
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>
@@ -111,6 +110,7 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
               placeholder='Masukkan nomor induk'
               className='my-1'
               required
+              defaultValue={defaultData?.nomor_induk}
             />
             {errors.nomor_induk && (
               <p className='text-sm text-red-500'>
@@ -132,6 +132,7 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
               placeholder='Masukkan email'
               className='my-2'
               required
+              defaultValue={defaultData?.email}
             />
             {errors.email && (
               <p className='text-sm text-red-500'>{errors.email.message}</p>
@@ -150,27 +151,10 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
               placeholder='Masukkan nama lengkap'
               className='my-2'
               required
+              defaultValue={defaultData?.full_name}
             />
             {errors.full_name && (
               <p className='text-sm text-red-500'>{errors.full_name.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
-                <PiPassword className='w-4 h-4' />
-              </span>
-              Password
-            </Label>
-            <Input
-              {...register("password")}
-              placeholder='Masukkan password'
-              className='my-2'
-              required
-            />
-            {errors.password && (
-              <p className='text-sm text-red-500'>{errors.password.message}</p>
             )}
           </div>
 
@@ -186,6 +170,7 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
               placeholder='Masukkan penempatan gedung'
               className='my-2'
               required
+              defaultValue={defaultData?.department}
             />
             {errors.department && (
               <p className='text-sm text-red-500'>
@@ -203,4 +188,4 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
   );
 };
 
-export default SupervisorFormDialog;
+export default UpdateSupervisorForm;

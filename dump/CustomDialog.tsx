@@ -14,11 +14,11 @@ import { IconType } from "react-icons";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  internSchema,
-  InternInput,
+  internInsertSchema,
+  InternInsert,
   prepareForBackend,
 } from "@/lib/validation/schema";
-import { z } from 'zod'
+import { z } from "zod";
 
 interface FieldConfig {
   name: string;
@@ -36,7 +36,7 @@ interface CustomDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-type InternFormValues = z.infer<typeof internSchema>;
+type InternFormValues = z.infer<typeof internInsertSchema>;
 
 const CustomDialog: FC<CustomDialogProps> = ({
   open,
@@ -44,19 +44,19 @@ const CustomDialog: FC<CustomDialogProps> = ({
   fields,
   onOpenChange,
 }) => {
-// const { register, handleSubmit, formState: { errors } } = useForm<InternFormValues>({
-//   resolver: zodResolver(internSchema),
-//   defaultValues: {
-//     nomor_induk: "",
-//     email: "",
-//     full_name: "",
-//     department: "",
-//     institution: "",
-//     supervisor_name: "",
-//     intern_start_date: "", // string kosong
-//     intern_end_date: "",   // string kosong
-//   },
-// });
+  // const { register, handleSubmit, formState: { errors } } = useForm<InternFormValues>({
+  //   resolver: zodResolver(internInsertSchema),
+  //   defaultValues: {
+  //     nomor_induk: "",
+  //     email: "",
+  //     full_name: "",
+  //     department: "",
+  //     institution: "",
+  //     supervisor_name: "",
+  //     intern_start_date: "", // string kosong
+  //     intern_end_date: "",   // string kosong
+  //   },
+  // });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
