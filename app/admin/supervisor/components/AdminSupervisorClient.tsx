@@ -31,14 +31,14 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const deleteByNIM = useCallback(
-    async (nomor_induk: number, onComplete?: () => void) => {
+  const deleteById = useCallback(
+    async (id: string, onComplete?: () => void) => {
       setLoading(true);
 
       const res = await fetch("/api/deleteUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nomor_induk }),
+        body: JSON.stringify({ id }),
       });
       setLoading(false);
 
@@ -46,7 +46,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
       } else {
-        console.log(`User dengan NIM ${nomor_induk} berhasil dihapus`);
+        console.log("User berhasil dihapus.");
         if (onComplete) onComplete();
       }
     },
@@ -98,7 +98,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-          const nomor_induk = row.original.nomor_induk;
+          const id = row.original.id;
 
           return (
             <DropdownMenu>
@@ -118,7 +118,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                   <Button
                     variant={null}
                     onClick={() =>
-                      deleteByNIM(nomor_induk, () => {
+                      deleteById(id, () => {
                         console.log("done");
                         router.refresh();
                       })
@@ -135,7 +135,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteByNIM, router]
+    [loading, deleteById, router]
   );
 
   return (
