@@ -28,8 +28,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   internInsertSchema,
   InternInsert,
-  insertDataToLowerCase,
 } from "@/lib/validation/schema";
+import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
 
 interface InternFormDialogProps {
   fields: FieldConfig[];

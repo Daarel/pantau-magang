@@ -20,8 +20,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   supervisorUpdateSchema,
   SupervisorUpdate,
-  insertDataToLowerCase,
 } from "@/lib/validation/schema";
+import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
+
 
 interface UpdateSupervisorFormProps {
   open: boolean;
