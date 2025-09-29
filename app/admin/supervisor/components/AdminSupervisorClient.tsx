@@ -39,6 +39,8 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
 
   const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
+  const deleteById = useCallback(
+    async (id: string, onComplete?: () => void) => {
       setLoading(true);
 
       const res = await fetch("/api/supervisor", {
@@ -46,12 +48,14 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
+
       setLoading(false);
 
       if (!res.ok) {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
       } else {
+        console.log("User berhasil dihapus.");
         console.log("User berhasil dihapus.");
         if (onComplete) onComplete();
       }
@@ -65,13 +69,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         accessorKey: "nomor_induk",
         header: "Nomor Induk",
         cell: ({ row }) => <div>{row.getValue("nomor_induk")}</div>,
-      },
-      {
-        accessorKey: "email",
-        header: "Email",
-        cell: ({ row }) => (
-          <div className='lowercase'>{row.getValue("email")}</div>
-        ),
       },
       {
         accessorKey: "full_name",
@@ -91,6 +88,13 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         },
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("full_name")}</div>
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div className='lowercase'>{row.getValue("email")}</div>
         ),
       },
       {

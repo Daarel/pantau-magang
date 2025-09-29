@@ -70,4 +70,4 @@ export const supervisorUpdateSchema = z.object({
   email: z.email("Email tidak valid"),
   full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
   department: z.string().min(1, "Gedung wajib diisi"),
-})
+});

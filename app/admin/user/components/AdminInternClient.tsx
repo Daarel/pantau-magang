@@ -29,7 +29,9 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   const router = useRouter();
 
   const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [editData, setEditData] = useState<DataColumn | null>(null);
+
 
   const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
@@ -41,7 +43,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         body: JSON.stringify({ id }),
       });
 
-      setLoading(false);
+      setLoadingDelete(false);
 
       if (!res.ok) {
         const err = await res.json();
@@ -54,6 +56,28 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
     []
   );
 
+  async function updateById(user: DataColumn, onComplete?: () => void) {
+    try {
+      const res = await fetch(`/api/updateUser`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal update user");
+      }
+
+      console.log("User berhasil diupdate:", data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const columns = useMemo<ColumnDef<DataColumn>[]>(
     () => [
       {
@@ -61,13 +85,6 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         header: "Nomor Induk",
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("nomor_induk")}</div>
-        ),
-      },
-      {
-        accessorKey: "email",
-        header: "Email",
-        cell: ({ row }) => (
-          <div className='lowercase'>{row.getValue("email")}</div>
         ),
       },
       {
@@ -88,6 +105,13 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         },
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("full_name")}</div>
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div className='lowercase'>{row.getValue("email")}</div>
         ),
       },
       {
@@ -131,6 +155,8 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         cell: ({ row }) => {
           const id = row.original.id;
 
+          const id = row.original.id;
+
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -142,7 +168,17 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
               <DropdownMenuContent align='end'>
                 <DropdownMenuItem>
                   <RiEdit2Line />
-                  <Button variant={null}>Edit</Button>
+                  <Button
+                    variant={null}
+                    onClick={() =>
+                      updateById(row.original, () => {
+                        setEditData(row.original);
+                        handleOpenChange(true)
+                      })
+                    }
+                  >
+                    Edit
+                  </Button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <RiDeleteBin6Fill className='text-red-500' />
@@ -150,14 +186,15 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
                     variant={null}
                     onClick={() =>
                       deleteById(id, () => {
+                      deleteById(id, () => {
                         console.log("done");
                         router.refresh();
                       })
                     }
-                    disabled={loading}
+                    disabled={loadingDelete}
                     className='text-red-500'
                   >
-                    {loading ? "Deleting..." : "Delete"}
+                    {loadingDelete ? "Deleting..." : "Delete"}
                   </Button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -182,9 +219,24 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
       </div>
       <InternFormDialog
         open={open}
-        onOpenChange={handleOpenChange}
-        title='Tambah User'
+        onOpenChange={(val) => {
+          if (!val) setEditData(null); // reset kalau close
+          handleOpenChange(val);
+        }}
+        title={editData ? "Edit User" : "Tambah User"}
         fields={internModalInput}
+        initialData={editData ?? undefined}
+        onSubmit={async (values) => {
+          if (editData) {
+            // edit mode
+            await updateById({ ...values, id: editData.id }, () =>
+              router.refresh()
+            );
+          } else {
+            // insert mode
+            await insertUser(values, () => router.refresh()); // bikin insertUser mirip updateById
+          }
+        }}
       />
     </>
   );
