@@ -64,13 +64,6 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         ),
       },
       {
-        accessorKey: "email",
-        header: "Email",
-        cell: ({ row }) => (
-          <div className='lowercase'>{row.getValue("email")}</div>
-        ),
-      },
-      {
         accessorKey: "full_name",
         header: ({ column }) => {
           return (
@@ -88,6 +81,13 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         },
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("full_name")}</div>
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div className='lowercase'>{row.getValue("email")}</div>
         ),
       },
       {
