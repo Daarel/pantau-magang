@@ -202,7 +202,7 @@ export default async function AdminDashboard() {
             <NavigationButton
               variant='outline'
               className='p-10'
-              href='/admin/user?modal=open'
+              href='/admin/intern?modal=open'
             >
               <FaUsers className='h-8 w-8 text-blue-600' />
               <span className='text-sm'>Add User</span>
