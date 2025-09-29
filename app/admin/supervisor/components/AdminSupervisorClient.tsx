@@ -14,12 +14,12 @@ import { Button } from "@/components/ui/button";
 
 import { type FC, useCallback, useMemo, useState } from "react";
 
-import { supervisorModalInput } from "@/const";
-import SupervisorFormDialog from "./SupervisorFormDialog";
+import InsertSupervisorForm from "./InsertSupervisorForm";
 import DataTable from "@/components/DataTable";
 import TablePageHeader from "@/components/DataTableHeader";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { useRouter } from "next/navigation";
+import UpdateSupervisorForm from "./UpdateSupervisorForm";
 
 interface AdminSupervisorProps {
   tableData: DataColumn[];
@@ -28,17 +28,23 @@ interface AdminSupervisorProps {
 const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const router = useRouter();
 
-  const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
-  const [loading, setLoading] = useState<boolean>(false);
+  const { open: insertOpen, toggleModal: toggleInsert } =
+    useModalQuery("modalInsert");
+  const { open: editOpen, toggleModal: toggleEdit } =
+    useModalQuery("modalEdit");
 
-  const deleteByNIM = useCallback(
-    async (nomor_induk: number, onComplete?: () => void) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  // 🔹 Tambahkan state untuk data yang sedang diedit
+  const [editData, setEditData] = useState<DataColumn | null>(null);
+
+  const deleteById = useCallback(
+    async (id: string, onComplete?: () => void) => {
       setLoading(true);
 
-      const res = await fetch("/api/deleteUser", {
-        method: "POST",
+      const res = await fetch("/api/supervisor", {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nomor_induk }),
+        body: JSON.stringify({ id }),
       });
       setLoading(false);
 
@@ -46,7 +52,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
       } else {
-        console.log(`User dengan NIM ${nomor_induk} berhasil dihapus`);
+        console.log("User berhasil dihapus.");
         if (onComplete) onComplete();
       }
     },
@@ -98,7 +104,8 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-          const nomor_induk = row.original.nomor_induk;
+          const id = row.original.id;
+          const userData = row.original;
 
           return (
             <DropdownMenu>
@@ -109,17 +116,36 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
-                <DropdownMenuItem>
-                  <RiEdit2Line />
-                  <Button variant={null}>Edit</Button>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setEditData(userData);
+                    toggleEdit();
+                  }}
+                >
+                  <RiEdit2Line className='mr-2' />
+                  Edit
+                  {/* <RiEdit2Line />
+                  <Button onClick={() => {
+                      setEditData(userData);
+                      toggleEdit();
+                    }} variant={null}>
+                    Edit
+                  </Button> */}
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <RiDeleteBin6Fill className='text-red-500' />
+                <DropdownMenuItem
+                  onSelect={() =>
+                    deleteById(id, () => {
+                      router.refresh();
+                    })
+                  }
+                >
+                  <RiDeleteBin6Fill className='mr-2 text-red-500' />
+                  {loading ? "Deleting..." : "Delete"}
+                  {/* <RiDeleteBin6Fill className='text-red-500' />
                   <Button
                     variant={null}
                     onClick={() =>
-                      deleteByNIM(nomor_induk, () => {
-                        console.log("done");
+                      deleteById(id, () => {
                         router.refresh();
                       })
                     }
@@ -127,7 +153,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                     className='text-red-500'
                   >
                     {loading ? "Deleting..." : "Delete"}
-                  </Button>
+                  </Button> */}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -135,7 +161,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteByNIM, router]
+    [loading, deleteById, router, toggleEdit]
   );
 
   return (
@@ -144,14 +170,14 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         title='Daftar Supervisor'
         subtitle='List daftar supervisor aktif'
         label='Tambah Supervisor'
-        onAdd={toggleModal}
+        onAdd={toggleInsert}
       />
       <DataTable data={tableData} columns={columns} />
-      <SupervisorFormDialog
-        open={open}
-        onOpenChange={handleOpenChange}
-        title='Tambah User'
-        fields={supervisorModalInput}
+      <InsertSupervisorForm open={insertOpen} onOpenChange={toggleInsert} />
+      <UpdateSupervisorForm
+        open={editOpen}
+        onOpenChange={toggleEdit}
+        defaultData={editData}
       />
     </>
   );

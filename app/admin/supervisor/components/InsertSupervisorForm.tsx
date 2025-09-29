@@ -1,5 +1,4 @@
 import type { FC } from "react";
-import type { IconType } from "react-icons";
 
 import { FaUser, FaIdCardAlt, FaBuilding } from "react-icons/fa";
 import { PiPassword } from "react-icons/pi";
@@ -20,28 +19,17 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  supervisorSchema,
-  SupervisorInput,
+  supervisorInsertSchema,
+  SupervisorInsert,
   insertDataToLowerCase,
 } from "@/lib/validation/schema";
 
-interface SupervisorFormDialogProps {
-  fields: FieldConfig[];
+interface InsertSupervisorFormProps {
   open: boolean;
-  title: string;
   onOpenChange: (open: boolean) => void;
 }
 
-interface FieldConfig {
-  name: string;
-  placeholder: string;
-  label: string;
-  type?: string;
-  Icon: IconType;
-  iconClassName?: string;
-}
-
-const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
+const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
   open,
   onOpenChange,
 }) => {
@@ -49,11 +37,11 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SupervisorInput>({
-    resolver: zodResolver(supervisorSchema),
+  } = useForm<SupervisorInsert>({
+    resolver: zodResolver(supervisorInsertSchema),
   });
 
-  const onSubmit = async (data: SupervisorInput) => {
+  const onSubmit = async (data: SupervisorInsert) => {
     const payload = {
       ...insertDataToLowerCase(data),
       role: "supervisor",
@@ -64,7 +52,7 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
     };
 
     try {
-      const res = await fetch("/api/insertUser", {
+      const res = await fetch("/api/supervisor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -203,4 +191,4 @@ const SupervisorFormDialog: FC<SupervisorFormDialogProps> = ({
   );
 };
 
-export default SupervisorFormDialog;
+export default InsertSupervisorForm;

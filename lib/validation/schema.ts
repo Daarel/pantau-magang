@@ -7,7 +7,9 @@ const formatDateToYMD = (date: Date) => {
   return `${y}-${m}-${d}`;
 };
 
-export const insertDataToLowerCase = <T extends Record<string, any>>(data: T): T => {
+export const insertDataToLowerCase = <T extends Record<string, any>>(
+  data: T
+): T => {
   const lowercasedData = Object.fromEntries(
     Object.entries(data).map(([key, value]) => [
       key,
@@ -18,7 +20,9 @@ export const insertDataToLowerCase = <T extends Record<string, any>>(data: T): T
   return {
     ...lowercasedData,
     ...(data.hasOwnProperty("intern_start_date") && {
-      intern_start_date: formatDateToYMD(new Date((data as any).intern_start_date)),
+      intern_start_date: formatDateToYMD(
+        new Date((data as any).intern_start_date)
+      ),
     }),
     ...(data.hasOwnProperty("intern_end_date") && {
       intern_end_date: formatDateToYMD(new Date((data as any).intern_end_date)),
@@ -26,10 +30,9 @@ export const insertDataToLowerCase = <T extends Record<string, any>>(data: T): T
   };
 };
 
+export type InternInsert = z.infer<typeof internInsertSchema>;
 
-export type InternInput = z.infer<typeof internSchema>;
-
-export const internSchema = z
+export const internInsertSchema = z
   .object({
     nomor_induk: z.string().min(1, "Nomor Induk wajib diisi"),
     email: z.email("Email tidak valid"),
@@ -50,12 +53,21 @@ export const internSchema = z
     }
   );
 
-export type SupervisorInput = z.infer<typeof supervisorSchema>;
+export type SupervisorInsert = z.infer<typeof supervisorInsertSchema>;
 
-export const supervisorSchema = z.object({
+export const supervisorInsertSchema = z.object({
   nomor_induk: z.string().min(1, "Nomor Induk wajib diisi"),
   email: z.email("Email tidak valid"),
   full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
   password: z.string().min(1, "Password wajib diisi"),
   department: z.string().min(1, "Gedung wajib diisi"),
 });
+
+export type SupervisorUpdate = z.infer<typeof supervisorUpdateSchema>;
+
+export const supervisorUpdateSchema = z.object({
+  nomor_induk: z.string().min(1, "Nomor Induk wajib diisi"),
+  email: z.email("Email tidak valid"),
+  full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
+  department: z.string().min(1, "Gedung wajib diisi"),
+})

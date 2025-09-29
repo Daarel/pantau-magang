@@ -26,8 +26,8 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  internSchema,
-  InternInput,
+  internInsertSchema,
+  InternInsert,
   insertDataToLowerCase,
 } from "@/lib/validation/schema";
 
@@ -55,15 +55,15 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<InternInput>({
-    resolver: zodResolver(internSchema),
+  } = useForm<InternInsert>({
+    resolver: zodResolver(internInsertSchema),
   });
 
-  const onSubmit = async (data: InternInput) => {
+  const onSubmit = async (data: InternInsert) => {
     const payload = { ...insertDataToLowerCase(data), role: "intern" };
 
     try {
-      const res = await fetch("/api/insertUser", {
+      const res = await fetch("/api/intern", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +111,11 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-1'
               required
             />
-            {errors.nomor_induk && <p className="text-sm text-red-500">{errors.nomor_induk.message}</p>}
+            {errors.nomor_induk && (
+              <p className='text-sm text-red-500'>
+                {errors.nomor_induk.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -128,7 +132,9 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+            {errors.email && (
+              <p className='text-sm text-red-500'>{errors.email.message}</p>
+            )}
           </div>
 
           <div>
@@ -144,7 +150,9 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.full_name && <p className="text-sm text-red-500">{errors.full_name.message}</p>}
+            {errors.full_name && (
+              <p className='text-sm text-red-500'>{errors.full_name.message}</p>
+            )}
           </div>
 
           <div>
@@ -160,7 +168,9 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+            {errors.password && (
+              <p className='text-sm text-red-500'>{errors.password.message}</p>
+            )}
           </div>
 
           <div>
@@ -176,7 +186,11 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.department && <p className="text-sm text-red-500">{errors.department.message}</p>}
+            {errors.department && (
+              <p className='text-sm text-red-500'>
+                {errors.department.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -192,7 +206,11 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.institution && <p className="text-sm text-red-500">{errors.institution.message}</p>}
+            {errors.institution && (
+              <p className='text-sm text-red-500'>
+                {errors.institution.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -208,7 +226,11 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.nomor_induk_supervisor && <p className="text-sm text-red-500">{errors.nomor_induk_supervisor.message}</p>}
+            {errors.nomor_induk_supervisor && (
+              <p className='text-sm text-red-500'>
+                {errors.nomor_induk_supervisor.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -226,7 +248,9 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               required
             />
             {errors.intern_start_date && (
-              <p className="text-sm text-red-500">{errors.intern_start_date.message}</p>
+              <p className='text-sm text-red-500'>
+                {errors.intern_start_date.message}
+              </p>
             )}
           </div>
 
@@ -244,7 +268,11 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
               className='my-2'
               required
             />
-            {errors.intern_end_date && <p className="text-sm text-red-500">{errors.intern_end_date.message}</p>}
+            {errors.intern_end_date && (
+              <p className='text-sm text-red-500'>
+                {errors.intern_end_date.message}
+              </p>
+            )}
           </div>
 
           <DialogFooter>
