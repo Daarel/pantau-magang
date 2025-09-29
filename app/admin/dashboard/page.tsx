@@ -135,7 +135,7 @@ export default async function AdminDashboard() {
     <>
       <div className='relative space-y-2 mb-7 bg-purple-500 min-h-48 p-8 rounded-lg overflow-hidden'>
         <Image
-          src='/overlayBuilding.jpeg'
+          src='/overlayBuilding.webp'
           alt='Overlay'
           fill
           priority
@@ -202,7 +202,7 @@ export default async function AdminDashboard() {
             <NavigationButton
               variant='outline'
               className='p-10'
-              href='/admin/user?modal=open'
+              href='/admin/intern?modal=open'
             >
               <FaUsers className='h-8 w-8 text-blue-600' />
               <span className='text-sm'>Add User</span>

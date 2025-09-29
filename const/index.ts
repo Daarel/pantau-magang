@@ -148,7 +148,7 @@ const supervisorMenu: MenuByRole[] = [
 // untuk menu sidebar admin
 const adminMenu: MenuByRole[] = [
   { title: "Dashboard", path: "/admin/dashboard", Icon: BsHouse },
-  { title: "User", path: "/admin/user", Icon: FaUser },
+  { title: "Intern", path: "/admin/intern", Icon: FaUser },
   { title: "Supervisor", path: "/admin/supervisor", Icon: FaUserTie },
   { title: "Reset Password", path: "/admin/reset", Icon: PiPassword },
 ];

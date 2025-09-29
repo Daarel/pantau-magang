@@ -38,7 +38,7 @@ const menuByRole = {
   ],
   admin: [
     { title: "Dashboard", path: "/admin/dashboard", icon: BsHouse },
-    { title: "User", path: "/admin/user", icon: FaUser },
+    { title: "User", path: "/admin/intern", icon: FaUser },
     { title: "Supervisor", path: "/admin/supervisor", icon: FaUserTie },
   ],
 };
