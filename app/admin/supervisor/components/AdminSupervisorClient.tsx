@@ -41,8 +41,8 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
     async (id: string, onComplete?: () => void) => {
       setLoading(true);
 
-      const res = await fetch("/api/deleteUser", {
-        method: "POST",
+      const res = await fetch("/api/supervisor", {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });

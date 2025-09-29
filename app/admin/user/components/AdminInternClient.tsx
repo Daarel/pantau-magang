@@ -35,7 +35,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
     async (id: string, onComplete?: () => void) => {
       setLoading(true);
 
-      const res = await fetch("/api/deleteUser", {
+      const res = await fetch("/api/intern", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

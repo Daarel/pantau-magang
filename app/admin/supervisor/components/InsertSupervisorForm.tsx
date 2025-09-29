@@ -52,7 +52,7 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
     };
 
     try {
-      const res = await fetch("/api/insertUser", {
+      const res = await fetch("/api/supervisor", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

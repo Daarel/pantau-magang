@@ -6,18 +6,18 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient();
 
   const body = await req.json();
-    const {
-      nomor_induk,
-      email,
-      full_name,
-      password,
-      role,
-      department,
-      institution,
-      nomor_induk_supervisor,
-      intern_start_date,
-      intern_end_date,
-    } = body;
+  const {
+    nomor_induk,
+    email,
+    full_name,
+    password,
+    role,
+    department,
+    institution,
+    nomor_induk_supervisor,
+    intern_start_date,
+    intern_end_date,
+  } = body;
 
   let supervisorByNIM: { id: string; role: string } | null = null;
 

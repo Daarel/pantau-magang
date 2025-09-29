@@ -63,7 +63,7 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
     const payload = { ...insertDataToLowerCase(data), role: "intern" };
 
     try {
-      const res = await fetch("/api/insertUser", {
+      const res = await fetch("/api/intern", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

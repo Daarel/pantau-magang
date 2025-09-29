@@ -63,7 +63,7 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
     };
 
     try {
-      const res = await fetch(`/api/supervisor`, {
+      const res = await fetch('/api/supervisor', {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
