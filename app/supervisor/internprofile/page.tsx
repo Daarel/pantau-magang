@@ -10,7 +10,6 @@ import {
   FaHourglassHalf,
   FaCheckCircle,
 } from "react-icons/fa";
-import { MdWork } from "react-icons/md";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -100,7 +99,9 @@ export default async function InternProfilePage() {
       {/* Cards */}
       <div className="grid gap-6 sm:grid-cols-2">
         {interns?.map((intern) => {
-          const daysRemaining = calculateRemainingWeekdays(intern.intern_end_date);
+          const daysRemaining = calculateRemainingWeekdays(
+            intern.intern_end_date
+          );
 
           return (
             <Card
@@ -109,11 +110,11 @@ export default async function InternProfilePage() {
                 daysRemaining === 0 ? "bg-red-50" : "bg-white"
               }`}
             >
-              <CardContent className="p-4 flex items-center justify-between gap-4">
+              <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 {/* 🔹 Kiri: Foto + Info */}
-                <div className="flex items-center gap-4">
-                  {/* Avatar (fallback huruf awal) */}
-                  <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-blue-100 text-blue-700 font-semibold ring-2 ring-gray-200">
+                <div className="flex items-center gap-4 flex-1">
+                  {/* Avatar */}
+                  <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-blue-100 text-blue-700 font-semibold ring-2 ring-gray-200 shrink-0">
                     {intern.photo_url ? (
                       <Image
                         src={intern.photo_url}
@@ -142,8 +143,8 @@ export default async function InternProfilePage() {
                 </div>
 
                 {/* 🔹 Kanan: Periode & Status */}
-                <div className="text-right space-y-1">
-                  <p className="text-xs text-gray-500 flex items-center gap-1 justify-end">
+                <div className="text-left sm:text-right space-y-1">
+                  <p className="text-xs text-gray-500 flex items-center gap-1 sm:justify-end">
                     <FaRegCalendarAlt className="text-gray-400" />
                     {intern.intern_start_date
                       ? new Date(intern.intern_start_date).toLocaleDateString(
@@ -170,7 +171,7 @@ export default async function InternProfilePage() {
 
                   {daysRemaining !== null && (
                     <p
-                      className={`text-sm font-medium flex items-center gap-1 justify-end ${
+                      className={`text-sm font-medium flex items-center gap-1 sm:justify-end ${
                         daysRemaining === 0 ? "text-red-600" : "text-green-600"
                       }`}
                     >
