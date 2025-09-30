@@ -117,6 +117,8 @@ export default async function InternProfilePage() {
                   <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-blue-100 text-blue-700 font-semibold ring-2 ring-gray-200 shrink-0">
                     {intern.photo_url ? (
                       <Image
+                        width={48}
+                        height={48}
                         src={intern.photo_url}
                         alt={intern.full_name}
                         className="w-full h-full object-cover"
