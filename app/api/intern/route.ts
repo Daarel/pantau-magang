@@ -19,19 +19,6 @@ export async function POST(req: NextRequest) {
     intern_end_date,
   } = body;
 
-  console.log({
-    nomor_induk,
-    email,
-    full_name,
-    password,
-    role,
-    department,
-    institution,
-    nomor_induk_supervisor,
-    intern_start_date,
-    intern_end_date,
-  });
-
   const { data: dataUser, error: errorDataUser } = await supabase
     .from("users")
     .select("id, role")
@@ -95,28 +82,23 @@ export async function PATCH(req: NextRequest) {
       auth_id,
     } = body;
 
-    const { data: getSupervisorId, error: ErrorGetSupervisorId } =
-      await supabase
-        .from("users")
-        .select("id")
-        .eq("nomor_induk", nomor_induk_supervisor)
-        .single();
+    console.log("📥 Body dari request:", body);
+    console.log("🔎 nomor_induk_supervisor diterima:", nomor_induk_supervisor);
 
-    if (getSupervisorId?.id)
+    const { data: dataUser, error: errorDataUser } = await supabase
+      .from("users")
+      .select("id")
+      .eq("nomor_induk", nomor_induk_supervisor)
+      .single();
+
+    if (!dataUser?.id)
       return NextResponse.json(
         { error: "Supervisor tidak ditemukan" },
         { status: 404 }
       );
 
-    if (ErrorGetSupervisorId) {
-      return NextResponse.json(
-        {
-          error: "Gagal mencari supervisor",
-          detail: ErrorGetSupervisorId.message,
-        },
-        { status: 500 }
-      );
-    }
+    if (errorDataUser)
+      return NextResponse.json({ errorDataUser }, { status: 400 });
 
     const { data: updatedAuthData, error: errorUpdateAuthData } =
       await supabaseAdmin.auth.admin.updateUserById(auth_id, {
@@ -134,11 +116,11 @@ export async function PATCH(req: NextRequest) {
       .from("users")
       .update({
         nomor_induk: Number(nomor_induk),
-        email: email,
+        email,
         full_name,
         department,
         institution,
-        nomor_induk_supervisor: String(getSupervisorId.id),
+        supervisor_id: String(dataUser?.id),
         intern_start_date,
         intern_end_date,
       })

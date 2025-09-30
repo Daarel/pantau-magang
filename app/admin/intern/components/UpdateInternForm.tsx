@@ -37,7 +37,6 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
   onOpenChange,
   defaultData,
 }) => {
-  console.log(defaultData);
   const {
     register,
     handleSubmit,
@@ -55,7 +54,7 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
         full_name: defaultData.full_name || "",
         department: defaultData.department || "",
         institution: defaultData.institution || "",
-        nomor_induk_supervisor: defaultData.supervisor?.nomor_induk || "",
+        nomor_induk_supervisor: String(defaultData.supervisor?.nomor_induk) || "",
         intern_start_date: defaultData.intern_start_date ?? "",
         intern_end_date: defaultData.intern_end_date ?? "",
       });
