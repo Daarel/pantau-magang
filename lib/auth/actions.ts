@@ -32,6 +32,7 @@ export async function loginUser(formData: FormData) {
 
   if (!loginData.nomorInduk || !loginData.password) {
     throw new Error("Nomor Induk dan Password harus diisi");
+    
   }
 
   const userInfo = await getUserByNomorInduk(loginData.nomorInduk);

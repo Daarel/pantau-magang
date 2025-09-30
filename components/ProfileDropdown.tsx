@@ -140,6 +140,3 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
 };
 
 export default ProfileDropDown;
-function setRole(arg0: any) {
-  throw new Error("Function not implemented.");
-}
