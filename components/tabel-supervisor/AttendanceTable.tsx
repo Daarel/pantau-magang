@@ -32,7 +32,9 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
     `
     )
     .eq("users.supervisor_id", supervisorId)
-    .or("dispensation.eq.approved,dispensation.eq.n_approved,dispensation.is.null")
+    .or(
+      "dispensation.eq.approved,dispensation.eq.n_approved,dispensation.is.null"
+    )
     .order("date", { ascending: false });
 
   if (error) {
@@ -50,12 +52,16 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
       ? new Date(att.check_in_time).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
+          hour12: false,
+          timeZone: "Asia/Jakarta", 
         })
       : "-:-",
     check_out_time: att.check_out_time
       ? new Date(att.check_out_time).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
+          hour12: false,
+          timeZone: "Asia/Jakarta", 
         })
       : "-:-",
   }));
@@ -124,7 +130,9 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
     )
     .eq("users.supervisor_id", supervisorId)
     .eq("date", today)
-    .or("dispensation.eq.approved,dispensation.eq.n_approved,dispensation.is.null")
+    .or(
+      "dispensation.eq.approved,dispensation.eq.n_approved,dispensation.is.null"
+    )
     .order("date", { ascending: false });
 
   if (error) {
@@ -140,12 +148,16 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
       ? new Date(att.check_in_time).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
+          hour12: false,
+          timeZone: "Asia/Jakarta",
         })
       : "-:-",
     check_out_time: att.check_out_time
       ? new Date(att.check_out_time).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
+          hour12: false,
+          timeZone: "Asia/Jakarta", 
         })
       : "-:-",
   }));
