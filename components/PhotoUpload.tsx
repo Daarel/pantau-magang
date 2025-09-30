@@ -7,6 +7,7 @@ import { TbCameraPlus } from 'react-icons/tb';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { toast } from "sonner";
 import { FaTrash } from 'react-icons/fa';
+import Image from 'next/image';
 
 interface PhotoUploadProps {
   onPhotoChange: (file: File | null) => void;
@@ -62,7 +63,7 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
       
       {previewUrl ? (
         <div className="relative flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 overflow-hidden">
-          <img
+          <Image
             src={previewUrl}
             alt="Preview"
             className='w-full h-full object-cover'
