@@ -7,6 +7,7 @@ import DashboardClock from "@/components/DashboardClock";
 import { Card, CardContent } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 import { DashboardTable } from "@/components/tabel-supervisor/AttendanceTable";
+import { MdNavigateNext } from "react-icons/md";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -159,31 +160,32 @@ export default async function SupervisorDashboard() {
 
   return (
     <>
-      <div className='relative bg-green-500 space-y-2 mb-7 min-h-48 p-8 rounded-lg overflow-hidden'>
+      <div className="relative bg-green-500 space-y-2 mb-7 min-h-48 p-8 rounded-lg overflow-hidden">
         <Image
-          src='/overlayBuilding.webp'
-          alt='Overlay'
+          src="/overlayBuilding.webp"
+          alt="Overlay"
           fill
           priority
-          className='absolute inset-0 object-cover opacity-25 z-0'
+          className="absolute inset-0 object-cover opacity-25 z-0"
         />
 
-        <div className='relative z-10'>
-          <h1 className='title_header max-sm:text-3xl capitalize'>
+        <div className="relative z-10">
+          <h1 className="title_header max-sm:text-3xl capitalize">
             Selamat Datang, {user?.user_metadata.full_name}!
           </h1>
           <DashboardClock />
         </div>
       </div>
 
-      <div className='grid grid-cols-4 max-sm:grid-cols-2 gap-6 max-md:grid-cols-2 mb-5'>
+      <div className="grid grid-cols-4 max-sm:grid-cols-2 gap-6 max-md:grid-cols-2 mb-5">
         {statCards.map((card, i) => (
           <Card key={i}>
             {card.Icon === GoPeople ? (
-              <Link href='/supervisor/internprofile'>
+              <Link href="/supervisor/internprofile">
                 <CardContent
                   className={`flex justify-center items-center gap-0 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1 pr-8 cursor-pointer 
-                hover:bg-gray-100 hover:shadow-md transition-all duration-200 rounded-xl`}
+                hover:bg-gray-100 hover:shadow-md hover:scale-[1.02] 
+    hover:ring-2 hover:ring-blue-300 transition-all duration-200 rounded-xl`}
                 >
                   <StatCard
                     Icon={card.Icon}
@@ -191,10 +193,14 @@ export default async function SupervisorDashboard() {
                     value={card.value}
                     contentColor={card.contentColor}
                   />
+                  {/* 🔹 Panah kecil biar keliatan bisa diklik */}
+                  <span className="ml-2 text-blue-600 font-extrabold text-2xl">
+                    <MdNavigateNext className="w-6 h-6 font-extrabold drop-shadow-sm"/>
+                  </span>
                 </CardContent>
               </Link>
             ) : (
-              <CardContent className='flex justify-center items-center gap-0 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1 pr-8'>
+              <CardContent className="flex justify-center items-center gap-0 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1 pr-8">
                 <StatCard
                   Icon={card.Icon}
                   title={card.title}
