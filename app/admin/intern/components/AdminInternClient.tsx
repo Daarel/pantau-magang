@@ -2,13 +2,11 @@
 
 import { LuArrowUpDown } from "react-icons/lu";
 import { RiMoreFill, RiEdit2Line, RiDeleteBin6Fill } from "react-icons/ri";
-import InternFormDialog from "./InternFormDialog";
-
+import InsertInternForm from "./InsertInternForm";
 import type { DataColumn } from "@/types/adminTable";
 
 import DataTable from "@/components/DataTable";
 import TablePageHeader from "@/components/DataTableHeader";
-import { internModalInput } from "@/const";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,6 +18,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { type FC, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import UpdateInternForm from "./UpdateInternForm";
 
 interface AdminUserProps {
   tableData: DataColumn[];
@@ -28,8 +27,12 @@ interface AdminUserProps {
 const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   const router = useRouter();
 
-  const { open, toggleModal, handleOpenChange } = useModalQuery("modal");
+  const { open: insertOpen, toggleModal: toggleInsert } =
+    useModalQuery("modalInsert");
+  const { open: editOpen, toggleModal: toggleEdit } =
+    useModalQuery("modalEdit");
   const [loading, setLoading] = useState<boolean>(false);
+  const [editData, setEditData] = useState<DataColumn | null>(null);
 
   const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
@@ -130,6 +133,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         enableHiding: false,
         cell: ({ row }) => {
           const id = row.original.id;
+          const userData = row.original;
 
           return (
             <DropdownMenu>
@@ -140,25 +144,26 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
-                <DropdownMenuItem>
-                  <RiEdit2Line />
-                  <Button variant={null}>Edit</Button>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setEditData(userData);
+                    toggleEdit();
+                  }}
+                  className='cursor-pointer'
+                >
+                  <RiEdit2Line className='mr-2' />
+                  Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <RiDeleteBin6Fill className='text-red-500' />
-                  <Button
-                    variant={null}
-                    onClick={() =>
-                      deleteById(id, () => {
-                        console.log("done");
-                        router.refresh();
-                      })
-                    }
-                    disabled={loading}
-                    className='text-red-500'
-                  >
-                    {loading ? "Deleting..." : "Delete"}
-                  </Button>
+                <DropdownMenuItem
+                  onSelect={() =>
+                    deleteById(id, () => {
+                      router.refresh();
+                    })
+                  }
+                  className='text-red-500 cursor-pointer'
+                >
+                  <RiDeleteBin6Fill className='mr-2 text-red-500' />
+                  {loading ? "Deleting..." : "Delete"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -166,7 +171,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteById, router]
+    [loading, deleteById, router, toggleEdit]
   );
 
   return (
@@ -175,16 +180,14 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         title='Daftar Anak Magang'
         subtitle='List daftar anak magang aktif'
         label='Tambah User'
-        onAdd={toggleModal}
+        onAdd={toggleInsert}
       />
-      <div>
-        <DataTable data={tableData} columns={columns} />
-      </div>
-      <InternFormDialog
-        open={open}
-        onOpenChange={handleOpenChange}
-        title='Tambah User'
-        fields={internModalInput}
+      <DataTable data={tableData} columns={columns} />
+      <InsertInternForm open={insertOpen} onOpenChange={toggleInsert} />
+      <UpdateInternForm
+        open={editOpen}
+        onOpenChange={toggleEdit}
+        defaultData={editData}
       />
     </>
   );

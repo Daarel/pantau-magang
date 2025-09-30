@@ -19,6 +19,19 @@ export async function POST(req: NextRequest) {
     intern_end_date,
   } = body;
 
+  console.log({
+    nomor_induk,
+    email,
+    full_name,
+    password,
+    role,
+    department,
+    institution,
+    nomor_induk_supervisor,
+    intern_start_date,
+    intern_end_date,
+  });
+
   const { data: dataUser, error: errorDataUser } = await supabase
     .from("users")
     .select("id, role")
@@ -64,6 +77,81 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
 
   return NextResponse.json({ data });
+}
+
+export async function PATCH(req: NextRequest) {
+  const supabase = await createClient();
+  try {
+    const body = await req.json();
+    const {
+      nomor_induk,
+      email,
+      full_name,
+      department,
+      institution,
+      nomor_induk_supervisor,
+      intern_start_date,
+      intern_end_date,
+      auth_id,
+    } = body;
+
+    const { data: getSupervisorId, error: ErrorGetSupervisorId } =
+      await supabase
+        .from("users")
+        .select("id")
+        .eq("nomor_induk", nomor_induk_supervisor)
+        .single();
+
+    if (getSupervisorId?.id)
+      return NextResponse.json(
+        { error: "Supervisor tidak ditemukan" },
+        { status: 404 }
+      );
+
+    if (ErrorGetSupervisorId) {
+      return NextResponse.json(
+        {
+          error: "Gagal mencari supervisor",
+          detail: ErrorGetSupervisorId.message,
+        },
+        { status: 500 }
+      );
+    }
+
+    const { data: updatedAuthData, error: errorUpdateAuthData } =
+      await supabaseAdmin.auth.admin.updateUserById(auth_id, {
+        email: email,
+        user_metadata: { full_name: full_name },
+      });
+
+    if (errorUpdateAuthData)
+      return NextResponse.json(
+        { error: "Gagal update intern" },
+        { status: 500 }
+      );
+
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({
+        nomor_induk: Number(nomor_induk),
+        email: email,
+        full_name,
+        department,
+        institution,
+        nomor_induk_supervisor: String(getSupervisorId.id),
+        intern_start_date,
+        intern_end_date,
+      })
+      .eq("auth_id", auth_id);
+
+    if (updateError) {
+      return NextResponse.json({ error: updateError.message }, { status: 500 });
+    }
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
