@@ -33,7 +33,7 @@ export default function AdminReset() {
               required
             />
           </div>
-          <LoginButton />
+          <LoginButton buttonTitle="Ubah" />
         </form>
       </div>
     </div>
