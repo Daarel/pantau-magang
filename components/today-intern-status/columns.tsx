@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTableColumnHeader } from "@/components/data-table-column-header"
 import { AttendanceIntern } from "@/types/attendance"
-import { formatDate, formatTime, truncateText, statusColor } from "@/lib/utils"
+import { formatDate, formatTimeStamp, truncateText, statusColor } from "@/lib/utils"
 
 // Header name
 export const columns: ColumnDef<AttendanceIntern>[] = [
@@ -46,7 +46,7 @@ export const columns: ColumnDef<AttendanceIntern>[] = [
     header: "Masuk",
     cell: ({ row }) => {
       const checkInTime = row.getValue("check_in_time") as string | null;
-      return <div>{formatTime(checkInTime)}</div>;
+      return <div>{formatTimeStamp(checkInTime)}</div>;
     },
   },
   {
@@ -54,7 +54,7 @@ export const columns: ColumnDef<AttendanceIntern>[] = [
     header: "Pulang",
     cell: ({ row }) => {
       const checkOutTime = row.getValue("check_out_time") as string | null;
-      return <div>{formatTime(checkOutTime)}</div>;
+      return <div>{formatTimeStamp(checkOutTime)}</div>;
     },
   },
   {

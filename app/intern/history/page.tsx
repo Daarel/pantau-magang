@@ -1,8 +1,8 @@
 // src/components/AttendanceHistory.tsx
 "use client";
 import React, { useState } from "react";
-import { Download, } from "lucide-react";
 import { InternAttendanceTable } from "@/components/today-intern-status/page"
+import ExportAttendanceButton from "@/components/ExportAttendanceButton";
 
 export default function InternHistory() {
   const [activeTab, setActiveTab] = useState<string>("Semua Riwayat");
@@ -13,19 +13,16 @@ export default function InternHistory() {
       <div className='flex items-center justify-between'>
         <div>
           <h1 className='h4 font-semibold'>Riwayat Kehadiran</h1>
-          <p className='text-gray-500'>
+          <p className='text-gray-500 text-[12px] md:text-[16px]'>
             Lacak catatan dan pola kehadiran Anda
           </p>
         </div>
-        <button className='flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700'>
-          <Download size={18} />
-          Export PDF
-        </button>
+        <ExportAttendanceButton />
       </div>
 
       <div className="flex flex-col border-2 rounded-lg p-2">
         {/* Tabs */}
-        <div className='flex gap-6 border-b'>
+        <div className='flex gap-6 border-b text-[14px] md:text-[16px] justify-evenly sm:justify-normal'>
           {["Semua Riwayat", "Hadir", "Sakit", "Izin", "Alfa"].map((tab) => (
             <button
               key={tab}
