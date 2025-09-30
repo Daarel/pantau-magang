@@ -150,7 +150,7 @@ const adminMenu: MenuByRole[] = [
   { title: "Dashboard", path: "/admin/dashboard", Icon: BsHouse },
   { title: "Intern", path: "/admin/intern", Icon: FaUser },
   { title: "Supervisor", path: "/admin/supervisor", Icon: FaUserTie },
-  { title: "Reset Password", path: "/admin/reset", Icon: PiPassword },
+  { title: "Ubah Password", path: "/admin/reset", Icon: PiPassword },
 ];
 
 export {
