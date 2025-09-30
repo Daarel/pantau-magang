@@ -118,18 +118,31 @@ export const columns = (
     cell: ({ row }) => {
       const handleUpdateStatus = async (newStatus: string) => {
         try {
+          const updateData: any = { status: newStatus };
+
+          // kalau dari izin jadi hadir → isi check_in_time
+          if (
+            newStatus === "hadir" &&
+            row.original.status.toLowerCase() === "izin"
+          ) {
+            updateData.check_in_time = new Date().toISOString();
+          }
+
           const { error } = await supabase
-            .from("attendance") // pastikan nama tabel bener
-            .update({ status: newStatus })
-            .eq("id", row.original.id); // wajib ada id di dataset
+            .from("attendance")
+            .update(updateData)
+            .eq("id", row.original.id);
 
           if (error) {
             console.error("Gagal update status:", error);
           } else {
             console.log(`Status updated to ${newStatus} for`, row.original);
 
-            // 🔄 update langsung di UI tanpa reload
+            // update UI langsung
             row.original.status = newStatus;
+            if (updateData.check_in_time) {
+              row.original.check_in_time = updateData.check_in_time;
+            }
             onActionComplete();
           }
         } catch (err) {
@@ -196,8 +209,8 @@ export const reportColumns = (
       // ambil hanya nama file (tanpa path)
       const fileName = file.split("/").pop() || file;
       const extension = fileName.includes(".")
-      ? fileName.split(".").pop()?.toUpperCase()
-      : "";
+        ? fileName.split(".").pop()?.toUpperCase()
+        : "";
 
       return (
         <a

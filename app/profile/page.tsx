@@ -153,7 +153,13 @@ export default function Profile() {
     <>
       <div className="flex items-center justify-between mb-6">
         <Link
-          href="/supervisor/dashboard"
+          href={
+            role === "intern"
+              ? "/intern/dashboard"
+              : role === "supervisor"
+              ? "/supervisor/dashboard"
+              : "/admin/dashboard"
+          }
           className="px-2 py-2 hover:bg-gray-200 rounded-full transition"
         >
           <IoArrowBackOutline className="text-2xl text-gray-700 hover:text-gray-900" />
