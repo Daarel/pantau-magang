@@ -18,9 +18,11 @@ export default async function AdminUserPage() {
   const { data, error: errorGetData } = await supabase
     .from("users")
     .select(
-      `id, nomor_induk, full_name, department, email, supervisor:supervisor_id (
+      `id, nomor_induk, full_name, department, email, auth_id, supervisor:supervisor_id (
   id,
-  full_name
+  auth_id,
+  full_name,
+  nomor_induk
 ), intern_start_date, intern_end_date, institution`
     )
     .eq("role", "intern");
@@ -30,8 +32,11 @@ export default async function AdminUserPage() {
 
   const flatData = (data ?? []).map((user: any) => ({
     ...user,
+    auth_id: user.auth_id ?? null,
     supervisor_name: user.supervisor?.full_name ?? "-",
   }));
+
+  console.log("sample intern row:", flatData[0]);
 
   return (
     <Suspense fallback={<Loading />}>
