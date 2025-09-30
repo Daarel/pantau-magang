@@ -6,10 +6,12 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MdEdit, MdDelete } from "react-icons/md";
-
+import { FiAlertCircle } from "react-icons/fi";
 
 export default function Profile() {
-  const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(null);
+  const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(
+    null
+  );
   const [profileData, setProfileData] = useState<any>(null);
   const fallbackAvatar = "/avatar_fallback.png";
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -18,12 +20,16 @@ export default function Profile() {
     const getUserProfile = async () => {
       const supabase = createClient();
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.user) return;
 
       const { data, error } = await supabase
         .from("users")
-        .select("id, full_name, nomor_induk, department, role, photo_url, institution, intern_start_date, intern_end_date")
+        .select(
+          "id, full_name, nomor_induk, department, role, photo_url, institution, intern_start_date, intern_end_date"
+        )
         .eq("auth_id", session.user.id)
         .single();
 
@@ -57,7 +63,9 @@ export default function Profile() {
       return;
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.user) return;
 
     if (profileData.photo_url) {
@@ -102,7 +110,7 @@ export default function Profile() {
 
     setProfileData((prev: any) => ({
       ...prev,
-      photo_url: `${publicUrl}?t=${Date.now()}`
+      photo_url: `${publicUrl}?t=${Date.now()}`,
     }));
     window.dispatchEvent(new Event("profile-updated"));
   };
@@ -134,7 +142,7 @@ export default function Profile() {
 
     setProfileData((prev: any) => ({
       ...prev,
-      photo_url: null
+      photo_url: null,
     }));
     window.dispatchEvent(new Event("profile-updated"));
   };
@@ -175,6 +183,12 @@ export default function Profile() {
               onChange={handleUpload}
             />
 
+            {/* 🔹 Teks info ukuran maksimal */}
+            <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+              <FiAlertCircle size={14} className="text-gray-400" />
+              Ukuran foto maksimal 2 MB
+            </p>
+
             {/* 🔹 Info User */}
             <div className="flex flex-row mt-5 gap-10">
               <ul className="flex flex-col items-start">
@@ -187,7 +201,9 @@ export default function Profile() {
                       <p>Periode Magang: </p>
                     </>
                   )}
-                  {(role === "supervisor" || role === "admin") && <p>Gedung: </p>}
+                  {(role === "supervisor" || role === "admin") && (
+                    <p>Gedung: </p>
+                  )}
                 </li>
               </ul>
               <ul>
@@ -198,8 +214,8 @@ export default function Profile() {
                     <>
                       <p>{profileData.institution}</p>
                       <p>
-                        {new Date(profileData.intern_start_date).toDateString()} -{" "}
-                        {new Date(profileData.intern_end_date).toDateString()}
+                        {new Date(profileData.intern_start_date).toDateString()}{" "}
+                        - {new Date(profileData.intern_end_date).toDateString()}
                       </p>
                     </>
                   )}
