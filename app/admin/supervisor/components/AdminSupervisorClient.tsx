@@ -139,9 +139,9 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                       router.refresh();
                     })
                   }
-                  className="text-red-500 cursor-pointer"
+                  className="text-red-500 cursor-pointer  hover:text-red-500"
                 >
-                  <RiDeleteBin6Fill className='mr-2 text-red-500' />
+                  <RiDeleteBin6Fill className='mr-2 text-red-500 hover:text-red-500' />
                   {loading ? "Deleting..." : "Delete"}
                   {/* <RiDeleteBin6Fill className='text-red-500' />
                   <Button

@@ -23,7 +23,7 @@ const DataTableHeader: FC<DataTableHeaderProps> = ({
       </div>
       <Button
         onClick={onAdd}
-        className='cursor-pointer flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700'
+        className='cursor-pointer flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 hover:scale-105'
       >
         <AiOutlineUserAdd className='h-6 w-auto' />
         <span className='text-xs'>{ label }</span>
