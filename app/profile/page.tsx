@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { FiAlertCircle } from "react-icons/fi";
+import { IoArrowBackOutline } from "react-icons/io5";
+import Link from "next/link";
 
 export default function Profile() {
   const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(
@@ -149,9 +151,21 @@ export default function Profile() {
 
   return (
     <>
-      <h1 className="h4 font-semibold">Profile</h1>
-      <p className="text-gray-500">Informasi tentang saya</p>
-      <div className="flex justify-center items-center flex-col">
+      <div className="flex items-center justify-between mb-6">
+        <Link
+          href="/supervisor/dashboard"
+          className="px-2 py-2 hover:bg-gray-200 rounded-full transition"
+        >
+          <IoArrowBackOutline className="text-2xl text-gray-700 hover:text-gray-900" />
+        </Link>
+
+        <div className="absolute left-1/2 -translate-x-1/2 text-center">
+          <h1 className="h4 font-semibold">Profile</h1>
+          <p className="text-gray-500">Informasi tentang saya</p>
+        </div>
+      </div>
+
+      <div className="flex justify-center items-center flex-col mt-10">
         <Card>
           <CardContent className="flex flex-col justify-center items-center">
             {/* 🔹 Avatar bulat rapi + tombol tidak terpotong */}
