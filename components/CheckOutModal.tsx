@@ -40,7 +40,7 @@ export function CheckOutModal() {
         .eq("auth_id", user.id)
         .single();
 
-      const userId = userData.id;
+      const userId = userData?.id;
 
       if (!userId) {
         throw new Error('ID user tidak valid');
