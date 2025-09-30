@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 export default function DummySignUp() {
   async function signUp(formData: FormData) {
@@ -25,10 +26,9 @@ export default function DummySignUp() {
     });
 
     if (error) {
-      throw new Error(error.message);
+      toast.error('Data tidak berhasil didapatkan.')
     }
 
-    // setelah signup, redirect ke dashboard (atau halaman lain)
     redirect("/");
   }
 

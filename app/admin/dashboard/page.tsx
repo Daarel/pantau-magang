@@ -16,6 +16,7 @@ import DashboardClock from "@/components/DashboardClock";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { toast } from "sonner";
 
 type ActivityType = "user" | "approval" | "attendance" | "alert";
 
@@ -41,16 +42,20 @@ export default async function AdminDashboard() {
     .from("users_summary")
     .select("*");
 
-  if (!summary || error) {
-    throw new Error("cannot get data from view");
+  if (error) {
+    toast.error("Data tidak berhasil didapatkan.");
+  }
+
+  if (!summary || summary.length === 0) {
+    toast.error("Data ringkasan tidak tersedia.");
   }
 
   // Mock data
   const stats = {
-    totalUsers: summary[0]?.total_users ?? 0,
-    activeInterns: summary[0]?.total_intern ?? 0,
-    supervisors: summary[0]?.total_supervisor ?? 0,
-    departments: summary[0]?.total_departement ?? 0,
+    totalUsers: summary?.[0]?.total_users ?? 0,
+    activeInterns: summary?.[0]?.total_intern ?? 0,
+    supervisors: summary?.[0]?.total_supervisor ?? 0,
+    departments: summary?.[0]?.total_departement ?? 0,
   };
 
   const statCards = [
