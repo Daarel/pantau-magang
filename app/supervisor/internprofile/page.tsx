@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { MdWork } from "react-icons/md";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function InternProfilePage() {
   const supabase = await createClient();
@@ -58,7 +59,7 @@ export default async function InternProfilePage() {
     const endDate = new Date(end);
 
     let count = 0;
-    let current = new Date(today);
+    const current = new Date(today);
 
     while (current <= endDate) {
       const day = current.getDay(); // 0 = Minggu, 6 = Sabtu
@@ -114,7 +115,7 @@ export default async function InternProfilePage() {
                   {/* Avatar (fallback huruf awal) */}
                   <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-blue-100 text-blue-700 font-semibold ring-2 ring-gray-200">
                     {intern.photo_url ? (
-                      <img
+                      <Image
                         src={intern.photo_url}
                         alt={intern.full_name}
                         className="w-full h-full object-cover"
