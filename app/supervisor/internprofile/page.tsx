@@ -51,17 +51,24 @@ export default async function InternProfilePage() {
   }
 
   // helper sisa hari
-  const calculateRemainingDays = (end: string | null) => {
+  const calculateRemainingWeekdays = (end: string | null) => {
     if (!end) return null;
+
     const today = new Date();
     const endDate = new Date(end);
 
-    const daysRemaining = Math.max(
-      0,
-      Math.floor((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-    );
+    let count = 0;
+    let current = new Date(today);
 
-    return daysRemaining;
+    while (current <= endDate) {
+      const day = current.getDay(); // 0 = Minggu, 6 = Sabtu
+      if (day !== 0 && day !== 6) {
+        count++;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+
+    return count;
   };
 
   return (
@@ -92,7 +99,7 @@ export default async function InternProfilePage() {
       {/* Cards */}
       <div className="grid gap-6 sm:grid-cols-2">
         {interns?.map((intern) => {
-          const daysRemaining = calculateRemainingDays(intern.intern_end_date);
+          const daysRemaining = calculateRemainingWeekdays(intern.intern_end_date);
 
           return (
             <Card
