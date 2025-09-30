@@ -7,7 +7,7 @@ export default function SupervisorInboxClient({ supervisorId }: { supervisorId: 
   const [activeTab, setActiveTab] = useState("Semua Daftar");
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="mb-6">
