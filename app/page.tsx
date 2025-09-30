@@ -59,7 +59,7 @@ export default function LoginPage() {
                   required
                 />
               </div>
-              <LoginButton />
+              <LoginButton buttonTitle="Masuk" />
             </form>
           </CardContent>
         </Card>

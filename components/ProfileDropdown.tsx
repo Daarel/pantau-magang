@@ -98,13 +98,13 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
         <DropdownMenuContent className='w-56' align='end'>
           <DropdownMenuLabel>{role}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => handleNavigate("profile")}>
+          <DropdownMenuItem onClick={() => handleNavigate("profile")} className="cursor-pointer">
             <FaUser className='mr-2 h-4 w-4' />
             <span className='cursor-pointer'>Profil</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleOpenModal}>
+          <DropdownMenuItem onClick={handleOpenModal} className="cursor-pointer">
             <IoLogOutOutline className='mr-2 h-4 w-4 text-red-600' />
-            <span className='cursor-pointer text-red-600'>Keluar</span>
+            <span className=' text-red-600'>Keluar</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

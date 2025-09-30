@@ -1,7 +1,13 @@
 import { useEffect, type FC } from "react";
 
-import { FaUser, FaIdCardAlt, FaBuilding } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
+import {
+  FaUser,
+  FaUserTie,
+  FaIdCardAlt,
+  FaBuilding,
+  FaCalendarAlt,
+} from "react-icons/fa";
+import { MdEmail, MdSchool } from "react-icons/md";
 
 import {
   Dialog,
@@ -17,19 +23,16 @@ import { Label } from "@/components/ui/label";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  supervisorUpdateSchema,
-  SupervisorUpdate,
-} from "@/lib/validation/schema";
+import { internUpdateSchema, InternUpdate } from "@/lib/validation/schema";
 import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
 
-interface UpdateSupervisorFormProps {
+interface UpdateInternFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultData: any;
 }
 
-const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
+const UpdateInternForm: FC<UpdateInternFormProps> = ({
   open,
   onOpenChange,
   defaultData,
@@ -39,8 +42,8 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SupervisorUpdate>({
-    resolver: zodResolver(supervisorUpdateSchema),
+  } = useForm<InternUpdate>({
+    resolver: zodResolver(internUpdateSchema),
   });
 
   useEffect(() => {
@@ -50,20 +53,24 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
         email: defaultData.email || "",
         full_name: defaultData.full_name || "",
         department: defaultData.department || "",
+        institution: defaultData.institution || "",
+        nomor_induk_supervisor: String(defaultData.supervisor?.nomor_induk) || "",
+        intern_start_date: defaultData.intern_start_date ?? "",
+        intern_end_date: defaultData.intern_end_date ?? "",
       });
     } else {
       reset();
     }
   }, [defaultData, reset]);
 
-  const onSubmit = async (data: SupervisorUpdate) => {
+  const onSubmit = async (data: InternUpdate) => {
     const payload = {
       ...insertDataToLowerCase(data),
       auth_id: defaultData.auth_id,
     };
 
     try {
-      const res = await fetch("/api/supervisor", {
+      const res = await fetch("/api/intern", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -92,9 +99,9 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[600px] max-h-[80vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle>Edit Anak Magang</DialogTitle>
+          <DialogTitle>Edit Supervisor</DialogTitle>
           <DialogDescription className='text-gray-500'>
-            Silahkan edit data anak magang
+            Silahkan edit data supervisor
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3'>
@@ -175,6 +182,88 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
             )}
           </div>
 
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <MdSchool className='w-4 h-4' />
+              </span>
+              Perguruan Tinggi
+            </Label>
+            <Input
+              {...register("institution")}
+              placeholder='Masukkan asal perguruan tinggi'
+              className='my-2'
+              required
+            />
+            {errors.institution && (
+              <p className='text-sm text-red-500'>
+                {errors.institution.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <FaUserTie className='w-4 h-4' />
+              </span>
+              Nomor Induk Pembimbing
+            </Label>
+            <Input
+              {...register("nomor_induk_supervisor")}
+              placeholder='Masukkan Nomor Induk Pembimbing'
+              className='my-2'
+              required
+            />
+            {errors.nomor_induk_supervisor && (
+              <p className='text-sm text-red-500'>
+                {errors.nomor_induk_supervisor.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <FaCalendarAlt className='w-4 h-4' />
+              </span>
+              Mulai Magang
+            </Label>
+            <Input
+              type='date'
+              {...register("intern_start_date")}
+              placeholder='Masukkan tanggal mulai magang'
+              className='my-2'
+              required
+            />
+            {errors.intern_start_date && (
+              <p className='text-sm text-red-500'>
+                {errors.intern_start_date.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <FaCalendarAlt className='w-4 h-4' />
+              </span>
+              Selesai Magang
+            </Label>
+            <Input
+              type='date'
+              {...register("intern_end_date")}
+              placeholder='Masukkan tanggal selesai magang'
+              className='my-2'
+              required
+            />
+            {errors.intern_end_date && (
+              <p className='text-sm text-red-500'>
+                {errors.intern_end_date.message}
+              </p>
+            )}
+          </div>
+
           <DialogFooter>
             <Button type='submit'>Submit</Button>
           </DialogFooter>
@@ -184,4 +273,4 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
   );
 };
 
-export default UpdateSupervisorForm;
+export default UpdateInternForm;

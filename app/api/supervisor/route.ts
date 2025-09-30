@@ -54,7 +54,6 @@ export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
     const { nomor_induk, email, full_name, auth_id, department } = body;
-    console.log({ nomor_induk, email, full_name, auth_id, department });
 
     const { data: updatedAuthData, error: errorUpdateAuthData } =
       await supabaseAdmin.auth.admin.updateUserById(auth_id, {
@@ -64,7 +63,7 @@ export async function PATCH(req: NextRequest) {
 
     if (errorUpdateAuthData)
       return NextResponse.json(
-        { error: "Gagal update user." },
+        { error: "Gagal update supervisor" },
         { status: 500 }
       );
 

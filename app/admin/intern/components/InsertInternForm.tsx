@@ -1,5 +1,4 @@
 import type { FC } from "react";
-import type { IconType } from "react-icons";
 
 import {
   FaUser,
@@ -28,26 +27,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   internInsertSchema,
   InternInsert,
-  insertDataToLowerCase,
 } from "@/lib/validation/schema";
+import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
 
 interface InternFormDialogProps {
-  fields: FieldConfig[];
   open: boolean;
-  title: string;
   onOpenChange: (open: boolean) => void;
 }
 
-interface FieldConfig {
-  name: string;
-  placeholder: string;
-  label: string;
-  type?: string;
-  Icon: IconType;
-  iconClassName?: string;
-}
-
-const InternFormDialog: FC<InternFormDialogProps> = ({
+const InsertInternForm: FC<InternFormDialogProps> = ({
   open,
   onOpenChange,
 }) => {
@@ -284,4 +272,4 @@ const InternFormDialog: FC<InternFormDialogProps> = ({
   );
 };
 
-export default InternFormDialog;
+export default InsertInternForm;
