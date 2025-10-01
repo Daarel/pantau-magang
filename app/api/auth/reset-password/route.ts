@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { getUserByNomorInduk } from "@/lib/helper/auth.helper";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,27 +23,27 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
 
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: userInfo.email,
-      password,
-    });
+    const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
+      userInfo.auth_id,
+      {
+        password: password,
+      }
+    );
 
     if (error || !data)
       return NextResponse.json(
-        { success: false, message: "Password salah" },
+        { success: false, message: "Terjadi kesalahan." },
         { status: 401 }
       );
 
-    const role = userInfo.role ?? "intern";
-    const redirectPath =
-      role === "intern"
-        ? "/intern/dashboard"
-        : role === "supervisor"
-        ? "/supervisor/dashboard"
-        : "/admin/dashboard";
+    if (userInfo.role === "admin") {
+      return NextResponse.json({ success: true, redirect: "/" });
+    }
 
-    return NextResponse.json({ success: true, redirectPath });
+    return NextResponse.json({
+      success: true,
+      message: "Password berhasil diubah",
+    });
   } catch (err) {
     return NextResponse.json(
       {
