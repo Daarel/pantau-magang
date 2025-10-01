@@ -129,6 +129,13 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         ),
       },
       {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("status")}</div>
+        ),
+      },
+      {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {

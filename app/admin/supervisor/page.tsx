@@ -17,7 +17,7 @@ export default async function AdminUserPage() {
 
   const { data, error: errorGetData } = await supabase
     .from("users")
-    .select("id, nomor_induk, full_name, email, department, auth_id")
+    .select("id, nomor_induk, full_name, email, department, auth_id, status")
     .eq("role", "supervisor");
 
   if (errorGetData) {

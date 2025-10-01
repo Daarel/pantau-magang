@@ -23,7 +23,7 @@ export default async function AdminUserPage() {
   auth_id,
   full_name,
   nomor_induk
-), intern_start_date, intern_end_date, institution`
+), intern_start_date, intern_end_date, institution, status`
     )
     .eq("role", "intern");
   if (errorGetData) {
