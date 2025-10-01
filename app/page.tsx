@@ -1,69 +1,108 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { loginUser } from "@/lib/auth/actions";
+"use client";
+import { FormEvent, useState } from "react";
+import Head from "next/head";
 import Image from "next/image";
-import { FaRegUser } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { CiLock } from "react-icons/ci";
 import LoginButton from "@/components/LoginButton";
 import LoginInput from "@/components/LoginInput";
-import Head from "next/head";
+import { FaRegUser } from "react-icons/fa";
+import { CiLock } from "react-icons/ci";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          nomorInduk: formData.get("nomorInduk"),
+          password: formData.get("password"),
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        setError(json.message || "Login gagal, coba lagi.");
+      } else {
+        router.push(json.redirectPath);
+      }
+    } catch (err) {
+      setError("Gagal terhubung ke server.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <>
-      <Head>
-        <link rel='preload' as='image' href='/overlayBuilding.webp' />
-      </Head>
+    <div className="min-h-screen flex items-center justify-center bg-[url('/overlayBuilding.webp')] bg-cover bg-center relative">
+      <div className='absolute inset-0 bg-black/50 backdrop-blur-sm' />
+      <Card className='w-[400px] max-sm:w-[300px] relative z-10'>
+        <CardHeader className='text-center'>
+          <div className='mx-auto p-3 w-fit mb-4'>
+            <Image
+              src='/logoESDM.png'
+              alt='Logo'
+              width={200}
+              height={200}
+              priority
+            />
+          </div>
+          <CardTitle className='text-2xl text-gray-900'>
+            PANTAU MAGANG
+          </CardTitle>
+          <p className='text-gray-600'>Masukkan akun Anda</p>
+        </CardHeader>
 
-      <div className="min-h-screen relative flex items-center justify-center bg-[url('/overlayBuilding.webp')] bg-cover bg-center">
-        <div className='absolute inset-0 bg-black/50 backdrop-blur-sm z-0' />
-
-        <Card className='w-[400px] max-sm:w-[300px] relative z-10'>
-          <CardHeader className='text-center'>
-            <div className='mx-auto p-3 w-fit mb-4'>
-              <Image
-                src='/logoESDM.png'
-                alt='Logo Kementrian Energi dan Sumber Daya Mineral'
-                width={150}
-                height={150}
-                priority
-                className='h-auto w-auto'
+        <CardContent>
+          {error && (
+            <div className=' text-sm text-red-600 bg-red-100 p-2 rounded'>
+              {error}
+            </div>
+          )}
+          <form onSubmit={handleSubmit} className='space-y-4 mt-6'>
+            <div className='relative'>
+              <FaRegUser className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
+              <Input
+                id='nomorInduk'
+                name='nomorInduk'
+                type='number'
+                placeholder='Nomor Induk'
+                className='pl-10'
+                required
               />
             </div>
-            <CardTitle className='text-2xl text-gray-900'>
-              PANTAU MAGANG
-            </CardTitle>
-            <p className='text-gray-600'>Masukkan akun Anda</p>
-          </CardHeader>
 
-          <CardContent>
-            <form action={loginUser} className='space-y-4'>
-              <div className='relative'>
-                <FaRegUser className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
-                <Input
-                  id='nomorInduk'
-                  name='nomorInduk'
-                  type='number'
-                  placeholder='Nomor Induk'
-                  className='pl-10'
-                  required
-                />
-              </div>
-              <div className='relative'>
-                <CiLock className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
-                <LoginInput
-                  id='password'
-                  name='password'
-                  placeholder='Password'
-                  className='pl-10'
-                  required
-                />
-              </div>
-              <LoginButton buttonTitle="Masuk" />
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </>
+            <div className='relative'>
+              <CiLock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-10 w-5 -ml-0.5' />
+              <LoginInput
+                id='password'
+                name='password'
+                placeholder='Password'
+                className='pl-10'
+                required
+              />
+            </div>
+
+            <LoginButton
+              buttonTitle={isLoading ? "Loading..." : "Masuk"}
+              disabled={isLoading}
+            />
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
