@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserByNomorInduk } from "@/lib/helper/auth.helper";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient();
     const body = await req.json();
     const { nomorInduk, password } = body;
 
@@ -37,6 +39,7 @@ export async function POST(req: NextRequest) {
       );
 
     if (userInfo.role === "admin") {
+      await supabase.auth.signOut();
       return NextResponse.json({ success: true, redirect: "/" });
     }
 

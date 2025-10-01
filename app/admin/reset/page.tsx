@@ -32,14 +32,14 @@ export default function AdminReset() {
       const json = await res.json();
 
       if (!res.ok) {
-        setError(json.message || "Login gagal, coba lagi.");
+        setError(json.message || "Reset password gagal, coba lagi.");
       }
 
       if (json.success) {
         if (json.redirect) {
           router.push(json.redirect);
         } else {
-          router.push("/login");
+          router.push("/");
         }
       }
     } catch (err) {

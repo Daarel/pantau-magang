@@ -1,0 +1,132 @@
+"filename", "language", "TypeScript", "Markdown", "JSON", "XML", "JavaScript", "JSON with Comments", "Docker", "TypeScript JSX", "PostCSS", "comment", "blank", "total"
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\README.md", "Markdown", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 14, 37
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\dashboard\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 209, 0, 1, 19, 229
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\intern\components\AdminInternClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 183, 0, 0, 14, 197
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\intern\components\InsertInternForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 254, 0, 0, 22, 276
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\intern\components\UpdateInternForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 22, 277
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\intern\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 8, 49
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 6, 61
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 2, 17
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 5
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\reset\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 10, 102
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\supervisor\components\AdminSupervisorClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 153, 0, 21, 15, 189
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\supervisor\components\InsertSupervisorForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 177, 0, 0, 18, 195
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\supervisor\components\UpdateSupervisorForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 170, 0, 0, 18, 188
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\admin\supervisor\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 7, 35
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\api\auth\login\route.ts", "TypeScript", 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 57
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\api\auth\reset-password\route.ts", "TypeScript", 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 60
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\api\intern\route.ts", "TypeScript", 152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 180
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\api\supervisor\route.ts", "TypeScript", 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 130
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\error.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 3, 32
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 198, 11, 13, 222
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\intern\attendance\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 75, 0, 18, 14, 107
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\intern\dashboard\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 113, 0, 13, 11, 137
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\intern\history\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 40, 0, 4, 5, 49
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\intern\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 6, 61
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\intern\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 5
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\intern\record\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 66, 0, 5, 7, 78
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 5, 49
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\not-authorized\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 2, 31
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\not-found.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 2, 31
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 98, 0, 0, 11, 109
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\profile\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 8, 0, 1, 2, 11
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\profile\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 214, 0, 5, 35, 254
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\supervisor\attendance\component\AttendanceClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 38, 0, 3, 6, 47
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\supervisor\attendance\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 7, 29
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\supervisor\dashboard\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 180, 0, 11, 30, 221
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\supervisor\inbox\component\SupervisorInboxClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 38, 0, 3, 6, 47
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\supervisor\inbox\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 7, 29
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\supervisor\internprofile\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 168, 0, 12, 21, 201
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\supervisor\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 101, 0, 6, 14, 121
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\app\supervisor\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 5
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components.json", "JSON", 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 21
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\AttendanceButtonHandler.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 2, 27
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\AttendanceForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 372, 0, 20, 34, 426
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\AttendanceInfo.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 7, 62
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\Certificate.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 42, 0, 7, 10, 59
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\CheckOutModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 90, 0, 5, 11, 106
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\DashboardClock.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 7, 32
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\DataTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 146, 0, 1, 9, 156
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\DataTableHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 4, 36
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ExportAttendanceButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 59, 0, 3, 17, 79
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\FLocationButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 3, 40
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\FStatusDropdown.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 2, 61
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\FileUpload.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 193, 0, 133, 28, 354
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\LoginButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 5, 26
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\LoginInput.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 7, 45
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\Navbar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 58, 0, 0, 9, 67
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\NavigationButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 7, 28
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\PhotoUpload.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 83, 0, 4, 12, 99
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\PieChart.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 66, 0, 6, 7, 79
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ProfileDropdown.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 126, 0, 1, 16, 143
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\RoleBasedLayout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 34, 0, 1, 7, 42
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\StatCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 4, 31
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\TodaysAttendance.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 62, 0, 5, 13, 80
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\data-table-column-header.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 57, 0, 6, 5, 68
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\data-table-column-visibility.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 4, 58
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\tabel-supervisor\AttendanceTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 229, 0, 1, 26, 256
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\tabel-supervisor\columns.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 353, 0, 16, 24, 393
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\tabel-supervisor\data-table.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 165, 0, 8, 12, 185
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\today-intern-status\columns.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 79, 0, 2, 2, 83
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\today-intern-status\data-table.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 160, 0, 9, 12, 181
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\today-intern-status\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 25, 0, 2, 4, 31
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\alert-dialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 143, 0, 0, 15, 158
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\avatar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 47, 0, 1, 7, 55
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\badge.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 48, 0, 0, 7, 55
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\button.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 6, 60
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\calendar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 203, 0, 0, 11, 214
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\card.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 83, 0, 0, 10, 93
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\date-picker.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 96, 0, 0, 8, 104
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\dialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 130, 0, 0, 14, 144
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\dropdown-menu.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 239, 0, 0, 19, 258
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\error.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 47, 0, 2, 9, 58
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\form.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 143, 0, 0, 25, 168
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\input.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 4, 22
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\label.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 5, 25
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\loader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 3, 14
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\navigation-menu.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 157, 0, 0, 12, 169
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\popover.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 8, 49
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\progress.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 5, 32
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\select.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 172, 0, 0, 14, 186
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\separator.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 5, 29
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\sheet.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 126, 0, 0, 14, 140
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\sidebar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 660, 0, 17, 55, 732
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\skeleton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 3, 14
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\sonner.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 5, 26
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\success.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 50, 0, 2, 9, 61
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\table.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 105, 0, 0, 12, 117
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\textarea.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 4, 19
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\components\ui\tooltip.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 8, 62
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\const\index.ts", "TypeScript", 147, 0, 0, 0, 0, 0, 0, 0, 0, 5, 11, 163
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\dockerfile", "Docker", 0, 0, 0, 0, 0, 0, 16, 0, 0, 14, 13, 43
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\dump\auth\actions.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 58, 22, 80
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\dump\dummy-signin\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 63, 0, 1, 8, 72
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 5, 22
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\hooks\use-mobile.ts", "TypeScript", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\hooks\useAttendance.ts", "TypeScript", 125, 0, 0, 0, 0, 0, 0, 0, 0, 10, 23, 158
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\hooks\useAuth.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 4, 14
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\hooks\useDashboardData.ts", "TypeScript", 71, 0, 0, 0, 0, 0, 0, 0, 0, 2, 13, 86
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\hooks\useModalQuery.ts", "TypeScript", 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 32
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\attendance.ts", "TypeScript", 183, 0, 0, 0, 0, 0, 0, 0, 0, 5, 31, 219
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\helper\auth.helper.ts", "TypeScript", 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 18
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\helper\dataInsert.helper.ts", "TypeScript", 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 29
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\helper\geolocation.helpers.ts", "TypeScript", 122, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 138
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\helper\upload.helpers.ts", "TypeScript", 29, 0, 0, 0, 0, 0, 0, 0, 0, 12, 11, 52
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\middleware.ts", "TypeScript", 10, 0, 0, 0, 0, 0, 0, 0, 0, 55, 13, 78
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\supabase\admin.ts", "TypeScript", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\supabase\client.ts", "TypeScript", 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 10
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\supabase\middleware.ts", "TypeScript", 40, 0, 0, 0, 0, 0, 0, 0, 0, 17, 8, 65
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\supabase\server.ts", "TypeScript", 24, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 29
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\utils.ts", "TypeScript", 82, 0, 0, 0, 0, 0, 0, 0, 0, 7, 16, 105
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\lib\validation\schema.ts", "TypeScript", 57, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 65
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\middleware.ts", "TypeScript", 10, 0, 0, 0, 0, 0, 0, 0, 0, 33, 9, 52
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\next.config.ts", "TypeScript", 14, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 20
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\package-lock.json", "JSON", 0, 0, 9014, 0, 0, 0, 0, 0, 0, 0, 1, 9015
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\package.json", "JSON", 0, 0, 70, 0, 0, 0, 0, 0, 0, 0, 1, 71
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\postcss.config.mjs", "JavaScript", 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 6
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\public\landscape-placeholder.svg", "XML", 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 5
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 35, 0, 0, 0, 0, 1, 36
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\types\adminTable.ts", "TypeScript", 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\types\attendance.ts", "TypeScript", 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 27
+"c:\Users\Daare\OneDrive\Desktop\pantau-magang\types\dashboard.ts", "TypeScript", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15
+"Total", "-", 1420, 23, 9105, 5, 21, 35, 16, 8614, 198, 601, 1300, 21338
