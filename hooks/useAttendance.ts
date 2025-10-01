@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AttendanceIntern, AttendanceCheckIn } from "@/types/attendance";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 // Fetch data user (intern)
 export function useAttendanceData(activeTab: string) {
@@ -127,13 +128,11 @@ export const UpdateCheckOutTime = async (userId: string, date: string) => {
       .single();
 
     if (fetchError) {
-      throw new Error(
-        `Tidak ditemukan data absensi masuk untuk hari ini: ${fetchError.message}`
-      );
+      toast.error('Gagal melakukan sinkronisasi absensi')
     }
 
     if (!attendanceRecord) {
-      throw new Error("Tidak ditemukan data absensi masuk untuk hari ini");
+      toast.error('Data absensi hari ini tidak ditemukan');
     }
 
     // Update check_out_time
@@ -143,7 +142,7 @@ export const UpdateCheckOutTime = async (userId: string, date: string) => {
         check_out_time: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq("id", attendanceRecord.id)
+      .eq("id", attendanceRecord?.id)
       .select();
 
     if (error) {

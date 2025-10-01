@@ -2,6 +2,7 @@ import { createClient } from "./supabase/client";
 import QRCode from "qrcode";
 import { format } from "date-fns";
 import { ReactNode } from "react";
+import { toast } from "sonner";
 
 export interface AttendanceRecord {
   checkOut: string | null;
@@ -83,7 +84,7 @@ export async function checkIn(userId: string): Promise<boolean> {
       .single();
 
     if (existing && existing.check_in_time) {
-      throw new Error("Already checked in today");
+      toast.error('Anda sudah melakukkan absensi hari ini');
     }
 
     const checkInTime = new Date().toISOString();
@@ -137,11 +138,11 @@ export async function checkOut(userId: string): Promise<boolean> {
       .single();
 
     if (!existing || !existing.check_in_time) {
-      throw new Error("Must check in first");
+      toast.warning('Anda harus check-in terlebih dahulu');
     }
 
     if (existing.check_out_time) {
-      throw new Error("Already checked out today");
+      toast.warning('Sudah melakukkan check-out hari ini');
     }
 
     const checkOutTime = new Date().toISOString();
