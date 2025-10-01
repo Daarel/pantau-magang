@@ -101,6 +101,11 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         ),
       },
       {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => <div>{row.getValue("status")}</div>,
+      },
+      {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
@@ -121,7 +126,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                     setEditData(userData);
                     toggleEdit();
                   }}
-                  className="cursor-pointer"
+                  className='cursor-pointer'
                 >
                   <RiEdit2Line className='mr-2' />
                   Edit
@@ -139,7 +144,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                       router.refresh();
                     })
                   }
-                  className="text-red-500 cursor-pointer  hover:text-red-500"
+                  className='text-red-500 cursor-pointer  hover:text-red-500'
                 >
                   <RiDeleteBin6Fill className='mr-2 text-red-500 hover:text-red-500' />
                   {loading ? "Deleting..." : "Delete"}

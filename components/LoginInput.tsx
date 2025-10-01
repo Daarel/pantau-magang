@@ -8,33 +8,42 @@ import clsx from "clsx";
 
 interface LoginInputProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
-  className: string;
+  className?: string;
 }
 
-const LoginInput: FC<LoginInputProps> = (props) => {
+const LoginInput: FC<LoginInputProps> = ({ className, ...props }) => {
   const { pending } = useFormStatus();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
+    if (!isDisabled) {
+      setShowPassword((prev) => !prev);
+    }
   };
+
+  const isDisabled = pending || props.disabled;
 
   return (
     <>
-      <Input type={showPassword ? "text" : "password"} {...props} />
+      <Input
+        type={showPassword ? "text" : "password"}
+        {...props}
+        disabled={isDisabled}
+        className={className}
+      />
       <button
-        type='button'
+        type="button"
         onClick={togglePasswordVisibility}
-        disabled={pending}
+        disabled={isDisabled}
         className={clsx(
-          "absolute right-3 top-1/2 -translate-y-1/2 transform cursor-pointer text-gray-400",
-          !pending && "hover:text-gray-600"
+          "absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400",
+          isDisabled ? "cursor-default" : "cursor-pointer hover:text-gray-600"
         )}
       >
         {showPassword ? (
-          <AiOutlineEye className='h-5 w-5' />
+          <AiOutlineEye className="h-5 w-5" />
         ) : (
-          <AiOutlineEyeInvisible className='h-5 w-5 z-10' />
+          <AiOutlineEyeInvisible className="h-5 w-5 z-10" />
         )}
       </button>
     </>

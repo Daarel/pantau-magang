@@ -23,7 +23,7 @@ export default async function AdminUserPage() {
   auth_id,
   full_name,
   nomor_induk
-), intern_start_date, intern_end_date, institution`
+), intern_start_date, intern_end_date, institution, status`
     )
     .eq("role", "intern");
   if (errorGetData) {
@@ -40,7 +40,7 @@ export default async function AdminUserPage() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className='min-h-screen bg-gray-50 p-6 overflow-x-auto'>
+      <div className='min-h-screen bg-gray-50 p-6 overflow-x-hidden pr-64 max-md:pr-0'>
         <AdminInternClient tableData={flatData ?? []} />
       </div>
     </Suspense>
