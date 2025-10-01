@@ -7,7 +7,8 @@ import DashboardClock from "@/components/DashboardClock";
 import { Card, CardContent } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 import { DashboardTable } from "@/components/tabel-supervisor/AttendanceTable";
-import { MdNavigateNext } from "react-icons/md";
+import { MdNavigateNext, MdOutlineSick } from "react-icons/md";
+import { FaRegCalendarCheck, FaUserTimes } from "react-icons/fa";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -26,6 +27,10 @@ export default async function SupervisorDashboard() {
   let presentToday = 0;
   let pendingLeaves = 0;
   let avgAttendance = 0;
+  let weeklyAttendance = 0;
+  let izinCount = 0;
+  let sakitCount = 0;
+  let alfaCount = 0;
 
   const { data, error: errorGetUser } = await supabase
     .from("users")
@@ -45,8 +50,6 @@ export default async function SupervisorDashboard() {
     .eq("role", "intern")
     .eq("supervisor_id", data.id);
 
-  console.log("Interns Count:", internsCount);
-
   totalInterns = internsCount ?? 0;
 
   // ambil tanggal hari ini (lokal)
@@ -64,10 +67,7 @@ export default async function SupervisorDashboard() {
     .eq("status", "hadir")
     .eq("users.supervisor_id", data.id);
 
-  if (error) {
-    console.error("Error fetching presentToday:", error);
-  }
-
+  if (error) console.error("Error fetching presentToday:", error);
   presentToday = presentCount ?? 0;
 
   // hitung yang cuti/izin/sakit yang belum disetujui
@@ -77,10 +77,7 @@ export default async function SupervisorDashboard() {
     .eq("dispensation", "pending")
     .eq("users.supervisor_id", data.id);
 
-  if (pendingError) {
-    console.error("Error fetching pendingLeaves:", pendingError);
-  }
-
+  if (pendingError) console.error("Error fetching pendingLeaves:", pendingError);
   pendingLeaves = pendingCount ?? 0;
 
   // ambil semua kehadiran intern supervisor ini
@@ -102,59 +99,157 @@ export default async function SupervisorDashboard() {
         if (!attendancePerDay[att.date]) {
           attendancePerDay[att.date] = 0;
         }
-        attendancePerDay[att.date] += 1; // tambah jumlah hadir
+        attendancePerDay[att.date] += 1;
       }
     });
 
     const totalDays = Object.keys(attendancePerDay).length;
 
-    // total hadir seluruh hari
     const totalPresent = Object.values(attendancePerDay).reduce(
       (sum, val) => sum + val,
       0
     );
 
-    // hitung avg attendance
     avgAttendance =
       totalDays > 0 && totalInterns > 0
         ? (totalPresent / (totalDays * totalInterns)) * 100
         : 0;
 
     avgAttendance = parseFloat(avgAttendance.toFixed(2));
+
+    // === Weekly Attendance (Mon-Fri only) ===
+    function countWorkdays(start: Date, end: Date) {
+      let count = 0;
+      const date = new Date(start);
+
+      while (date <= end) {
+        const day = date.getDay();
+        if (day !== 0 && day !== 6) {
+          count++;
+        }
+        date.setDate(date.getDate() + 1);
+      }
+      return count;
+    }
+
+    const todayDate = new Date(today);
+    const mondayDate = new Date(todayDate);
+    mondayDate.setDate(todayDate.getDate() - todayDate.getDay() + 1); // Senin minggu ini
+
+    const workdaysCount = countWorkdays(mondayDate, todayDate);
+
+    // total hadir minggu ini
+    const weeklyPresent = attendanceData.filter((att: any) => {
+      const d = new Date(att.date);
+      return (
+        att.status === "hadir" &&
+        d >= mondayDate &&
+        d <= todayDate &&
+        d.getDay() !== 0 &&
+        d.getDay() !== 6
+      );
+    }).length;
+
+    const totalOpportunity = totalInterns * workdaysCount;
+
+    weeklyAttendance =
+      totalOpportunity > 0 ? (weeklyPresent / totalOpportunity) * 100 : 0;
+
+    weeklyAttendance = parseFloat(weeklyAttendance.toFixed(2));
   }
 
-  // Ensure totalInterns is defined and in scope
+  // hitung izin hari ini
+  const { count: izinTodayCount, error: izinError } = await supabase
+    .from("attendance")
+    .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+    .eq("date", today)
+    .eq("status", "izin")
+    .eq("users.supervisor_id", data.id);
+
+  if (izinError) console.error("Error fetching izinToday:", izinError);
+  izinCount = izinTodayCount ?? 0;
+
+  // hitung sakit hari ini
+  const { count: sakitTodayCount, error: sakitError } = await supabase
+    .from("attendance")
+    .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+    .eq("date", today)
+    .eq("status", "sakit")
+    .eq("users.supervisor_id", data.id);
+
+  if (sakitError) console.error("Error fetching sakitToday:", sakitError);
+  sakitCount = sakitTodayCount ?? 0;
+
+  // hitung alfa hari ini
+  const { count: alfaTodayCount, error: alfaError } = await supabase
+    .from("attendance")
+    .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+    .eq("date", today)
+    .eq("status", "alfa")
+    .eq("users.supervisor_id", data.id);
+
+  if (alfaError) console.error("Error fetching alfaToday:", alfaError);
+  alfaCount = alfaTodayCount ?? 0;
+
   const stats = {
     totalInterns: totalInterns + " Anak",
     presentToday: presentToday + " Hadir",
+    izinToday: izinCount + " Izin",
+    sakitToday: sakitCount + " Sakit",
+    alfaToday: alfaCount + " Alfa",
     pendingLeaves: pendingLeaves + " Pending",
     avgAttendance: avgAttendance + "%",
+    weeklyAttendance: weeklyAttendance + "%",
   };
 
   const statCards = [
     {
       Icon: GoPeople,
-      title: "Total Interns",
+      title: "Total Peserta",
       value: stats.totalInterns,
       contentColor: "text-blue-600",
     },
     {
       Icon: GoClock,
-      title: "Present Today",
+      title: "Kehadiran Hari Ini",
       value: stats.presentToday,
       contentColor: "text-green-600",
     },
     {
       Icon: IoDocumentTextOutline,
-      title: "Pending Leaves",
+      title: "Pesan Menunggu",
       value: stats.pendingLeaves,
       contentColor: "text-yellow-600",
     },
     {
       Icon: FiTrendingUp,
-      title: "Avg Attendance",
+      title: "Rata-Rata Kehadiran",
       value: stats.avgAttendance,
       contentColor: "text-indigo-600",
+    },
+    {
+      Icon: FaRegCalendarCheck,
+      title: "Izin Hari Ini",
+      value: stats.izinToday,
+      contentColor: "text-orange-600",
+    },
+    {
+      Icon: MdOutlineSick,
+      title: "Sakit Hari Ini",
+      value: stats.sakitToday,
+      contentColor: "text-red-600",
+    },
+    {
+      Icon: FaUserTimes,
+      title: "Alfa Hari Ini",
+      value: stats.alfaToday,
+      contentColor: "text-gray-700",
+    },
+    {
+      Icon: FiTrendingUp,
+      title: "Kehadiran Minggu Ini",
+      value: stats.weeklyAttendance,
+      contentColor: "text-purple-600",
     },
   ];
 
@@ -168,7 +263,6 @@ export default async function SupervisorDashboard() {
           priority
           className="absolute inset-0 object-cover opacity-25 z-0"
         />
-
         <div className="relative z-10">
           <h1 className="title_header max-sm:text-3xl capitalize">
             Selamat Datang, {user?.user_metadata.full_name}!
@@ -185,7 +279,7 @@ export default async function SupervisorDashboard() {
                 <CardContent
                   className={`flex justify-center items-center gap-0 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1 pr-8 cursor-pointer 
                 hover:bg-gray-100 hover:shadow-md hover:scale-[1.02] 
-    hover:ring-2 hover:ring-blue-300 transition-all duration-200 rounded-xl`}
+                hover:ring-2 hover:ring-blue-300 transition-all duration-200 rounded-xl`}
                 >
                   <StatCard
                     Icon={card.Icon}
@@ -193,9 +287,8 @@ export default async function SupervisorDashboard() {
                     value={card.value}
                     contentColor={card.contentColor}
                   />
-                  {/* 🔹 Panah kecil biar keliatan bisa diklik */}
                   <span className="ml-2 text-blue-600 font-extrabold text-2xl">
-                    <MdNavigateNext className="w-6 h-6 font-extrabold drop-shadow-sm"/>
+                    <MdNavigateNext className="w-6 h-6 font-extrabold drop-shadow-sm" />
                   </span>
                 </CardContent>
               </Link>
@@ -213,7 +306,6 @@ export default async function SupervisorDashboard() {
         ))}
       </div>
 
-      {/* Today's Intern Status */}
       {data.id && <DashboardTable supervisorId={data.id} />}
     </>
   );

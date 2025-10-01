@@ -22,7 +22,6 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
       status,
       date,
       check_in_time,
-      check_out_time,
       notes,
       dispensation,
       users!inner (
@@ -50,14 +49,6 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
     date: att.date,
     check_in_time: att.check_in_time
       ? new Date(att.check_in_time).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-          timeZone: "Asia/Jakarta", 
-        })
-      : "-:-",
-    check_out_time: att.check_out_time
-      ? new Date(att.check_out_time).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
           hour12: false,
@@ -95,7 +86,7 @@ async function getReportData(supervisorId: string): Promise<Report[]> {
 
   return (data ?? []).map((att: any) => ({
     id: att.id,
-    file: att.file_url, // sementara generate nama file
+    file: att.file_url,
     name: att.users?.full_name ?? "Unknown",
     status: att.status.charAt(0).toUpperCase() + att.status.slice(1),
     keterangan: att.notes ?? "-",
@@ -118,7 +109,6 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
       id,
       status,
       check_in_time,
-      check_out_time,
       date,
       dispensation,
       users!inner (
@@ -150,14 +140,6 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
           minute: "2-digit",
           hour12: false,
           timeZone: "Asia/Jakarta",
-        })
-      : "-:-",
-    check_out_time: att.check_out_time
-      ? new Date(att.check_out_time).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-          timeZone: "Asia/Jakarta", 
         })
       : "-:-",
   }));
