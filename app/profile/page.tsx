@@ -30,7 +30,7 @@ export default function Profile() {
       const { data, error } = await supabase
         .from("users")
         .select(
-          "id, full_name, nomor_induk, department, role, photo_url, institution, intern_start_date, intern_end_date"
+          "id, full_name, nomor_induk, department, role, photo_url, institution, intern_start_date, intern_end_date, supervisor:supervisor_id ( full_name )"
         )
         .eq("auth_id", session.user.id)
         .single();
@@ -218,6 +218,7 @@ export default function Profile() {
                   {role === "intern" && (
                     <>
                       <p>Universitas: </p>
+                      <p>Pembimbing: </p>
                       <p>Periode Magang: </p>
                     </>
                   )}
@@ -226,6 +227,7 @@ export default function Profile() {
                   )}
                 </li>
               </ul>
+
               <ul>
                 <li>
                   <p>{profileData.full_name}</p>
@@ -233,6 +235,7 @@ export default function Profile() {
                   {role === "intern" && (
                     <>
                       <p>{profileData.institution}</p>
+                      <p>{profileData.supervisor?.full_name ?? "-"}</p>{" "}
                       <p>
                         {new Date(profileData.intern_start_date).toDateString()}{" "}
                         - {new Date(profileData.intern_end_date).toDateString()}
