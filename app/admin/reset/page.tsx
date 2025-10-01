@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { CiLock } from "react-icons/ci";
 import { FaRegUser } from "react-icons/fa";
 
-import { resetPassword } from "@/lib/auth/actions";
+import { resetPassword } from "@/dump/auth/actions";
 import { Label } from "@/components/ui/label";
 
 export default function AdminReset() {
