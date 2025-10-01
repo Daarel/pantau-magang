@@ -7,8 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import LoginButton from "@/components/LoginButton";
 import LoginInput from "@/components/LoginInput";
-import { FaRegUser } from "react-icons/fa";
-import { CiLock } from "react-icons/ci";
+import { FaRegUser, FaLock } from "react-icons/fa";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -86,12 +85,13 @@ export default function LoginPage() {
             </div>
 
             <div className='relative'>
-              <CiLock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-10 w-5 -ml-0.5' />
+              <FaLock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
               <LoginInput
                 id='password'
                 name='password'
                 placeholder='Password'
                 className='pl-10'
+                disabled={isLoading}
                 required
               />
             </div>

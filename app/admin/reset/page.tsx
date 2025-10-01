@@ -2,8 +2,7 @@
 import { FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CiLock } from "react-icons/ci";
-import { FaRegUser } from "react-icons/fa";
+import { FaRegUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
 import { useRouter } from "next/navigation";
 
@@ -84,7 +83,7 @@ export default function AdminReset() {
           <div>
             <Label>
               <span className='w-4 h-4 inline-block mr-1'>
-                <CiLock className='w-4 h-4 inline' />
+                <FaLock className='h-4 w-4 inline' />
               </span>
               Password Baru
             </Label>

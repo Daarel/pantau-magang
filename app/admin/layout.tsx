@@ -25,7 +25,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     <SidebarProvider>
       <div className='flex flex-col w-full h-screen capitalize'>
         <Navbar />
-        <div className='flex flex-1 overflow-auto'>
+        <div className='flex flex-1 overflow-x-hidden'>
           <Sidebar>
             <SidebarMenu className='mt-16 max-sm:mt-5'>
               {adminMenu.map((menu) => {

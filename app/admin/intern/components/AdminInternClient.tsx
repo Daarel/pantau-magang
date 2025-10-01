@@ -182,7 +182,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   );
 
   return (
-    <>
+    <div className="">
       <TablePageHeader
         title='Daftar Anak Magang'
         subtitle='List daftar anak magang aktif'
@@ -196,7 +196,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         onOpenChange={toggleEdit}
         defaultData={editData}
       />
-    </>
+    </div>
   );
 };
 
