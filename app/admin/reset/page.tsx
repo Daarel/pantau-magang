@@ -50,19 +50,25 @@ export default function AdminReset() {
   }
 
   return (
-    <div className='flex flex-col justify-center items-center min-h-screen gap-10 mt-[-100px]'>
-      <div className='text-4xl font-bold text-gray-800'>Ubah Password</div>
-      <div className='w-[400px]'>
+    <div className='flex flex-col justify-center items-center min-h-screen gap-10 mt-[-100px] px-4'>
+      {/* Title */}
+      <div className='text-4xl max-sm:text-2xl font-bold text-gray-800 text-center'>
+        Ubah Password
+      </div>
+
+      {/* Card/Form Wrapper */}
+      <div className='w-[400px] max-sm:w-full max-sm:max-w-sm'>
         {error && (
-          <div className=' text-sm text-red-600 bg-red-100 p-2 rounded'>
+          <div className='text-sm text-red-600 bg-red-100 p-2 rounded mb-4'>
             {error}
           </div>
         )}
+
         <form onSubmit={handleResetPassword} className='flex flex-col gap-6'>
           <div>
             <Label>
-              <span className='w-4 h-4'>
-                <FaRegUser className='w-4 h-4' />
+              <span className='w-4 h-4 inline-block mr-1'>
+                <FaRegUser className='w-4 h-4 inline' />
               </span>
               Nomor Induk
             </Label>
@@ -70,15 +76,15 @@ export default function AdminReset() {
               id='nomorInduk'
               name='nomorInduk'
               placeholder='Masukkan nomor induk'
-              className='mt-3'
+              className='mt-3 w-full'
               required
             />
           </div>
 
           <div>
             <Label>
-              <span className='w-4 h-4'>
-                <CiLock className='w-4 h-4' />
+              <span className='w-4 h-4 inline-block mr-1'>
+                <CiLock className='w-4 h-4 inline' />
               </span>
               Password Baru
             </Label>
@@ -86,10 +92,11 @@ export default function AdminReset() {
               id='password'
               name='password'
               placeholder='Masukkan password baru'
-              className='mt-3'
+              className='mt-3 w-full'
               required
             />
           </div>
+
           <LoginButton
             buttonTitle={isLoading ? "Loading..." : "Masuk"}
             disabled={isLoading}
