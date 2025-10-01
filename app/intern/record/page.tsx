@@ -59,7 +59,7 @@ export default function InternRecord() {
             priority
             className='border'
           />
-          <Sertificate userName="Bahlul"/>
+          <Sertificate userName="Dika Arnanda Putra"/>
         </div>
       </div>
 

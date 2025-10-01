@@ -22,7 +22,6 @@ export type Attendance = {
   date: string;
   keterangan?: string;
   check_in_time: string;
-  check_out_time: string;
 };
 export type Report = {
   id(arg0: string, id: any): { error: any } | PromiseLike<{ error: any }>;
@@ -36,7 +35,6 @@ export type Dashboard = {
   status: string;
   institutions: string;
   check_in_time: string;
-  check_out_time: string;
 };
 
 const supabase = createClient();
@@ -105,12 +103,6 @@ export const columns = (
     accessorKey: "check_in_time",
     header: ({ column }) => {
       return <DataTableColumnHeader column={column} title="Check In" />;
-    },
-  },
-  {
-    accessorKey: "check_out_time",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Check Out" />;
     },
   },
   {
@@ -381,12 +373,6 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
     accessorKey: "check_in_time",
     header: ({ column }) => {
       return <DataTableColumnHeader column={column} title="Check In" />;
-    },
-  },
-  {
-    accessorKey: "check_out_time",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Check Out" />;
     },
   },
 ];
