@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
 
-    if (userInfo.status)
+    if (userInfo.status === "nonaktif")
       return NextResponse.json(
         {
           success: false,

@@ -1,6 +1,6 @@
 import { useEffect, type FC } from "react";
 
-import { FaUser, FaIdCardAlt, FaBuilding } from "react-icons/fa";
+import { FaUser, FaIdCardAlt, FaBuilding, FaUserCheck } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
 import {
@@ -15,13 +15,23 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   supervisorUpdateSchema,
   SupervisorUpdate,
 } from "@/lib/validation/schema";
 import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
+import Combobox from "@/components/Combobox";
+import { pilihanGedung } from "@/const";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface UpdateSupervisorFormProps {
   open: boolean;
@@ -38,6 +48,7 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<SupervisorUpdate>({
     resolver: zodResolver(supervisorUpdateSchema),
@@ -50,6 +61,7 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
         email: defaultData.email || "",
         full_name: defaultData.full_name || "",
         department: defaultData.department || "",
+        status: defaultData.status || ""
       });
     } else {
       reset();
@@ -157,21 +169,52 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
 
           <div>
             <Label>
-              <span className='w-4 h-4'>
-                <FaBuilding className='w-4 h-4' />
-              </span>
-              Gedung
+              <FaBuilding className='w-4 h-4 inline' /> Gedung
             </Label>
-            <Input
-              {...register("department")}
-              placeholder='Masukkan penempatan gedung'
-              className='my-2'
-              required
+            <Controller
+              name='department'
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  fields={pilihanGedung}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
             />
             {errors.department && (
               <p className='text-sm text-red-500'>
                 {errors.department.message}
               </p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <FaUserCheck className='w-4 h-4' />
+              </span>
+              Status
+            </Label>
+            <Controller
+              name='status'
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className='my-2 w-full'>
+                    <SelectValue placeholder='Status saat ini' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value='aktif'>Aktif</SelectItem>
+                      <SelectItem value='nonaktif'>Nonaktif</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.status && (
+              <p className='text-sm text-red-500'>{errors.status.message}</p>
             )}
           </div>
 

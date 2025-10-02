@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
     institution,
     intern_start_date,
     intern_end_date,
+    status,
   } = body;
 
   const { data: signUpData, error: errorSignUp } =
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
       institution,
       email,
       auth_id: signUpData.user.id,
+      status,
     },
   ]);
 
@@ -53,7 +55,7 @@ export async function PATCH(req: NextRequest) {
   const supabase = await createClient();
   try {
     const body = await req.json();
-    const { nomor_induk, email, full_name, auth_id, department } = body;
+    const { nomor_induk, email, full_name, auth_id, department, status } = body;
 
     const { data: updatedAuthData, error: errorUpdateAuthData } =
       await supabaseAdmin.auth.admin.updateUserById(auth_id, {
@@ -74,6 +76,7 @@ export async function PATCH(req: NextRequest) {
         email: email,
         full_name,
         department,
+        status,
       })
       .eq("auth_id", auth_id);
 
