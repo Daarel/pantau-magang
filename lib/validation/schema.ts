@@ -31,6 +31,7 @@ export const supervisorInsertSchema = z.object({
   full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
   password: z.string().min(1, "Password wajib diisi"),
   department: z.string().min(1, "Gedung wajib diisi"),
+  status: z.string().min(1, "Status wajib diisi"),
 });
 
 export type InternUpdate = z.infer<typeof internUpdateSchema>;
@@ -62,4 +63,5 @@ export const supervisorUpdateSchema = z.object({
   email: z.email("Email tidak valid"),
   full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
   department: z.string().min(1, "Gedung wajib diisi"),
-})
+  status: z.string().min(1, "Status wajib diisi"),
+});

@@ -27,14 +27,11 @@ interface AdminSupervisorProps {
 
 const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const router = useRouter();
-
   const { open: insertOpen, toggleModal: toggleInsert } =
     useModalQuery("modalInsert");
   const { open: editOpen, toggleModal: toggleEdit } =
     useModalQuery("modalEdit");
-
   const [loading, setLoading] = useState<boolean>(false);
-  // 🔹 Tambahkan state untuk data yang sedang diedit
   const [editData, setEditData] = useState<DataColumn | null>(null);
 
   const deleteById = useCallback(
@@ -109,7 +106,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-          const id = row.original.id;
           const userData = row.original;
 
           return (
@@ -140,7 +136,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onSelect={() =>
-                    deleteById(id, () => {
+                    deleteById(userData.id, () => {
                       router.refresh();
                     })
                   }

@@ -1,9 +1,18 @@
 import type { FC } from "react";
 
-import { FaUser, FaIdCardAlt, FaBuilding } from "react-icons/fa";
+import { FaUser, FaIdCardAlt, FaBuilding, FaUserCheck } from "react-icons/fa";
 import { PiPassword } from "react-icons/pi";
 import { MdEmail } from "react-icons/md";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -15,14 +24,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import Combobox from "@/components/ui/combobox";
 
 import { useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   supervisorInsertSchema,
   SupervisorInsert,
 } from "@/lib/validation/schema";
 import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
+import { pilihanGedung } from "@/const";
 
 interface InsertSupervisorFormProps {
   open: boolean;
@@ -36,6 +49,7 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<SupervisorInsert>({
     resolver: zodResolver(supervisorInsertSchema),
@@ -164,21 +178,54 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
 
           <div>
             <Label>
-              <span className='w-4 h-4'>
-                <FaBuilding className='w-4 h-4' />
-              </span>
-              Gedung
+              <FaBuilding className='w-4 h-4 inline' /> Gedung
             </Label>
-            <Input
-              {...register("department")}
-              placeholder='Masukkan penempatan gedung'
-              className='my-2'
-              required
+            <Controller
+              name='department'
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  fields={pilihanGedung}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder='Pilih opsi gedung'
+                  emptyText='Gedung tidak ditemukan'
+                />
+              )}
             />
             {errors.department && (
               <p className='text-sm text-red-500'>
                 {errors.department.message}
               </p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <FaUserCheck className='w-4 h-4' />
+              </span>
+              Status
+            </Label>
+            <Controller
+              name='status'
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className='my-2 w-full'>
+                    <SelectValue placeholder='Status saat ini' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value='aktif'>Aktif</SelectItem>
+                      <SelectItem value='nonaktif'>Nonaktif</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.status && (
+              <p className='text-sm text-red-500'>{errors.status.message}</p>
             )}
           </div>
 
