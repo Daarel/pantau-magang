@@ -171,7 +171,6 @@ export type Gedung =
   | "Teknologi Gas"
   | "Telematika";
 
-
 export type selectGedung = {
   value: string;
   label: Gedung;
@@ -179,15 +178,15 @@ export type selectGedung = {
 
 const pilihanGedung: selectGedung[] = [
   {
-    value: "aplikasi1",
+    value: "aplikasi 1",
     label: "Aplikasi 1",
   },
   {
-    value: "aplikasi2",
+    value: "aplikasi 2",
     label: "Aplikasi 2",
   },
   {
-    value: "aplikasi3",
+    value: "aplikasi 3",
     label: "Aplikasi 3",
   },
   {
@@ -199,15 +198,15 @@ const pilihanGedung: selectGedung[] = [
     label: "BBSP",
   },
   {
-    value: "eksplorasi1",
+    value: "eksplorasi 1",
     label: "Eksplorasi 1",
   },
   {
-    value: "eksplorasi2",
+    value: "eksplorasi 2",
     label: "Eksplorasi 2",
   },
   {
-    value: "eksplorasi3",
+    value: "eksplorasi 3",
     label: "Eksplorasi 3",
   },
   {
@@ -215,7 +214,7 @@ const pilihanGedung: selectGedung[] = [
     label: "Eksploitasi",
   },
   {
-    value: "forumTeknologi",
+    value: "forum teknologi",
     label: "Forum Teknologi",
   },
   {
@@ -231,11 +230,11 @@ const pilihanGedung: selectGedung[] = [
     label: "Proses",
   },
   {
-    value: "saranaLitbang",
+    value: "sarana litbang",
     label: "Sarana Litbang",
   },
   {
-    value: "teknologiGas",
+    value: "teknologi gas",
     label: "Teknologi Gas",
   },
   {
