@@ -5,7 +5,7 @@ export async function getUserByNomorInduk(nomorInduk: string) {
 
   const { data, error } = await supabase
     .from("users")
-    .select("role, email, auth_id")
+    .select("role, email, auth_id, status")
     .eq("nomor_induk", nomorInduk)
     .single();
 

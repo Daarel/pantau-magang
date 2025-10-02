@@ -23,6 +23,15 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
 
+    if (userInfo.status)
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Akun sudah tidak aktif, harap hubungi administator",
+        },
+        { status: 401 }
+      );
+
     const supabase = await createClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email: userInfo.email,

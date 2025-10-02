@@ -1,8 +1,18 @@
 import type { FC } from "react";
 
-import { FaUser, FaIdCardAlt, FaBuilding } from "react-icons/fa";
+import { FaUser, FaIdCardAlt, FaBuilding, FaUserCheck } from "react-icons/fa";
 import { PiPassword } from "react-icons/pi";
 import { MdEmail } from "react-icons/md";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   Dialog,
@@ -169,17 +179,27 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
               </span>
               Gedung
             </Label>
-            <Input
-              {...register("department")}
-              placeholder='Masukkan penempatan gedung'
-              className='my-2'
-              required
-            />
-            {errors.department && (
-              <p className='text-sm text-red-500'>
-                {errors.department.message}
-              </p>
-            )}
+            
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <FaUserCheck className='w-4 h-4' />
+              </span>
+              Status
+            </Label>
+            <Select>
+              <SelectTrigger className='my-2 w-full'>
+                <SelectValue placeholder='Status saat ini' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value='aktif'>Aktif</SelectItem>
+                  <SelectItem value='nonaktif'>Nonaktif</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
 
           <DialogFooter>
