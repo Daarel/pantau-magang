@@ -22,7 +22,7 @@ import {
   SupervisorUpdate,
 } from "@/lib/validation/schema";
 import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
-import Combobox from "@/components/Combobox";
+import Combobox from "@/components/ui/combobox";
 import { pilihanGedung } from "@/const";
 import {
   Select,
@@ -61,7 +61,7 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
         email: defaultData.email || "",
         full_name: defaultData.full_name || "",
         department: defaultData.department || "",
-        status: defaultData.status || ""
+        status: defaultData.status || "",
       });
     } else {
       reset();
@@ -179,6 +179,8 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
                   fields={pilihanGedung}
                   value={field.value}
                   onChange={field.onChange}
+                  placeholder='Pilih opsi gedung'
+                  emptyText='Gedung tidak ditemukan'
                 />
               )}
             />

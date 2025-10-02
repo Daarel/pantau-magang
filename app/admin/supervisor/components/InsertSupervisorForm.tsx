@@ -24,7 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import Combobox from "@/components/Combobox";
+import Combobox from "@/components/ui/combobox";
 
 import { useForm } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -188,6 +188,8 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
                   fields={pilihanGedung}
                   value={field.value}
                   onChange={field.onChange}
+                  placeholder='Pilih opsi gedung'
+                  emptyText='Gedung tidak ditemukan'
                 />
               )}
             />
