@@ -59,7 +59,7 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
       ...insertDataToLowerCase(data),
       role: "supervisor",
       institution: null,
-      nomor_induk_supervisor: null,
+      supervisor_id: null,
       intern_start_date: null,
       intern_end_date: null,
     };

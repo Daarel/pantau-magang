@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     role,
     department,
     institution,
-    nomor_induk_supervisor,
+    supervisor_id,
     intern_start_date,
     intern_end_date,
     status,
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   const { data: dataUser, error: errorDataUser } = await supabase
     .from("users")
     .select("id, role")
-    .eq("nomor_induk", nomor_induk_supervisor)
+    .eq("id", supervisor_id)
     .single();
 
   if (!dataUser?.id)
@@ -78,19 +78,20 @@ export async function PATCH(req: NextRequest) {
       full_name,
       department,
       institution,
-      nomor_induk_supervisor,
+      supervisor_id,
       intern_start_date,
       intern_end_date,
       auth_id,
+      status,
     } = body;
 
     console.log("📥 Body dari request:", body);
-    console.log("🔎 nomor_induk_supervisor diterima:", nomor_induk_supervisor);
+    console.log("🔎 supervisor_id diterima:", supervisor_id);
 
     const { data: dataUser, error: errorDataUser } = await supabase
       .from("users")
       .select("id")
-      .eq("nomor_induk", nomor_induk_supervisor)
+      .eq("id", supervisor_id)
       .single();
 
     if (!dataUser?.id)
@@ -125,6 +126,7 @@ export async function PATCH(req: NextRequest) {
         supervisor_id: String(dataUser?.id),
         intern_start_date,
         intern_end_date,
+        status,
       })
       .eq("auth_id", auth_id);
 

@@ -187,16 +187,20 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
 
           <div>
             <Label>
-              <span className='w-4 h-4'>
-                <FaBuilding className='w-4 h-4' />
-              </span>
-              Gedung
+              <FaBuilding className='w-4 h-4 inline' /> Gedung
             </Label>
-            <Input
-              {...register("department")}
-              placeholder='Masukkan penempatan gedung'
-              className='my-2'
-              required
+            <Controller
+              name='department'
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  fields={pilihanGedung}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder='Pilih opsi gedung'
+                  emptyText='Gedung tidak ditemukan'
+                />
+              )}
             />
             {errors.department && (
               <p className='text-sm text-red-500'>

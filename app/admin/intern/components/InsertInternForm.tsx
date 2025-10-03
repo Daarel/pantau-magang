@@ -189,7 +189,7 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
               control={control}
               render={({ field }) => (
                 <Combobox
-                  fields={supervisors}
+                  fields={pilihanGedung}
                   value={field.value}
                   onChange={field.onChange}
                   placeholder='Pilih opsi gedung'
@@ -307,8 +307,8 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value='aktif'>Aktif</SelectItem>
-                      <SelectItem value='nonaktif'>Nonaktif</SelectItem>
+                      <SelectItem value='aktif'>aktif</SelectItem>
+                      <SelectItem value='nonaktif'>nonaktif</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>

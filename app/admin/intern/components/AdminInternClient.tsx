@@ -141,7 +141,6 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         cell: ({ row }) => {
           const id = row.original.id;
           const userData = row.original;
-
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -182,7 +181,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   );
 
   return (
-    <div className="">
+    <div className=''>
       <TablePageHeader
         title='Daftar Anak Magang'
         subtitle='List daftar anak magang aktif'
