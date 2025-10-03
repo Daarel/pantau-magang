@@ -9,7 +9,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -60,7 +59,7 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
       ...insertDataToLowerCase(data),
       role: "supervisor",
       institution: null,
-      nomor_induk_supervisor: null,
+      supervisor_id: null,
       intern_start_date: null,
       intern_end_date: null,
     };
@@ -124,6 +123,24 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
           <div>
             <Label>
               <span className='w-4 h-4'>
+                <FaUser className='w-4 h-4' />
+              </span>
+              Nama Lengkap
+            </Label>
+            <Input
+              {...register("full_name")}
+              placeholder='Masukkan nama lengkap'
+              className='my-2'
+              required
+            />
+            {errors.full_name && (
+              <p className='text-sm text-red-500'>{errors.full_name.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
                 <MdEmail className='w-4 h-4' />
               </span>
               Email
@@ -137,24 +154,6 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
             />
             {errors.email && (
               <p className='text-sm text-red-500'>{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
-                <FaUser className='w-4 h-4' />
-              </span>
-              Nama Lengkap
-            </Label>
-            <Input
-              {...register("full_name")}
-              placeholder='Masukkan nama lengkap'
-              className='my-2'
-              required
-            />
-            {errors.full_name && (
-              <p className='text-sm text-red-500'>{errors.full_name.message}</p>
             )}
           </div>
 

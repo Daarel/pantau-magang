@@ -133,6 +133,24 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
           <div>
             <Label>
               <span className='w-4 h-4'>
+                <FaUser className='w-4 h-4' />
+              </span>
+              Nama Lengkap
+            </Label>
+            <Input
+              {...register("full_name")}
+              placeholder='Masukkan nama lengkap'
+              className='my-2'
+              required
+            />
+            {errors.full_name && (
+              <p className='text-sm text-red-500'>{errors.full_name.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
                 <MdEmail className='w-4 h-4' />
               </span>
               Email
@@ -146,24 +164,6 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
             />
             {errors.email && (
               <p className='text-sm text-red-500'>{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
-                <FaUser className='w-4 h-4' />
-              </span>
-              Nama Lengkap
-            </Label>
-            <Input
-              {...register("full_name")}
-              placeholder='Masukkan nama lengkap'
-              className='my-2'
-              required
-            />
-            {errors.full_name && (
-              <p className='text-sm text-red-500'>{errors.full_name.message}</p>
             )}
           </div>
 

@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { useEffect, useState, type FC } from "react";
 
 import {
   FaUser,
@@ -6,10 +6,19 @@ import {
   FaIdCardAlt,
   FaBuilding,
   FaCalendarAlt,
+  FaUserCheck,
 } from "react-icons/fa";
 import { PiPassword } from "react-icons/pi";
 import { MdEmail, MdSchool } from "react-icons/md";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -22,13 +31,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { internInsertSchema, InternInsert } from "@/lib/validation/schema";
 import {
-  internInsertSchema,
-  InternInsert,
-} from "@/lib/validation/schema";
-import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
+  getSupervisors,
+  insertDataToLowerCase,
+  SelectOption,
+} from "@/lib/helper/dataInsert.helper";
+import Combobox from "@/components/ui/combobox";
+import { pilihanGedung } from "@/const";
 
 interface InternFormDialogProps {
   open: boolean;
@@ -42,10 +54,17 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<InternInsert>({
     resolver: zodResolver(internInsertSchema),
   });
+
+  const [supervisors, setSupervisors] = useState<SelectOption[]>([]);
+
+  useEffect(() => {
+    getSupervisors().then(setSupervisors);
+  }, []);
 
   const onSubmit = async (data: InternInsert) => {
     const payload = { ...insertDataToLowerCase(data), role: "intern" };
@@ -109,6 +128,24 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
           <div>
             <Label>
               <span className='w-4 h-4'>
+                <FaUser className='w-4 h-4' />
+              </span>
+              Nama Lengkap
+            </Label>
+            <Input
+              {...register("full_name")}
+              placeholder='Masukkan nama lengkap'
+              className='my-2'
+              required
+            />
+            {errors.full_name && (
+              <p className='text-sm text-red-500'>{errors.full_name.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
                 <MdEmail className='w-4 h-4' />
               </span>
               Email
@@ -122,24 +159,6 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
             />
             {errors.email && (
               <p className='text-sm text-red-500'>{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
-                <FaUser className='w-4 h-4' />
-              </span>
-              Nama Lengkap
-            </Label>
-            <Input
-              {...register("full_name")}
-              placeholder='Masukkan nama lengkap'
-              className='my-2'
-              required
-            />
-            {errors.full_name && (
-              <p className='text-sm text-red-500'>{errors.full_name.message}</p>
             )}
           </div>
 
@@ -163,16 +182,20 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
 
           <div>
             <Label>
-              <span className='w-4 h-4'>
-                <FaBuilding className='w-4 h-4' />
-              </span>
-              Gedung
+              <FaBuilding className='w-4 h-4 inline' /> Gedung
             </Label>
-            <Input
-              {...register("department")}
-              placeholder='Masukkan penempatan gedung'
-              className='my-2'
-              required
+            <Controller
+              name='department'
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  fields={pilihanGedung}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder='Pilih opsi gedung'
+                  emptyText='Gedung tidak ditemukan'
+                />
+              )}
             />
             {errors.department && (
               <p className='text-sm text-red-500'>
@@ -186,11 +209,11 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
               <span className='w-4 h-4'>
                 <MdSchool className='w-4 h-4' />
               </span>
-              Perguruan Tinggi
+              Asal Sekolah / Universitas
             </Label>
             <Input
               {...register("institution")}
-              placeholder='Masukkan asal perguruan tinggi'
+              placeholder='Masukkan asal sekolah / universitas'
               className='my-2'
               required
             />
@@ -203,20 +226,24 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
 
           <div>
             <Label>
-              <span className='w-4 h-4'>
-                <FaUserTie className='w-4 h-4' />
-              </span>
-              Nomor Induk Pembimbing
+              <FaUserTie className='w-4 h-4 inline' /> Pembimbing
             </Label>
-            <Input
-              {...register("nomor_induk_supervisor")}
-              placeholder='Masukkan Nomor Induk Pembimbing'
-              className='my-2'
-              required
+            <Controller
+              name='supervisor_id'
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  fields={supervisors}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder='Pilih pembimbing'
+                  emptyText='Pembimbing tidak ditemukan'
+                />
+              )}
             />
-            {errors.nomor_induk_supervisor && (
+            {errors.supervisor_id && (
               <p className='text-sm text-red-500'>
-                {errors.nomor_induk_supervisor.message}
+                {errors.supervisor_id.message}
               </p>
             )}
           </div>
@@ -260,6 +287,35 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
               <p className='text-sm text-red-500'>
                 {errors.intern_end_date.message}
               </p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <FaUserCheck className='w-4 h-4' />
+              </span>
+              Status
+            </Label>
+            <Controller
+              name='status'
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className='my-2 w-full'>
+                    <SelectValue placeholder='Status saat ini' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value='aktif'>aktif</SelectItem>
+                      <SelectItem value='nonaktif'>nonaktif</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.status && (
+              <p className='text-sm text-red-500'>{errors.status.message}</p>
             )}
           </div>
 

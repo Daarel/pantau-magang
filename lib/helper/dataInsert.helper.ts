@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/client";
+
 const formatDateToYMD = (date: Date) => {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -27,3 +29,29 @@ export const insertDataToLowerCase = <T extends Record<string, any>>(
     }),
   };
 };
+
+export type SelectOption = {
+  value: string;
+  label: string;
+};
+
+export async function getSupervisors(): Promise<SelectOption[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, full_name")
+    .eq("role", "supervisor");
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+
+  return data.map((sup) => ({
+    value: sup.id,
+    label: sup.full_name,
+  }));
+}
+
+
