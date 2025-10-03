@@ -50,14 +50,6 @@ export const columns: ColumnDef<AttendanceIntern>[] = [
     },
   },
   {
-    accessorKey: "check_out_time",
-    header: "Pulang",
-    cell: ({ row }) => {
-      const checkOutTime = row.getValue("check_out_time") as string | null;
-      return <div>{formatTimeStamp(checkOutTime)}</div>;
-    },
-  },
-  {
     accessorKey: "file_url",
     header: "Lampiran",
     cell: ({ row }) => {

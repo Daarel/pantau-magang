@@ -102,7 +102,7 @@ export const columns = (
   {
     accessorKey: "check_in_time",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Check In" />;
+      return <DataTableColumnHeader column={column} title="Masuk" />;
     },
   },
   {
@@ -188,7 +188,7 @@ export const reportColumns = (
   {
     accessorKey: "file",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="File" />
+      <DataTableColumnHeader column={column} title="Lampiran" />
     ),
     cell: ({ row }) => {
       const file = row.getValue("file") as string | undefined;
@@ -287,7 +287,7 @@ export const reportColumns = (
             className="cursor-pointer"
           >
             <BiSolidCheckCircle className="mr-2 h-4 w-4 text-green-600" />
-            Approve
+            Setuju
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={async () => {
@@ -310,7 +310,7 @@ export const reportColumns = (
             className="cursor-pointer"
           >
             <BiSolidXCircle className="mr-2 h-4 w-4 text-red-600" />
-            Reject
+            Tolak
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -366,13 +366,13 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
     accessorKey: "institutions",
     // Sorting by institution name
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Institusi" />;
+      return <DataTableColumnHeader column={column} title="Sekolah/Universitas" />;
     },
   },
   {
     accessorKey: "check_in_time",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Check In" />;
+      return <DataTableColumnHeader column={column} title="Masuk" />;
     },
   },
 ];
