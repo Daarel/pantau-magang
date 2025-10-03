@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     nomor_induk_supervisor,
     intern_start_date,
     intern_end_date,
+    status,
   } = body;
 
   const { data: dataUser, error: errorDataUser } = await supabase
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
       institution,
       email,
       auth_id: signUpData.user.id,
+      status,
     },
   ]);
 

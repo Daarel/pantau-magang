@@ -36,8 +36,6 @@ export default async function AdminUserPage() {
     supervisor_name: user.supervisor?.full_name ?? "-",
   }));
 
-  console.log("sample intern row:", flatData[0]);
-
   return (
     <Suspense fallback={<Loading />}>
       <div className='min-h-screen bg-gray-50 p-6 overflow-x-hidden pr-64 max-md:pr-0'>

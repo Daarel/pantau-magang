@@ -10,9 +10,10 @@ export const internInsertSchema = z
     password: z.string().min(1, "Password wajib diisi"),
     department: z.string().min(1, "Gedung wajib diisi"),
     institution: z.string().min(1, "Perguruan Tinggi wajib diisi"),
-    nomor_induk_supervisor: z.string().min(1, "Pembimbing wajib diisi"),
+    supervisor_id: z.string().min(1, "Pembimbing wajib diisi"),
     intern_start_date: z.string().min(1, "Tanggal mulai magang wajib diisi"),
     intern_end_date: z.string().min(1, "Tanggal selesai magang wajib diisi"),
+    status: z.string().min(1, "Status wajib diisi"),
   })
   .refine(
     (data) =>
@@ -43,9 +44,10 @@ export const internUpdateSchema = z
     full_name: z.string().min(1, "Nama Lengkap wajib diisi"),
     department: z.string().min(1, "Gedung wajib diisi"),
     institution: z.string().min(1, "Perguruan Tinggi wajib diisi"),
-    nomor_induk_supervisor: z.string().min(1, "Pembimbing wajib diisi"),
+    supervisor_id: z.string().min(1, "Pembimbing wajib diisi"),
     intern_start_date: z.string().min(1, "Tanggal mulai magang wajib diisi"),
     intern_end_date: z.string().min(1, "Tanggal selesai magang wajib diisi"),
+    status: z.string().min(1, "Status wajib diisi"),
   })
   .refine(
     (data) =>
