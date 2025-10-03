@@ -111,27 +111,27 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
 
       {/* Modal */}
       <Dialog open={openModal} onOpenChange={setOpenModal}>
-        <DialogContent showCloseButton={false} className='h-1/4'>
+        <DialogContent showCloseButton={false} className='max-w-md rounded-2xl w-5/6'>
           <DialogHeader>
             <DialogTitle className='title__header'>
               Apakah Anda yakin ingin keluar?
             </DialogTitle>
-            <p className='text-gray-600'>
+            <p className='text-gray-600 max-sm:text-xs'>
               Anda akan keluar dari akun ini dan perlu login kembali.
             </p>
           </DialogHeader>
-          <DialogFooter className='flex justify-center items-center gap-3'>
+          <DialogFooter className='flex flex-row justify-center items-center gap-3'>
+            <DialogClose asChild>
+              <button className='cursor-pointer px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors shadow-sm'>
+                Batal
+              </button>
+            </DialogClose>
             <button
               onClick={() => handleNavigate("logout")}
               className='cursor-pointer px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 focus:ring-2 focus:ring-red-400 transition-all shadow-md'
             >
               Keluar
             </button>
-            <DialogClose asChild>
-              <button className='cursor-pointer px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors shadow-sm'>
-                Batal
-              </button>
-            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

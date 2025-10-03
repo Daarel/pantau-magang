@@ -46,7 +46,7 @@ export const columns = (
   {
     accessorKey: "name",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Name" />;
+      return <DataTableColumnHeader column={column} title="Nama" />;
     },
   },
   {
@@ -90,7 +90,7 @@ export const columns = (
     accessorKey: "date",
     // Sorting by institution name
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Date" />;
+      return <DataTableColumnHeader column={column} title="Tanggal" />;
     },
   },
   {
@@ -219,7 +219,7 @@ export const reportColumns = (
   {
     accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader column={column} title="Nama" />
     ),
   },
   {
@@ -322,7 +322,7 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Name" />;
+      return <DataTableColumnHeader column={column} title="Nama" />;
     },
   },
   {
@@ -366,7 +366,7 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
     accessorKey: "institutions",
     // Sorting by institution name
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Institution" />;
+      return <DataTableColumnHeader column={column} title="Institusi" />;
     },
   },
   {
