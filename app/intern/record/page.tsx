@@ -15,6 +15,7 @@ export default function InternRecord() {
     setFileUrl(fileUrl);
   };
 
+  // Syarat & Ketentuan
   const sk = [
     'Peserta wajib mengunggah laporan hasil kerja magang dan absensi magang melalui sistem yang telah disediakan.', 
     'Sertifikat hanya dapat diberikan kepada peserta dengan tingkat kehadiran minimal 75% selama periode magang.', 
@@ -66,7 +67,7 @@ export default function InternRecord() {
       {/* Syarat & Ketentuan */}
       <div className="text-[12px] md:text-[16px] text-gray-500">
         <p className="font-bold">Syarat dan Ketentuan Klaim Sertifikat Magang:</p>
-        <ul className="list-decimal list-inside">
+        <ul className="list-decimal list-outside pl-3 sm:pl-4 space-y-1">
           {sk.map((item, index) => (
             <li key={index} className="normal-case">{item}</li>
           ))}
