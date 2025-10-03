@@ -153,10 +153,101 @@ const adminMenu: MenuByRole[] = [
   { title: "Ubah Password", path: "/admin/reset", Icon: PiPassword },
 ];
 
+export type Gedung =
+  | "Aplikasi 1"
+  | "Aplikasi 2"
+  | "Aplikasi 3"
+  | "Arsip"
+  | "BBSP"
+  | "Eksplorasi 1"
+  | "Eksplorasi 2"
+  | "Eksplorasi 3"
+  | "Eksploitasi"
+  | "Forum Teknologi"
+  | "Klinik"
+  | "Pendukung"
+  | "Proses"
+  | "Sarana Litbang"
+  | "Teknologi Gas"
+  | "Telematika";
+
+export type selectGedung = {
+  value: string;
+  label: Gedung;
+};
+
+const pilihanGedung: selectGedung[] = [
+  {
+    value: "aplikasi 1",
+    label: "Aplikasi 1",
+  },
+  {
+    value: "aplikasi 2",
+    label: "Aplikasi 2",
+  },
+  {
+    value: "aplikasi 3",
+    label: "Aplikasi 3",
+  },
+  {
+    value: "arsip",
+    label: "Arsip",
+  },
+  {
+    value: "bbsp",
+    label: "BBSP",
+  },
+  {
+    value: "eksplorasi 1",
+    label: "Eksplorasi 1",
+  },
+  {
+    value: "eksplorasi 2",
+    label: "Eksplorasi 2",
+  },
+  {
+    value: "eksplorasi 3",
+    label: "Eksplorasi 3",
+  },
+  {
+    value: "eksploitasi",
+    label: "Eksploitasi",
+  },
+  {
+    value: "forum teknologi",
+    label: "Forum Teknologi",
+  },
+  {
+    value: "klinik",
+    label: "Klinik",
+  },
+  {
+    value: "pendukung",
+    label: "Pendukung",
+  },
+  {
+    value: "proses",
+    label: "Proses",
+  },
+  {
+    value: "sarana litbang",
+    label: "Sarana Litbang",
+  },
+  {
+    value: "teknologi gas",
+    label: "Teknologi Gas",
+  },
+  {
+    value: "telematika",
+    label: "Telematika",
+  },
+];
+
 export {
   supervisorModalInput,
   internModalInput,
   internMenu,
   supervisorMenu,
   adminMenu,
+  pilihanGedung,
 };

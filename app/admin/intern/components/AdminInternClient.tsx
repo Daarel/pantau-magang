@@ -129,6 +129,13 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         ),
       },
       {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => (
+          <div className='capitalize'>{row.getValue("status")}</div>
+        ),
+      },
+      {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
@@ -175,7 +182,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   );
 
   return (
-    <>
+    <div className="">
       <TablePageHeader
         title='Daftar Anak Magang'
         subtitle='List daftar anak magang aktif'
@@ -189,7 +196,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         onOpenChange={toggleEdit}
         defaultData={editData}
       />
-    </>
+    </div>
   );
 };
 

@@ -7,8 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import LoginButton from "@/components/LoginButton";
 import LoginInput from "@/components/LoginInput";
-import { FaRegUser } from "react-icons/fa";
-import { CiLock } from "react-icons/ci";
+import { FaRegUser, FaLock } from "react-icons/fa";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,62 +46,70 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[url('/overlayBuilding.webp')] bg-cover bg-center relative">
-      <div className='absolute inset-0 bg-black/50 backdrop-blur-sm' />
-      <Card className='w-[400px] max-sm:w-[300px] relative z-10'>
-        <CardHeader className='text-center'>
-          <div className='mx-auto p-3 w-fit mb-4'>
-            <Image
-              src='/logoESDM.png'
-              alt='Logo'
-              width={200}
-              height={200}
-              priority
-            />
-          </div>
-          <CardTitle className='text-2xl text-gray-900'>
-            PANTAU MAGANG
-          </CardTitle>
-          <p className='text-gray-600'>Masukkan akun Anda</p>
-        </CardHeader>
+    <>
+      <Head>
+        <link rel='preload' as='image' href='/logoESDM.png' />
+        <link rel='preload' as='image' href='/overlaybuilding.webp' />
+      </Head>
 
-        <CardContent>
-          {error && (
-            <div className=' text-sm text-red-600 bg-red-100 p-2 rounded'>
-              {error}
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className='space-y-4 mt-6'>
-            <div className='relative'>
-              <FaRegUser className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
-              <Input
-                id='nomorInduk'
-                name='nomorInduk'
-                type='number'
-                placeholder='Nomor Induk'
-                className='pl-10'
-                required
+      <div className="min-h-screen flex items-center justify-center bg-[url('/overlayBuilding.webp')] bg-cover bg-center relative">
+        <div className='absolute inset-0 bg-black/50 backdrop-blur-sm' />
+        <Card className='w-[400px] max-sm:w-[300px] relative z-10'>
+          <CardHeader className='text-center'>
+            <div className='mx-auto p-3 w-fit mb-4'>
+              <Image
+                src='/logoESDM.png'
+                alt='Logo'
+                width={200}
+                height={200}
+                priority
               />
             </div>
+            <CardTitle className='text-2xl text-gray-900'>
+              PANTAU MAGANG
+            </CardTitle>
+            <p className='text-gray-600'>Masukkan akun Anda</p>
+          </CardHeader>
 
-            <div className='relative'>
-              <CiLock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-10 w-5 -ml-0.5' />
-              <LoginInput
-                id='password'
-                name='password'
-                placeholder='Password'
-                className='pl-10'
-                required
+          <CardContent>
+            {error && (
+              <div className=' text-sm text-red-600 bg-red-100 p-2 rounded'>
+                {error}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className='space-y-4 mt-6'>
+              <div className='relative'>
+                <FaRegUser className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
+                <Input
+                  id='nomorInduk'
+                  name='nomorInduk'
+                  type='number'
+                  placeholder='Nomor Induk'
+                  className='pl-10'
+                  required
+                />
+              </div>
+
+              <div className='relative'>
+                <FaLock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
+                <LoginInput
+                  id='password'
+                  name='password'
+                  placeholder='Password'
+                  className='pl-10'
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+
+              <LoginButton
+                buttonTitle={isLoading ? "Loading..." : "Masuk"}
+                disabled={isLoading}
               />
-            </div>
-
-            <LoginButton
-              buttonTitle={isLoading ? "Loading..." : "Masuk"}
-              disabled={isLoading}
-            />
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }
