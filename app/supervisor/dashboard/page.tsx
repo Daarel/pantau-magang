@@ -197,7 +197,7 @@ export default async function SupervisorDashboard() {
     izinToday: izinCount + " Izin",
     sakitToday: sakitCount + " Sakit",
     alfaToday: alfaCount + " Alfa",
-    pendingLeaves: pendingLeaves + " Pending",
+    pendingLeaves: pendingLeaves + " Pesan",
     avgAttendance: avgAttendance + "%",
     weeklyAttendance: weeklyAttendance + "%",
   };
