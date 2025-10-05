@@ -4,6 +4,7 @@ import Loading from "../loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { formatDateID } from "@/lib/helper/formatDate.helper";
 
 export default async function AdminUserPage() {
   const supabase = await createClient();
@@ -34,6 +35,8 @@ export default async function AdminUserPage() {
     ...user,
     auth_id: user.auth_id ?? null,
     supervisor_name: user.supervisor?.full_name ?? "-",
+    formattedStartIntern: formatDateID(user.intern_start_date),
+    formattedEndIntern: formatDateID(user.intern_end_date),
   }));
 
   return (
