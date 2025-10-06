@@ -66,6 +66,7 @@ export function PhotoUpload({ onPhotoChange }: PhotoUploadProps) {
           <Image
             src={previewUrl}
             alt="Preview"
+            fill
             className='w-full h-full object-cover'
           />
           <Button
