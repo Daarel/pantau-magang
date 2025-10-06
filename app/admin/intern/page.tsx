@@ -4,6 +4,7 @@ import Loading from "../loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { formatDateID } from "@/lib/helper/formatDate.helper";
 
 export default async function AdminUserPage() {
   const supabase = await createClient();
@@ -18,7 +19,7 @@ export default async function AdminUserPage() {
   const { data, error: errorGetData } = await supabase
     .from("users")
     .select(
-      `id, nomor_induk, full_name, department, email, auth_id, supervisor:supervisor_id (
+      `id, nomor_induk, full_name, department, email, auth_id, supervisor_id, supervisor:supervisor_id (
   id,
   auth_id,
   full_name,
@@ -34,9 +35,9 @@ export default async function AdminUserPage() {
     ...user,
     auth_id: user.auth_id ?? null,
     supervisor_name: user.supervisor?.full_name ?? "-",
+    formattedStartIntern: formatDateID(user.intern_start_date),
+    formattedEndIntern: formatDateID(user.intern_end_date),
   }));
-
-  console.log("sample intern row:", flatData[0]);
 
   return (
     <Suspense fallback={<Loading />}>

@@ -13,6 +13,7 @@ import { AiOutlineClockCircle } from "react-icons/ai";
 import { FaRegFileAlt } from "react-icons/fa";
 import { PiPassword } from "react-icons/pi";
 import { MdEmail } from "react-icons/md";
+import { HiDocumentChartBar } from "react-icons/hi2";
 
 import type { IconType } from "react-icons";
 
@@ -150,6 +151,7 @@ const adminMenu: MenuByRole[] = [
   { title: "Dashboard", path: "/admin/dashboard", Icon: BsHouse },
   { title: "Intern", path: "/admin/intern", Icon: FaUser },
   { title: "Supervisor", path: "/admin/supervisor", Icon: FaUserTie },
+  { title: "Histori Perubahan", path: "/admin/histori-perubahan", Icon: HiDocumentChartBar },
   { title: "Ubah Password", path: "/admin/reset", Icon: PiPassword },
 ];
 

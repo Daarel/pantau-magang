@@ -6,7 +6,6 @@ import InsertInternForm from "./InsertInternForm";
 import type { DataColumn } from "@/types/adminTable";
 
 import DataTable from "@/components/DataTable";
-import TablePageHeader from "@/components/DataTableHeader";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,11 +13,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { type FC, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import UpdateInternForm from "./UpdateInternForm";
+import DataTableHeader from "@/components/DataTableHeader";
 
 interface AdminUserProps {
   tableData: DataColumn[];
@@ -115,17 +115,19 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         ),
       },
       {
-        accessorKey: "intern_start_date",
+        accessorKey: "formattedStartIntern",
         header: "Mulai Magang",
         cell: ({ row }) => (
-          <div className='capitalize'>{row.getValue("intern_start_date")}</div>
+          <div className='capitalize'>
+            {row.getValue("formattedStartIntern")}
+          </div>
         ),
       },
       {
-        accessorKey: "intern_end_date",
+        accessorKey: "formattedEndIntern",
         header: "Selesai Magang",
         cell: ({ row }) => (
-          <div className='capitalize'>{row.getValue("intern_end_date")}</div>
+          <div className='capitalize'>{row.getValue("formattedEndIntern")}</div>
         ),
       },
       {
@@ -141,7 +143,6 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         cell: ({ row }) => {
           const id = row.original.id;
           const userData = row.original;
-
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -182,8 +183,8 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
   );
 
   return (
-    <div className="">
-      <TablePageHeader
+    <>
+      <DataTableHeader
         title='Daftar Anak Magang'
         subtitle='List daftar anak magang aktif'
         label='Tambah User'
@@ -196,7 +197,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         onOpenChange={toggleEdit}
         defaultData={editData}
       />
-    </div>
+    </>
   );
 };
 

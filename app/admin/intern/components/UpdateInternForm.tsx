@@ -1,4 +1,4 @@
-import { useEffect, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 
 import {
   FaUser,
@@ -6,6 +6,7 @@ import {
   FaIdCardAlt,
   FaBuilding,
   FaCalendarAlt,
+  FaUserCheck,
 } from "react-icons/fa";
 import { MdEmail, MdSchool } from "react-icons/md";
 
@@ -21,10 +22,24 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { internUpdateSchema, InternUpdate } from "@/lib/validation/schema";
-import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
+import {
+  getSupervisors,
+  insertDataToLowerCase,
+  SelectOption,
+} from "@/lib/helper/dataInsert.helper";
+import Combobox from "@/components/ui/combobox";
+import { pilihanGedung } from "@/const";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface UpdateInternFormProps {
   open: boolean;
@@ -41,10 +56,17 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<InternUpdate>({
     resolver: zodResolver(internUpdateSchema),
   });
+
+  const [supervisors, setSupervisors] = useState<SelectOption[]>([]);
+
+  useEffect(() => {
+    getSupervisors().then(setSupervisors);
+  }, []);
 
   useEffect(() => {
     if (defaultData) {
@@ -54,9 +76,10 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
         full_name: defaultData.full_name || "",
         department: defaultData.department || "",
         institution: defaultData.institution || "",
-        nomor_induk_supervisor: String(defaultData.supervisor?.nomor_induk) || "",
+        supervisor_id: defaultData.supervisor_id || "",
         intern_start_date: defaultData.intern_start_date ?? "",
         intern_end_date: defaultData.intern_end_date ?? "",
+        status: defaultData.status ?? "",
       });
     } else {
       reset();
@@ -128,25 +151,6 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
           <div>
             <Label>
               <span className='w-4 h-4'>
-                <MdEmail className='w-4 h-4' />
-              </span>
-              Email
-            </Label>
-            <Input
-              type='email'
-              {...register("email")}
-              placeholder='Masukkan email'
-              className='my-2'
-              required
-            />
-            {errors.email && (
-              <p className='text-sm text-red-500'>{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label>
-              <span className='w-4 h-4'>
                 <FaUser className='w-4 h-4' />
               </span>
               Nama Lengkap
@@ -165,15 +169,38 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
           <div>
             <Label>
               <span className='w-4 h-4'>
-                <FaBuilding className='w-4 h-4' />
+                <MdEmail className='w-4 h-4' />
               </span>
-              Gedung
+              Email
             </Label>
             <Input
-              {...register("department")}
-              placeholder='Masukkan penempatan gedung'
+              type='email'
+              {...register("email")}
+              placeholder='Masukkan email'
               className='my-2'
               required
+            />
+            {errors.email && (
+              <p className='text-sm text-red-500'>{errors.email.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <FaBuilding className='w-4 h-4 inline' /> Gedung
+            </Label>
+            <Controller
+              name='department'
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  fields={pilihanGedung}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder='Pilih opsi gedung'
+                  emptyText='Gedung tidak ditemukan'
+                />
+              )}
             />
             {errors.department && (
               <p className='text-sm text-red-500'>
@@ -191,7 +218,7 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
             </Label>
             <Input
               {...register("institution")}
-              placeholder='Masukkan asal perguruan tinggi'
+              placeholder='asukkan asal sekolah / universitas'
               className='my-2'
               required
             />
@@ -204,20 +231,24 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
 
           <div>
             <Label>
-              <span className='w-4 h-4'>
-                <FaUserTie className='w-4 h-4' />
-              </span>
-              Nomor Induk Pembimbing
+              <FaUserTie className='w-4 h-4 inline' /> Pembimbing
             </Label>
-            <Input
-              {...register("nomor_induk_supervisor")}
-              placeholder='Masukkan Nomor Induk Pembimbing'
-              className='my-2'
-              required
+            <Controller
+              name='supervisor_id'
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  fields={supervisors}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder='Pilih pembimbing'
+                  emptyText='Pembimbing tidak ditemukan'
+                />
+              )}
             />
-            {errors.nomor_induk_supervisor && (
+            {errors.supervisor_id && (
               <p className='text-sm text-red-500'>
-                {errors.nomor_induk_supervisor.message}
+                {errors.supervisor_id.message}
               </p>
             )}
           </div>
@@ -261,6 +292,35 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
               <p className='text-sm text-red-500'>
                 {errors.intern_end_date.message}
               </p>
+            )}
+          </div>
+
+          <div>
+            <Label>
+              <span className='w-4 h-4'>
+                <FaUserCheck className='w-4 h-4' />
+              </span>
+              Status
+            </Label>
+            <Controller
+              name='status'
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className='my-2 w-full'>
+                    <SelectValue placeholder='Status saat ini' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value='aktif'>Aktif</SelectItem>
+                      <SelectItem value='nonaktif'>Nonaktif</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.status && (
+              <p className='text-sm text-red-500'>{errors.status.message}</p>
             )}
           </div>
 

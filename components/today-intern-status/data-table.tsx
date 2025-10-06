@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
   PaginationState,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -22,19 +22,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/data-table-column-visibility"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DataTableViewOptions } from "@/components/data-table-column-visibility";
 
 // Props
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  pageSize?: number // Prop pageSize
-  enableFilter?: boolean          // Prop filter
-  enableColumnVisibility?: boolean // Prop visibility
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  pageSize?: number; // Prop pageSize
+  enableFilter?: boolean; // Prop filter
+  enableColumnVisibility?: boolean; // Prop visibility
   // enablePagination?: boolean // Prop pagination
 }
 
@@ -44,20 +44,20 @@ export function DataTable<TData, TValue>({
   pageSize = 5, // Default 5 data per halaman
   enableFilter = true, // Default true
   enableColumnVisibility = false, // Default false
-  // enablePagination = true,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+}: // enablePagination = true,
+DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
+  );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
 
   // Tambahkan state pagination
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: pageSize,
-  })
+  });
 
   const table = useReactTable({
     data,
@@ -76,28 +76,30 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       pagination,
     },
-  })
+  });
 
   return (
     <div>
       {/* Field input filter */}
       {(enableFilter || enableColumnVisibility) && (
-        <div className="flex items-center pb-4">
+        <div className='flex items-center pb-4'>
           {enableFilter && (
             <Input
-              placeholder="Filter keterangan..."
-              value={(table.getColumn("notes")?.getFilterValue() as string) ?? ""}
+              placeholder='Filter keterangan...'
+              value={
+                (table.getColumn("notes")?.getFilterValue() as string) ?? ""
+              }
               onChange={(event) =>
                 table.getColumn("notes")?.setFilterValue(event.target.value)
               }
-              className="max-w-sm mt-4"
+              className='max-w-sm mt-4'
             />
           )}
           {enableColumnVisibility && <DataTableViewOptions table={table} />}
         </div>
       )}
 
-      <div className="overflow-hidden rounded-md">
+      <div className='overflow-hidden rounded-md'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -112,7 +114,7 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -125,29 +127,35 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="h6">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <TableCell key={cell.id} className='h6'>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center lowercase'
+                >
+                  Data tidak ditemukan.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      
+
       {/* Pagination */}
-      <div className="flex items-center justify-center space-x-2 pt-4">
+      <div className='flex items-center justify-center space-x-2 pt-4'>
         {/* Tombol Previous */}
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
@@ -158,8 +166,12 @@ export function DataTable<TData, TValue>({
         {Array.from({ length: table.getPageCount() }, (_, i) => (
           <Button
             key={i}
-            variant={table.getState().pagination.pageIndex === i ? "default" : "outline"}
-            size="sm"
+            variant={
+              table.getState().pagination.pageIndex === i
+                ? "default"
+                : "outline"
+            }
+            size='sm'
             onClick={() => table.setPageIndex(i)}
           >
             {i + 1}
@@ -168,8 +180,8 @@ export function DataTable<TData, TValue>({
 
         {/* Tombol Next */}
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
@@ -177,5 +189,5 @@ export function DataTable<TData, TValue>({
         </Button>
       </div>
     </div>
-  )
+  );
 }

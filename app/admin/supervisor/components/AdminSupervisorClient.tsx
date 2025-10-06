@@ -9,17 +9,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 
 import { type FC, useCallback, useMemo, useState } from "react";
 
 import InsertSupervisorForm from "./InsertSupervisorForm";
 import DataTable from "@/components/DataTable";
-import TablePageHeader from "@/components/DataTableHeader";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { useRouter } from "next/navigation";
 import UpdateSupervisorForm from "./UpdateSupervisorForm";
+import DataTableHeader from "@/components/DataTableHeader";
 
 interface AdminSupervisorProps {
   tableData: DataColumn[];
@@ -169,7 +169,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
 
   return (
     <>
-      <TablePageHeader
+      <DataTableHeader
         title='Daftar Supervisor'
         subtitle='List daftar supervisor aktif'
         label='Tambah Supervisor'
