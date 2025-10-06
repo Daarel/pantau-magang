@@ -16,7 +16,12 @@ export default function PieChart() {
     total_sakit_izin = 0,
   } = summaryData || {};
   const labels = ["Hadir", "Alfa", "Sakit/Izin"];
-  const dataValues = [total_hadir, total_alfa, total_sakit_izin]
+  const dataValues = [total_hadir, total_alfa, total_sakit_izin];
+  const total = dataValues.reduce((acc, val) => acc + val, 0);
+
+  const percentages = total > 0 
+    ? dataValues.map((v) => ((v / total) * 100).toFixed(1)) 
+    : dataValues.map(() => "0.0");
 
   const data = {
     labels,
@@ -25,13 +30,13 @@ export default function PieChart() {
         label: "Kehadiran",
         data: dataValues,
         backgroundColor: [
-          "rgba(255, 99, 132, 0.7)",
           "rgba(54, 162, 235, 0.7)",
+          "rgba(255, 99, 132, 0.7)",
           "rgba(255, 206, 86, 0.7)",
         ],
         borderColor: [
-          "rgba(255, 99, 132, 1)",
           "rgba(54, 162, 235, 1)",
+          "rgba(255, 99, 132, 1)",
           "rgba(255, 206, 86, 1)",
         ],
         borderWidth: 1,
@@ -43,8 +48,16 @@ export default function PieChart() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      // legend: { position: "bottom" },
-      // title: { display: true, text: "Pie Chart Contoh 4 Field" },
+      tooltip: {
+        callbacks: {
+          label: function(context: any) {
+            const label = context.label || '';
+            const value = context.parsed;
+            const percentage = percentages[context.dataIndex];
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
     },
   };
 
@@ -55,7 +68,7 @@ export default function PieChart() {
         <AiOutlinePieChart className="w-6 h-6 text-blue-500" />
         <h3 className="h4 font-semibold">Persentase Kehadiran</h3>
       </div>
-      <div className="flex items-center gap-3 md:gap-5 lg:gap-20">
+      <div className="flex items-center gap-3 md:gap-5 lg:justify-between">
         {/* Legend manual di kiri */}
         <div className="flex flex-col gap-3">
           {labels.map((label, idx) => (
@@ -64,7 +77,7 @@ export default function PieChart() {
                 className="w-4 h-4 rounded"
                 style={{ backgroundColor: data.datasets[0].backgroundColor[idx] }}
               ></div>
-              <span>{label}</span>
+              <span className="text-[14px] md:text-[16px]">{label}</span>
             </div>
           ))}
         </div>

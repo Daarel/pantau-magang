@@ -3,7 +3,6 @@ import React from "react";
 import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
 // Components
-import { CheckOutModal } from "@/components/CheckOutModal"
 import { useDashboardData } from '@/hooks/useDashboardData'
 import { statusColor } from '@/lib/utils';
 import { CheckInButton, DisabledButton } from "./AttendanceButtonHandler";
@@ -16,10 +15,9 @@ export default function TodaysAttendance() {
   const isAlfa = todayStatus.text === "Alfa";
   const isIzin = todayStatus.text === "Izin";
   const isSakit = todayStatus.text === "Sakit";
-  const isIzinOrSakit = isIzin || isSakit;
 
   const showCheckInButton = !loading && (!summaryData?.status || summaryData.status === "-" || todayStatus.text === "Belum Tercatat");
-  const hasCheckOut = !loading && summaryData?.today_check_out && summaryData.today_check_out !== "-";
+  const hasCheckIn = !loading && summaryData?.today_check_in && summaryData.today_check_in !== "-";
 
   return (
     <div className='flex flex-col w-full md:w-1/2 border-2 gap-6 py-4 px-5 rounded-md'>
@@ -46,30 +44,27 @@ export default function TodaysAttendance() {
       </div>
 
       {loading ? (
-        DisabledButton("Loading...")
+        <DisabledButton message="Loading..." />
       ) : (
         <>
           {isAlfa && (
-            DisabledButton("yahahahhaha gabisa absen awokaowkawok😂😂😂")
+            <DisabledButton message="Maaf, Anda Alfa Hari Ini!!" />
           )}
 
           {isIzin && (
-            DisabledButton("Besok harus berangkat!!")
+            <DisabledButton message="Besok harus berangkat yaa.." />
           )}
 
           {isSakit && (
-            DisabledButton("Semoga lekas sembuh yaa!!😁👍")
+            <DisabledButton message="Semoga lekas sembuh yaa.." />
           )}
 
           {!isAlfa && showCheckInButton && (
-            CheckInButton("Silakan Absen Masuk")
+            <CheckInButton message="Silakan Absen" />
           )}
 
-          {/* Tidak menampilkan Button Checkout ketika Status Alfa, Izin, Sakit, dan setelah melakukan Checkout */}
-          {!isAlfa && !isIzinOrSakit && !showCheckInButton && !hasCheckOut && <CheckOutModal />}
-
-          {hasCheckOut && (
-            DisabledButton("Besok masuk lagi yaa!")
+          {hasCheckIn && (
+            <DisabledButton message="Besok masuk lagi yaa!" />
           )}
         </>
       )}

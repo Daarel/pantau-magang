@@ -28,7 +28,7 @@ export default function InternDashboard() {
   return (
     <>
       {/* 1. Informasi nama, tanggal, dan waktu */}
-      <div className='relative bg-blue-500 space-y-2 mb-4 h-48 p-4 lg:p-8 rounded-lg overflow-hidden'>
+      <div className='relative bg-blue-500 space-y-2 mb-2 md:mb-4 h-48 p-4 lg:p-8 rounded-lg overflow-hidden'>
         <Image
           src='/overlayBuilding.webp'
           alt='Overlay'
@@ -46,7 +46,7 @@ export default function InternDashboard() {
       </div>
 
       {/* 2. Today attendance, Piechart */}
-      <div className='flex flex-col md:flex-row w-full gap-4 mb-4'>
+      <div className='flex flex-col md:flex-row w-full gap-2 md:gap-4 mb-2 md:mb-4'>
         {/* Attendance */}
         <TodaysAttendance />
 
@@ -60,7 +60,7 @@ export default function InternDashboard() {
       </div>
 
       {/* 3. Summary */}
-      <div className='flex flex-col w-full gap-4 sm:flex-row'>
+      <div className='flex flex-col w-full gap-2 md:gap-4 sm:flex-row'>
         {/* Schedule */}
         <div className='flex w-full sm:w-1/3 p-4 items-center justify-center sm:justify-evenly border-2 rounded-md gap-4'>
           <div>

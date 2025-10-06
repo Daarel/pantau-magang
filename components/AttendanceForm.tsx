@@ -268,7 +268,7 @@ export function AttendanceForm() {
                           type="button"
                           variant={"outline"}
                           className={cn(
-                            "w-full pl-3 text-left font-normal justify-between",
+                            "w-full pl-3 text-left font-normal justify-between capitalize",
                             !field.value && "text-muted-foreground"
                           )}
                         >
