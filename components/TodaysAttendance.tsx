@@ -8,10 +8,10 @@ import { statusColor } from '@/lib/utils';
 import { CheckInButton, DisabledButton } from "./AttendanceButtonHandler";
 
 export default function TodaysAttendance() {
-  const { summaryData, loading, error } = useDashboardData()
+  const { summaryData, loading, error } = useDashboardData();
 
-  const status = loading ? "-" : summaryData?.status ?? "-"
-  const todayStatus = statusColor(status)
+  const status = loading ? "-" : summaryData?.status ?? "-";
+  const todayStatus = statusColor(status);
   const isAlfa = todayStatus.text === "Alfa";
   const isIzin = todayStatus.text === "Izin";
   const isSakit = todayStatus.text === "Sakit";
@@ -31,11 +31,18 @@ export default function TodaysAttendance() {
       <div className='flex flex-col gap-4'>
         <div className='flex justify-between'>
           <h1>Status:</h1>
-          <Badge variant="default" className={loading ? "bg-gray-100" : todayStatus.class}>{loading ? "-" : todayStatus.text}</Badge>
+          <Badge
+            variant='default'
+            className={loading ? "bg-gray-100" : todayStatus.class}
+          >
+            {loading ? "-" : todayStatus.text}
+          </Badge>
         </div>
         <div className='flex justify-between'>
           <h1>Check In:</h1>
-          <h1 className='font-semibold'>{loading ? "-" : summaryData?.today_check_in ?? "-"}</h1>
+          <h1 className='font-semibold'>
+            {loading ? "-" : summaryData?.today_check_in ?? "-"}
+          </h1>
         </div>
       </div>
 
@@ -64,7 +71,6 @@ export default function TodaysAttendance() {
           )}
         </>
       )}
-
     </div>
   );
 }
