@@ -3,9 +3,8 @@ import React from "react";
 import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
 // Components
-import { CheckOutModal } from "@/components/CheckOutModal";
-import { useDashboardData } from "@/hooks/useDashboardData";
-import { statusColor } from "@/lib/utils";
+import { useDashboardData } from '@/hooks/useDashboardData'
+import { statusColor } from '@/lib/utils';
 import { CheckInButton, DisabledButton } from "./AttendanceButtonHandler";
 
 export default function TodaysAttendance() {
@@ -16,20 +15,12 @@ export default function TodaysAttendance() {
   const isAlfa = todayStatus.text === "Alfa";
   const isIzin = todayStatus.text === "Izin";
   const isSakit = todayStatus.text === "Sakit";
-  const isIzinOrSakit = isIzin || isSakit;
 
-  const showCheckInButton =
-    !loading &&
-    (!summaryData?.status ||
-      summaryData.status === "-" ||
-      todayStatus.text === "Belum Tercatat");
-  const hasCheckOut =
-    !loading &&
-    summaryData?.today_check_out &&
-    summaryData.today_check_out !== "-";
+  const showCheckInButton = !loading && (!summaryData?.status || summaryData.status === "-" || todayStatus.text === "Belum Tercatat");
+  const hasCheckIn = !loading && summaryData?.today_check_in && summaryData.today_check_in !== "-";
 
   return (
-    <div className='flex flex-col w-full md:w-1/2 border-2 gap-6 py-4 px-5 rounded-md'>
+    <div className='flex flex-col border-2 gap-6 py-4 px-5 rounded-md'>
       {/* Header */}
       <div className='flex items-center justify-center gap-3'>
         <GoClock className='text-blue-500 w-6 h-6' />
@@ -53,36 +44,31 @@ export default function TodaysAttendance() {
             {loading ? "-" : summaryData?.today_check_in ?? "-"}
           </h1>
         </div>
-        <div className='flex justify-between'>
-          <h1>Check Out:</h1>
-          <h1 className='font-semibold'>
-            {loading ? "-" : summaryData?.today_check_out ?? "-"}
-          </h1>
-        </div>
       </div>
 
       {loading ? (
-        <DisabledButton text='Loading...' />
+        <DisabledButton message="Loading..." />
       ) : (
         <>
           {isAlfa && (
-            <DisabledButton text='yahahahhaha gabisa absen awokaowkawok😂😂😂' />
+            <DisabledButton message="Maaf, Anda Alfa Hari Ini!!" />
           )}
 
-          {isIzin && <DisabledButton text='Besok harus berangkat!!' />}
+          {isIzin && (
+            <DisabledButton message="Besok harus berangkat yaa.." />
+          )}
 
-          {isSakit && <DisabledButton text='Semoga lekas sembuh yaa!!😁👍' />}
+          {isSakit && (
+            <DisabledButton message="Semoga lekas sembuh yaa.." />
+          )}
 
           {!isAlfa && showCheckInButton && (
-            <CheckInButton text='Silakan Absen Masuk' />
+            <CheckInButton message="Silakan Absen" />
           )}
 
-          {/* Tidak menampilkan Button Checkout ketika Status Alfa, Izin, Sakit, dan setelah melakukan Checkout */}
-          {!isAlfa && !isIzinOrSakit && !showCheckInButton && !hasCheckOut && (
-            <CheckOutModal />
+          {hasCheckIn && (
+            <DisabledButton message="Besok masuk lagi yaa!" />
           )}
-
-          {hasCheckOut && <DisabledButton text='Besok masuk lagi yaa!' />}
         </>
       )}
     </div>

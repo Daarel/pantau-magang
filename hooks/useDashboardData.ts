@@ -53,20 +53,12 @@ export function useDashboardData() {
           "Type:",
           typeof dashboardData?.start_time
         );
-        console.log(
-          "Raw end_time:",
-          dashboardData?.end_time,
-          "Type:",
-          typeof dashboardData?.end_time
-        );
 
         if (dashboardData) {
           const formatted = {
             ...dashboardData,
             start_time: formatTime(dashboardData.start_time),
-            end_time: formatTime(dashboardData.end_time),
             today_check_in: formatTimeStamp(dashboardData.today_check_in),
-            today_check_out: formatTimeStamp(dashboardData.today_check_out),
           };
           setSummaryData(formatted as internSummary);
         }
