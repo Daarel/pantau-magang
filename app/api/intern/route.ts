@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { insertActivityLogs } from "@/lib/helper/insertActivityLogs.helper";
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
@@ -178,6 +179,8 @@ export async function DELETE(req: NextRequest) {
       { status: 500 }
     );
   }
+
+  insertActivityLogs();
 
   return NextResponse.json({ success: true });
 }
