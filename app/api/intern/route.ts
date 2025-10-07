@@ -180,7 +180,7 @@ export async function DELETE(req: NextRequest) {
     );
   }
 
-  insertActivityLogs();
+  // insertActivityLogs();
 
   return NextResponse.json({ success: true });
 }
