@@ -85,14 +85,14 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
   };
 
   return (
-    <div className='flex flex-row justify-center items-center gap-3'>
+    <div className='flex flex-row justify-center items-center gap-3 capitalize'>
       <span className='md:text-lg md:font-normal font-normal tracking-wide'>
         {username}
       </span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className='cursor-pointer'>
-            <Image src={avatarUrl} width={40} height={40} alt='Profile' />
+            <Image src={avatarUrl} fill alt='Profile' className="w-full h-full object-cover"/>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-56' align='end'>

@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image";
+import Startbutton from "./startbutton";
 
 export default async function InternProfilePage() {
   const supabase = await createClient();
@@ -84,11 +85,19 @@ export default async function InternProfilePage() {
       </div>
 
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Daftar Intern Anda</h1>
-        <p className="text-gray-500">
-          Profil peserta magang di bawah pengawasan
-        </p>
+      <div className="flex items-center justify-between w-full mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">
+            Daftar Intern Anda
+          </h1>
+          <p className="text-gray-500">
+            Profil peserta magang di bawah pengawasan
+          </p>
+        </div>
+
+        <div>
+          <Startbutton />
+        </div>
       </div>
 
       {/* Kalau belum ada intern */}

@@ -110,7 +110,7 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
           </Sidebar>
           <div className="flex h-full w-full">
             <SidebarInset>
-              <main className="p-4">{children}</main>
+              <main className="p-2 md:p-4">{children}</main>
             </SidebarInset>
           </div>
         </div>

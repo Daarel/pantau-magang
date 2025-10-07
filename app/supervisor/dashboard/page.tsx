@@ -77,7 +77,8 @@ export default async function SupervisorDashboard() {
     .eq("dispensation", "pending")
     .eq("users.supervisor_id", data.id);
 
-  if (pendingError) console.error("Error fetching pendingLeaves:", pendingError);
+  if (pendingError)
+    console.error("Error fetching pendingLeaves:", pendingError);
   pendingLeaves = pendingCount ?? 0;
 
   // ambil semua kehadiran intern supervisor ini
@@ -278,8 +279,8 @@ export default async function SupervisorDashboard() {
               <Link href="/supervisor/internprofile">
                 <CardContent
                   className={`flex justify-center items-center gap-0 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1 pr-8 cursor-pointer 
-                hover:bg-gray-100 hover:shadow-md hover:scale-[1.02] 
-                hover:ring-2 hover:ring-blue-300 transition-all duration-200 rounded-xl`}
+                hover:scale-[1.02] 
+                transition-all duration-200 rounded-xl`}
                 >
                   <StatCard
                     Icon={card.Icon}
