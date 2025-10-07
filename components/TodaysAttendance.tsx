@@ -20,7 +20,7 @@ export default function TodaysAttendance() {
   const hasCheckIn = !loading && summaryData?.today_check_in && summaryData.today_check_in !== "-";
 
   return (
-    <div className='flex flex-col w-full md:w-1/2 border-2 gap-6 py-4 px-5 rounded-md'>
+    <div className='flex flex-col border-2 gap-6 py-4 px-5 rounded-md'>
       {/* Header */}
       <div className='flex items-center justify-center gap-3'>
         <GoClock className='text-blue-500 w-6 h-6' />
@@ -36,10 +36,6 @@ export default function TodaysAttendance() {
         <div className='flex justify-between'>
           <h1>Check In:</h1>
           <h1 className='font-semibold'>{loading ? "-" : summaryData?.today_check_in ?? "-"}</h1>
-        </div>
-        <div className='flex justify-between'>
-          <h1>Check Out:</h1>
-          <h1 className='font-semibold'>{loading ? "-" : summaryData?.today_check_out ?? "-"}</h1>
         </div>
       </div>
 
