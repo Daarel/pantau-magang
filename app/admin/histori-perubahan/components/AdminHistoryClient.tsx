@@ -8,7 +8,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo, type FC } from "react";
 import { LuArrowUpDown } from "react-icons/lu";
 
-
 interface AdminHistoryProps {
   tableData: DataColumn[];
 }
@@ -27,7 +26,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({ tableData }) => {
         accessorKey: "action_type",
         header: "Tipe aksi",
         cell: ({ row }) => (
-          <div className='capitalize'>{row.getValue("action_type")}</div>
+          <div>{row.getValue("action_type")}</div>
         ),
       },
       {

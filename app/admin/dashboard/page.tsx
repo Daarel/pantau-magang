@@ -1,15 +1,15 @@
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 
+import { AiOutlineUserAdd, AiOutlineUserDelete } from "react-icons/ai";
 import {
-  FaUsers,
+  FaUser,
   FaBuilding,
-  FaRegCheckCircle,
   FaUserGraduate,
   FaUserTie,
+  FaPen,
 } from "react-icons/fa";
 import { AiFillFileText } from "react-icons/ai";
-import { FiAlertTriangle } from "react-icons/fi";
 import Image from "next/image";
 import NavigationButton from "../../../components/NavigationButton";
 import DashboardClock from "@/components/DashboardClock";
@@ -18,15 +18,13 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { toast } from "sonner";
 
-type ActivityType = "user" | "approval" | "attendance" | "alert";
-
-type recentActivities = {
-  id: number;
-  user: string;
-  action: string;
-  time: string;
-  type: ActivityType;
-};
+type ActivityType =
+  | "assign_intern"
+  | "assign_supervisor"
+  | "delete_intern"
+  | "delete_supervisor"
+  | "update_intern"
+  | "update_supervisor";
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -50,7 +48,15 @@ export default async function AdminDashboard() {
     toast.error("Data ringkasan tidak tersedia.");
   }
 
-  // Mock data
+  const { data, error: errorGetData } = await supabase
+    .from("activity_logs")
+    .select("id, full_name, action_type, description, target_name, created_at")
+    .limit(5);
+
+  if (errorGetData) {
+    console.error("Error fetching", errorGetData);
+  }
+
   const stats = {
     totalUsers: summary?.[0]?.total_users ?? 0,
     activeInterns: summary?.[0]?.total_intern ?? 0,
@@ -60,7 +66,7 @@ export default async function AdminDashboard() {
 
   const statCards = [
     {
-      Icon: FaUsers,
+      Icon: FaUser,
       title: "Total Users",
       value: stats.totalUsers,
       contentColor: "text-blue-600",
@@ -85,57 +91,21 @@ export default async function AdminDashboard() {
     },
   ];
 
-  const recentActivities: recentActivities[] = [
-    {
-      id: 1,
-      action: "New intern registered",
-      user: "John Doe",
-      time: "2 minutes ago",
-      type: "user",
-    },
-    {
-      id: 2,
-      action: "Leave request approved",
-      user: "Jane Smith",
-      time: "5 minutes ago",
-      type: "attendance",
-    },
-    {
-      id: 3,
-      action: "Attendance record updated",
-      user: "Mike Johnson",
-      time: "10 minutes ago",
-      type: "attendance",
-    },
-    {
-      id: 4,
-      action: "New supervisor assigned",
-      user: "Dr. Sarah Wilson",
-      time: "1 hour ago",
-      type: "attendance",
-    },
-    {
-      id: 5,
-      action: "New supervisor assigned",
-      user: "Dr. Sarah Wil",
-      time: "1 hour ago",
-      type: "attendance",
-    },
-  ];
-
   const getActivityIcon = (type: ActivityType) => {
-    switch (type) {
-      case "user":
-        return <FaUsers className='h-6 w-6 text-blue-600' />;
-      case "approval":
-        return <FaRegCheckCircle className='h-6 w-6 text-green-600' />;
-      case "attendance":
-        return <AiFillFileText className='h-6 w-6 text-yellow-600' />;
+    switch (true) {
+      case type === "assign_intern" || type === "assign_supervisor":
+        return <AiOutlineUserAdd className='h-6 w-6 text-blue-600' />;
+
+      case type === "delete_intern" || type === "delete_supervisor":
+        return <AiOutlineUserDelete className='h-6 w-6 text-red-600' />;
+
+      case type === "update_intern" || type === "update_supervisor":
+        return <FaPen className='h-4 w-4 mx-1 text-yellow-600' />;
+
       default:
-        return <FiAlertTriangle className='h-6 w-6 text-gray-600' />;
+        return null;
     }
   };
-
   return (
     <>
       <div className='relative space-y-2 mb-7 bg-purple-500 min-h-48 p-8 rounded-lg overflow-hidden'>
@@ -173,27 +143,44 @@ export default async function AdminDashboard() {
       <div className='flex flex-row mt-5 justify-center gap-6 items-center max-sm:flex-col'>
         <Card className='w-1/2 max-sm:w-full h-[350px]'>
           <CardHeader>
-            <CardTitle>Recent Activities</CardTitle>
+            <CardTitle>Aktivitas Terbaru</CardTitle>
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
               <ul className='flex flex-col gap-3 max-sm:gap-5'>
-                {recentActivities.map((activity) => (
-                  <li
-                    key={activity.id}
-                    className='flex justify-start items-center gap-5'
-                  >
-                    <div>{getActivityIcon(activity.type)}</div>
-                    <div>
-                      <p className='text-md max-sm:text-sm font-medium text-gray-900'>
-                        {activity.action}
-                      </p>
-                      <p className='text-sm max-sm:text-xs text-gray-600'>
-                        {activity.user} • {activity.time}
-                      </p>
-                    </div>
-                  </li>
-                ))}
+                {data && data.length > 0 ? (
+                  data.map((activity) => (
+                    <li
+                      key={activity.id}
+                      className='flex justify-start items-center gap-5'
+                    >
+                      <div>
+                        {getActivityIcon(activity.action_type as ActivityType)}
+                      </div>
+                      <div>
+                        <p className='text-sm max-sm:text-sm font-medium text-gray-900  max-w-[45ch]'>
+                          {activity.description ?? activity.action_type}
+                        </p>
+                        <p className='text-sm max-sm:text-xs text-gray-600'>
+                          {activity.full_name} •{" "}
+                          {new Date(activity.created_at).toLocaleString(
+                            "id-ID",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              day: "2-digit",
+                              month: "short",
+                            }
+                          )}
+                        </p>
+                      </div>
+                    </li>
+                  ))
+                ) : (
+                  <p className='text-gray-500 text-sm italic'>
+                    Tidak ada aktivitas terbaru.
+                  </p>
+                )}
               </ul>
             </div>
           </CardContent>
@@ -209,7 +196,7 @@ export default async function AdminDashboard() {
               className='p-10'
               href='/admin/intern?modal=open'
             >
-              <FaUsers className='h-8 w-8 text-blue-600' />
+              <FaUser className='h-8 w-8 text-blue-600' />
               <span className='text-sm'>Add User</span>
             </NavigationButton>
             <NavigationButton

@@ -4,7 +4,7 @@ import Loading from "../loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { formatDateID} from "@/lib/helper/formatDate.helper";
+import { formatDateID } from "@/lib/helper/formatDate.helper";
 
 export default async function AdminHistoryPage() {
   const supabase = await createClient();

@@ -103,3 +103,9 @@ export const getWorkdaysInMonth = (): number => {
   }
   return workdays
 }
+
+// Format nama maksimal 3 kata
+export const formatNama = (nama: string): string => {
+  const kata = nama.trim().split(/\s+/);
+  return kata.slice(0, 3).join(' ');
+};
