@@ -52,7 +52,7 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
           hour: "2-digit",
           minute: "2-digit",
           hour12: false,
-          timeZone: "Asia/Jakarta", 
+          timeZone: "Asia/Jakarta",
         })
       : "-:-",
   }));
@@ -110,6 +110,7 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
       status,
       check_in_time,
       date,
+      file_url,
       dispensation,
       users!inner (
         full_name,
@@ -142,6 +143,7 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
           timeZone: "Asia/Jakarta",
         })
       : "-:-",
+    file: att.file_url,
   }));
 }
 
@@ -218,9 +220,27 @@ export function ReportTable({
 
 export function DashboardTable({ supervisorId }: { supervisorId: string }) {
   const [dashboardData, setDashboardData] = useState<Dashboard[]>([]);
+  const supabase = createClient();
 
   useEffect(() => {
     getDashboardData(supervisorId).then(setDashboardData);
+    const channel = supabase
+      .channel("realtime-dashboard-attendance")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "attendance" },
+        (payload) => {
+          console.log("📡 Realtime update detected:", payload.eventType);
+          // Fetch ulang data saat ada perubahan
+          getDashboardData(supervisorId).then(setDashboardData);
+        }
+      )
+      .subscribe();
+
+    // Cleanup saat komponen unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [supervisorId]);
 
   return (

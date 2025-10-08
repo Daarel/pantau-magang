@@ -35,6 +35,7 @@ export type Dashboard = {
   status: string;
   institutions: string;
   check_in_time: string;
+  file?: string;
 };
 
 const supabase = createClient();
@@ -112,12 +113,17 @@ export const columns = (
         try {
           const updateData: any = { status: newStatus };
 
-          // kalau dari izin jadi hadir → isi check_in_time
-          if (
-            newStatus === "hadir" &&
-            row.original.status.toLowerCase() === "izin"
-          ) {
-            updateData.check_in_time = new Date().toISOString();
+          // kalau dari izin/sakit jadi hadir → isi check_in_time
+          if (newStatus.toLowerCase() === "hadir") {
+            if (
+              row.original.status.toLowerCase() === "izin" ||
+              row.original.status.toLowerCase() === "sakit"
+            ) {
+              updateData.check_in_time = new Date().toISOString();
+            }
+          } else {
+            // kalau status bukan hadir, hapus check_in_time
+            updateData.check_in_time = null;
           }
 
           const { error } = await supabase
@@ -366,13 +372,46 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
     accessorKey: "institutions",
     // Sorting by institution name
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Sekolah/Universitas" />;
+      return (
+        <DataTableColumnHeader column={column} title="Sekolah/Universitas" />
+      );
     },
   },
   {
     accessorKey: "check_in_time",
     header: ({ column }) => {
       return <DataTableColumnHeader column={column} title="Masuk" />;
+    },
+  },
+  {
+    accessorKey: "file",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Lampiran" />
+    ),
+    cell: ({ row }) => {
+      const file = row.getValue("file") as string | undefined;
+      const fullName = row.original.name as string | undefined;
+
+      if (!file) {
+        return <span className="text-gray-400">-</span>;
+      }
+
+      // ambil hanya nama file (tanpa path)
+      const fileName = file.split("/").pop() || file;
+      const extension = fileName.includes(".")
+        ? fileName.split(".").pop()?.toUpperCase()
+        : "";
+
+      return (
+        <a
+          href={file}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
+        >
+          {fullName ? `${fullName}.${extension}` : fileName}
+        </a>
+      );
     },
   },
 ];

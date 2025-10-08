@@ -12,6 +12,7 @@ import { FaRegCalendarCheck, FaUserTimes } from "react-icons/fa";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
 
 export default async function SupervisorDashboard() {
   const supabase = await createClient();
@@ -308,6 +309,7 @@ export default async function SupervisorDashboard() {
       </div>
 
       {data.id && <DashboardTable supervisorId={data.id} />}
+      <RealtimeDashboardRefresher />
     </>
   );
 }

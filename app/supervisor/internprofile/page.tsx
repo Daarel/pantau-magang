@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { IoArrowBackOutline } from "react-icons/io5";
 import {
-  FaUserGraduate,
   FaUniversity,
   FaRegCalendarAlt,
   FaIdBadge,
