@@ -86,9 +86,6 @@ export async function PATCH(req: NextRequest) {
       status,
     } = body;
 
-    console.log("📥 Body dari request:", body);
-    console.log("🔎 supervisor_id diterima:", supervisor_id);
-
     const { data: dataUser, error: errorDataUser } = await supabase
       .from("users")
       .select("id")
@@ -134,6 +131,13 @@ export async function PATCH(req: NextRequest) {
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
+
+    insertActivityLogs({
+      action_type: "insert_intern",
+      description: `Akun ${full_name} telah ditambahkan`,
+      target_name: full_name,
+    });
+
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -147,7 +151,7 @@ export async function DELETE(req: NextRequest) {
 
   const { data: userData, error: fetchError } = await supabase
     .from("users")
-    .select("auth_id")
+    .select("auth_id, full_name")
     .eq("id", id)
     .single();
 
@@ -180,7 +184,11 @@ export async function DELETE(req: NextRequest) {
     );
   }
 
-  // insertActivityLogs();
+  insertActivityLogs({
+    action_type: "delete_intern",
+    description: `Akun ${userData.full_name} telah dihapus`,
+    target_name: userData.full_name,
+  });
 
   return NextResponse.json({ success: true });
 }
