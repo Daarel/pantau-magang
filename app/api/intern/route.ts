@@ -66,6 +66,12 @@ export async function POST(req: NextRequest) {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 400 });
 
+  await insertActivityLogs({
+    action_type: "insert_intern",
+    description: `Akun ${full_name} telah ditambahkan`,
+    target_name: full_name,
+  });
+
   return NextResponse.json({ data });
 }
 
@@ -132,9 +138,9 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
-    insertActivityLogs({
-      action_type: "insert_intern",
-      description: `Akun ${full_name} telah ditambahkan`,
+    await insertActivityLogs({
+      action_type: "update_intern",
+      description: `Akun ${full_name} telah diubah`,
       target_name: full_name,
     });
 
@@ -184,7 +190,7 @@ export async function DELETE(req: NextRequest) {
     );
   }
 
-  insertActivityLogs({
+  await insertActivityLogs({
     action_type: "delete_intern",
     description: `Akun ${userData.full_name} telah dihapus`,
     target_name: userData.full_name,

@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 400 });
 
-  insertActivityLogs({
+  await insertActivityLogs({
     action_type: "insert_supervisor",
     description: `Akun ${full_name} telah ditambahkan`,
     target_name: full_name,
@@ -91,7 +91,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
-    insertActivityLogs({
+    await insertActivityLogs({
       action_type: "update_supervisor",
       description: `Akun ${full_name} telah diubah`,
       target_name: full_name,
@@ -143,7 +143,7 @@ export async function DELETE(req: NextRequest) {
     );
   }
 
-  insertActivityLogs({
+  await insertActivityLogs({
     action_type: "delete_supervisor",
     description: `Akun ${userData.full_name} telah dihapus`,
     target_name: userData.full_name,

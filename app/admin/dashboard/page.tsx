@@ -19,8 +19,8 @@ import { createClient } from "@/lib/supabase/server";
 import { toast } from "sonner";
 
 type ActivityType =
-  | "assign_intern"
-  | "assign_supervisor"
+  | "insert_intern"
+  | "insert_supervisor"
   | "delete_intern"
   | "delete_supervisor"
   | "update_intern"
@@ -51,6 +51,7 @@ export default async function AdminDashboard() {
   const { data, error: errorGetData } = await supabase
     .from("activity_logs")
     .select("id, full_name, action_type, description, target_name, created_at")
+    .order("created_at", { ascending: false })
     .limit(5);
 
   if (errorGetData) {
@@ -67,13 +68,13 @@ export default async function AdminDashboard() {
   const statCards = [
     {
       Icon: FaUser,
-      title: "Total Users",
+      title: "Jumlah Pengguna",
       value: stats.totalUsers,
       contentColor: "text-blue-600",
     },
     {
       Icon: FaUserGraduate,
-      title: "Interns",
+      title: "Anak Magang",
       value: stats.activeInterns,
       contentColor: "text-green-600",
     },
@@ -85,7 +86,7 @@ export default async function AdminDashboard() {
     },
     {
       Icon: FaBuilding,
-      title: "Departments",
+      title: "Gedung Terdaftar",
       value: stats.departments,
       contentColor: "text-yellow-600",
     },
@@ -93,7 +94,7 @@ export default async function AdminDashboard() {
 
   const getActivityIcon = (type: ActivityType) => {
     switch (true) {
-      case type === "assign_intern" || type === "assign_supervisor":
+      case type === "insert_intern" || type === "insert_supervisor":
         return <AiOutlineUserAdd className='h-6 w-6 text-blue-600' />;
 
       case type === "delete_intern" || type === "delete_supervisor":
@@ -188,24 +189,24 @@ export default async function AdminDashboard() {
 
         <Card className='w-1/2 max-sm:w-full h-[350px]'>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>Aksi Cepat</CardTitle>
           </CardHeader>
           <CardContent className='flex flex-col gap-3'>
             <NavigationButton
               variant='outline'
               className='p-10'
-              href='/admin/intern?modal=open'
+              href='/admin/intern?modalInsert=open'
             >
               <FaUser className='h-8 w-8 text-blue-600' />
-              <span className='text-sm'>Add User</span>
+              <span className='text-sm'>Tambah anak magang</span>
             </NavigationButton>
             <NavigationButton
               variant='outline'
               className='p-10'
-              href='/admin/supervisor?modal=open'
+              href='/admin/supervisor?modalInsert=open'
             >
               <AiFillFileText className='h-8 w-8 text-green-600' />
-              <span className='text-sm'>Add Supervisor</span>
+              <span className='text-sm'>tambah supervisor</span>
             </NavigationButton>
           </CardContent>
         </Card>

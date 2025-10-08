@@ -18,13 +18,15 @@ export const insertActivityLogs = async ({
 
   const { data, error } = await supabase.from("activity_logs").insert([
     {
-      user_id: user?.id,
+      admin_id: user?.id,
       full_name: user?.user_metadata.full_name,
       action_type,
       description,
       target_name,
     },
   ]);
+
+  console.log(data);
 
   if (error) {
     console.error("Error inserting activity log:", error.message);
@@ -33,4 +35,3 @@ export const insertActivityLogs = async ({
 
   return data;
 };
-
