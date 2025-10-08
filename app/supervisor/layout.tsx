@@ -68,7 +68,7 @@ export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
   useEffect(() => {
     fetchPending();
     // auto refresh setiap 10 detik
-    const interval = setInterval(fetchPending, 10000);
+    const interval = setInterval(fetchPending, 1000);
     return () => clearInterval(interval);
   }, []);
 
