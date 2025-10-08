@@ -109,3 +109,100 @@ export const formatNama = (nama: string): string => {
   const kata = nama.trim().split(/\s+/);
   return kata.slice(0, 3).join(' ');
 };
+
+// Fungsi untuk mengkompresi gambar
+export const compressImage = (file: File, quality = 0.8): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          reject(new Error('Canvas context tidak tersedia'));
+          return;
+        }
+        
+        // Hitung ukuran baru dengan menjaga aspect ratio
+        let { width, height } = img;
+        const MAX_DIMENSION = 1200; // Maksimal dimensi untuk mengurangi ukuran
+        
+        if (width > height && width > MAX_DIMENSION) {
+          height = (height * MAX_DIMENSION) / width;
+          width = MAX_DIMENSION;
+        } else if (height > MAX_DIMENSION) {
+          width = (width * MAX_DIMENSION) / height;
+          height = MAX_DIMENSION;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Gambar ulang gambar dengan ukuran yang dikompresi
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Konversi ke blob dengan kualitas yang disesuaikan
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Gagal mengkompres gambar'));
+              return;
+            }
+            
+            // Buat nama file baru dengan timestamp
+            const fileName = `compressed_${Date.now()}.jpg`;
+            const newFile = new File([blob], fileName, {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            });
+            
+            resolve(newFile);
+          },
+          'image/jpeg',
+          quality
+        );
+      };
+      
+      img.onerror = () => reject(new Error('Gagal memuat gambar'));
+    };
+    reader.onerror = () => reject(new Error('Gagal membaca file'));
+  });
+};
+
+// Fungsi untuk memeriksa dan mengkompresi gambar jika diperlukan
+export const processImage = async (file: File, maxSizeMB = 2): Promise<File> => {
+  const MAX_SIZE = maxSizeMB * 1024 * 1024; // Convert MB to bytes
+  
+  // Jika file sudah di bawah ukuran maksimal, langsung return
+  if (file.size <= MAX_SIZE) {
+    return file;
+  }
+  
+  let compressedFile = file;
+  let quality = 0.8; // Kualitas awal
+  
+  // Coba kompresi dengan kualitas yang semakin rendah (maksimal 5 percobaan)
+  for (let i = 0; i < 5; i++) {
+    try {
+      compressedFile = await compressImage(compressedFile, quality);
+      
+      // Jika sudah di bawah ukuran maksimal, berhenti
+      if (compressedFile.size <= MAX_SIZE) {
+        return compressedFile;
+      }
+      
+      // Turunkan kualitas untuk percobaan berikutnya
+      quality = Math.max(0.3, quality - 0.15); // Minimum quality 0.3
+    } catch (error) {
+      console.error('Error kompresi gambar:', error);
+      throw new Error('Gagal mengkompres gambar');
+    }
+  }
+  
+  // Jika masih terlalu besar setelah beberapa percobaan, kembalikan file terkompresi terbaik
+  return compressedFile;
+};

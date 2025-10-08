@@ -3,12 +3,12 @@ import React from "react";
 import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
 // Components
-import { useDashboardData } from '@/hooks/useDashboardData'
+import { useInternData } from '@/hooks/useInternData'
 import { statusColor } from '@/lib/utils';
 import { CheckInButton, DisabledButton } from "./AttendanceButtonHandler";
 
 export default function TodaysAttendance() {
-  const { summaryData, loading, error } = useDashboardData();
+  const { summaryData, loading, error } = useInternData();
 
   const status = loading ? "-" : summaryData?.status ?? "-";
   const todayStatus = statusColor(status);

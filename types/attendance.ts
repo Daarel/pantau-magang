@@ -25,3 +25,21 @@ export type AttendanceIntern = {
   created_at: string
   updated_at: string
 }
+
+export type PhotoUploadProps = {
+  onPhotoChange: (file: File | null) => void;
+  maxSize?: number; // in MB
+}
+
+export type FileUploadProps = {
+  onFileChange: (file: File | null) => void;
+  className?: string;
+  containerClassName?: string;
+  cardClassName?: string;
+  buttonClassName?: string;
+  infoClassName?: string;
+  variant?: 'default' | 'compact' | 'large';
+  orientation?: 'vertical' | 'horizontal';
+  accept?: string;
+  maxSize?: number; // in MB
+}

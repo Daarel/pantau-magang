@@ -10,6 +10,5 @@ export type internSummary = {
   total_dispensasi: number;
   total_hadir_bulanan: number;
   today_check_in: string | null;
-  today_check_out: string | null;
   status: string | null;
 };

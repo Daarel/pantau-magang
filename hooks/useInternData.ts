@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { internSummary } from "@/types/dashboard";
+import { internSummary } from "@/types/intern";
 import { formatTimeStamp, formatTime } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
-export function useDashboardData() {
+export function useInternData() {
   const [summaryData, setSummaryData] = useState<internSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,8 +34,8 @@ export function useDashboardData() {
         }
 
         // Query data dari Supabase berdasarkan user_id
-        const { data: dashboardData, error } = await supabase
-          .from("intern_dashboard")
+        const { data: internData, error } = await supabase
+          .from("intern_data")
           .select("*")
           .eq("user_id", data.id)
           .single();
@@ -46,25 +46,28 @@ export function useDashboardData() {
           return;
         }
 
-        console.log("Raw data from Supabase:", dashboardData);
+        console.log("Raw data from Supabase:", internData);
         console.log(
           "Raw start_time:",
-          dashboardData?.start_time,
+          internData?.start_time,
+          internData?.end_time,
           "Type:",
-          typeof dashboardData?.start_time
+          typeof internData?.start_time,
+          typeof internData?.end_time
         );
 
-        if (dashboardData) {
+        if (internData) {
           const formatted = {
-            ...dashboardData,
-            start_time: formatTime(dashboardData.start_time),
-            today_check_in: formatTimeStamp(dashboardData.today_check_in),
+            ...internData,
+            start_time: formatTime(internData.start_time),
+            end_time: formatTime(internData.end_time),
+            today_check_in: formatTimeStamp(internData.today_check_in),
           };
           setSummaryData(formatted as internSummary);
         }
 
         setLoading(false);
-      } catch {
+      } catch { 
         setError("Unexpected error occurred");
         setLoading(false);
       }

@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
-import { Toaster } from "@/components/ui/sonner"
 import {
   Form,
   FormControl,
@@ -243,7 +242,7 @@ export function AttendanceForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Foto */}
-        <div className="flex flex-col md:flex-row items-center justify-around gap-6 md:gap-7 lg:gap-15 border-2 p-6 rounded-md">
+        <div className="flex flex-col md:flex-row items-center justify-between md:justify-evenly gap-6 border-2 p-6 rounded-md">
           <FormItem>
             {form.watch('status') === 'hadir' ? (
               <PhotoUpload onPhotoChange={handlePhotoChange} />
@@ -420,7 +419,6 @@ export function AttendanceForm() {
           </div>
         </div>
       </form>
-      <Toaster className="" />
     </Form>
   )
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, Title, Tooltip, ArcElement } from "chart.js";
-import { useDashboardData } from '@/hooks/useDashboardData'
+import { useInternData } from '@/hooks/useInternData'
 // icons
 import { AiOutlinePieChart } from 'react-icons/ai';
 
@@ -9,7 +9,7 @@ import { AiOutlinePieChart } from 'react-icons/ai';
 ChartJS.register(Title, Tooltip, ArcElement);
 
 export default function PieChart() {
-  const { summaryData, loading, error } = useDashboardData()
+  const { summaryData, loading, error } = useInternData()
   const {
     total_hadir = 0,
     total_alfa = 0,
