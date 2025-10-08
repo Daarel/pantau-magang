@@ -155,7 +155,7 @@ export default async function AdminDashboard() {
                       className='flex justify-start items-center gap-5'
                     >
                       <div>
-                        {getActivityIcon(activity.action_type as ActivityType)} 
+                        {getActivityIcon(activity.action_type as ActivityType)}
                       </div>
                       <div>
                         <p className='text-sm max-sm:text-sm font-medium text-gray-900  max-w-[45ch]'>

@@ -1,0 +1,120 @@
+"use client";
+
+import type { ReactNode } from "react";
+import {
+  SidebarProvider,
+  SidebarInset,
+  Sidebar,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
+import { supervisorMenu } from "@/const/index";
+import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+
+interface SupervisorLayoutProps {
+  children: ReactNode;
+}
+
+export default function SupervisorLayoutClient({ children }: SupervisorLayoutProps) {
+  const pathname = usePathname();
+  const [hasPending, setHasPending] = useState(false);
+
+  // cek apakah ada data pending
+  async function fetchPending() {
+    const supabase = createClient();
+
+    // ambil user login
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      console.error("Error fetching user:", authError);
+      return;
+    }
+
+    // ambil id supervisor dari tabel users
+    const { data: supervisorData, error: userError } = await supabase
+      .from("users")
+      .select("id")
+      .eq("auth_id", user.id)
+      .single();
+
+    if (userError || !supervisorData) {
+      console.error("Error fetching supervisor data:", userError);
+      return;
+    }
+
+    // filter attendance berdasarkan supervisor_id
+    const { count, error } = await supabase
+      .from("attendance")
+      .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+      .eq("dispensation", "pending")
+      .eq("users.supervisor_id", supervisorData.id);
+
+    if (error) {
+      console.error("Error fetching pending leaves:", error);
+    } else {
+      setHasPending((count ?? 0) > 0);
+    }
+  }
+
+  useEffect(() => {
+    fetchPending();
+    // auto refresh setiap 10 detik
+    const interval = setInterval(fetchPending, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <SidebarProvider>
+      <div className="flex flex-col w-full h-screen capitalize">
+        <Navbar />
+        <div className="flex flex-1 overflow-auto">
+          <Sidebar>
+            <SidebarMenu className="mt-16 max-sm:mt-5">
+              {supervisorMenu.map((menu) => {
+                const isActive = pathname.startsWith(menu.path);
+
+                return (
+                  <SidebarMenuItem key={menu.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      className="flex items-center gap-3 pl-5 py-2 rounded-md transition-colors"
+                    >
+                      <Link
+                        href={menu.path}
+                        className="flex items-center gap-2 relative"
+                      >
+                        <menu.Icon className="h-9 w-9" />
+                        <span className="flex items-center gap-2">
+                          {menu.title}
+                          {/* notif dot merah kalau ada pending */}
+                          {menu.title === "Inbox" && hasPending && (
+                            <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+                          )}
+                        </span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </Sidebar>
+          <div className="flex h-full w-full">
+            <SidebarInset>
+              <main className="p-2 md:p-4">{children}</main>
+            </SidebarInset>
+          </div>
+        </div>
+      </div>
+    </SidebarProvider>
+  );
+}
