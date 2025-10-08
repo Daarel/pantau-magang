@@ -13,10 +13,10 @@ import { getWorkdaysInMonth, formatNama } from "@/lib/utils";
 import "../../globals.css";
 import Image from "next/image";
 
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { useInternData } from "@/hooks/useInternData";
 
 export default function InternDashboard() {
-  const { summaryData, loading, error } = useDashboardData();
+  const { summaryData, loading, error } = useInternData();
   const totalHariKerja = getWorkdaysInMonth();
 
   useEffect(() => {

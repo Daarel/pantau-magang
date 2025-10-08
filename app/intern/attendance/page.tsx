@@ -7,6 +7,7 @@ import { AttendanceInfo } from "@/components/AttendanceInfo";
 import { useAttendanceData } from "@/hooks/useAttendance";
 import { createClient } from "@/lib/supabase/client";
 import { redirect } from "next/navigation";
+import { useInternData } from "@/hooks/useInternData";
 // Icons
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 
@@ -15,6 +16,7 @@ export default function Attendance() {
   const [todayStatus, setTodayStatus] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(true);
   const supabase = createClient();
+  const { summaryData, loading:internDataLoading, error:internDataError } = useInternData();
 
   useEffect(() => {
     const checkTodaysAttendance = async () => {
@@ -89,7 +91,7 @@ export default function Attendance() {
           </div>
           <div className="flex items-center gap-1 text-black/40 text-[12px] md:text-sm">
             <AiOutlineInfoCircle className="w-4 h-4" />
-            <h6>Absensi dibuka pukul 08:00 - 09:00</h6>
+            <h6>Absensi dibuka pukul {internDataLoading ? "-" : summaryData?.start_time ?? "..:.."} - {internDataLoading ? "-" : summaryData?.end_time ?? "..:.."}</h6>
           </div>
         </div>
 
