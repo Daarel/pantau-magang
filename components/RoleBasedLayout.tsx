@@ -2,9 +2,9 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import SupervisorLayout from "@/app/supervisor/layout";
-import InternLayout from "@/app/intern/layout";
-import AdminLayout from "@/app/admin/layout";
+import SupervisorLayout from "@/app/supervisor/layout.client";
+import InternLayout from "@/app/intern/layout.client";
+import AdminLayout from "@/app/admin/layout.client";
 
 export default function RoleBasedLayout({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export default function RoleBasedLayout({ children }: { children: ReactNode }) {
   }, []);
 
   if (!role) {
-    return <div>Loading...</div>;
+    return <div className='text-sm'>Loading</div>;
   }
 
   if (role === "supervisor") {
