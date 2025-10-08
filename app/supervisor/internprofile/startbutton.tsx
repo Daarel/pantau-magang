@@ -92,7 +92,7 @@ export default function StartAttendanceButton() {
 
         if (updateError) throw updateError;
 
-        toast.success("✅ Jadwal absen berhasil diperbarui!");
+        toast.success("Jadwal absen berhasil diperbarui!");
       } else {
         // insert data baru
         const { error: insertError } = await supabase
@@ -107,13 +107,13 @@ export default function StartAttendanceButton() {
 
         if (insertError) throw insertError;
 
-        toast.success("✅ Jadwal absen berhasil ditambahkan!");
+        toast.success("Jadwal absen berhasil ditambahkan!");
         setHasSchedule(true);
       }
 
       setOpen(false);
     } catch (error: any) {
-      toast.error("❌ Terjadi kesalahan: " + error.message);
+      toast.error("Terjadi kesalahan: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -147,12 +147,12 @@ export default function StartAttendanceButton() {
 
       if (deleteError) throw deleteError;
 
-      toast.success("✅ Jadwal absen berhasil direset!");
+      toast.success("Jadwal absen berhasil direset!");
       setHasSchedule(false);
       setStartTime("");
       setEndTime("");
     } catch (error: any) {
-      toast.error("❌ Gagal mereset jadwal: " + error.message);
+      toast.error("Gagal mereset jadwal: " + error.message);
     } finally {
       setLoading(false);
     }
