@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { insertActivityLogs } from "@/lib/helper/insertActivityLogs.helper";
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
@@ -48,6 +49,12 @@ export async function POST(req: NextRequest) {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 400 });
 
+  await insertActivityLogs({
+    action_type: "insert_supervisor",
+    description: `Akun ${full_name} telah ditambahkan`,
+    target_name: full_name,
+  });
+
   return NextResponse.json({ data });
 }
 
@@ -83,6 +90,13 @@ export async function PATCH(req: NextRequest) {
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
+
+    await insertActivityLogs({
+      action_type: "update_supervisor",
+      description: `Akun ${full_name} telah diubah`,
+      target_name: full_name,
+    });
+
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -96,7 +110,7 @@ export async function DELETE(req: NextRequest) {
 
   const { data: userData, error: fetchError } = await supabase
     .from("users")
-    .select("auth_id")
+    .select("auth_id, full_name")
     .eq("id", id)
     .single();
 
@@ -128,6 +142,12 @@ export async function DELETE(req: NextRequest) {
       { status: 500 }
     );
   }
+
+  await insertActivityLogs({
+    action_type: "delete_supervisor",
+    description: `Akun ${userData.full_name} telah dihapus`,
+    target_name: userData.full_name,
+  });
 
   return NextResponse.json({ success: true });
 }

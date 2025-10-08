@@ -26,7 +26,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({ tableData }) => {
         accessorKey: "action_type",
         header: "Tipe aksi",
         cell: ({ row }) => (
-          <div>{row.getValue("action_type")}</div>
+          <div className="lowercase">{row.getValue("action_type")}</div>
         ),
       },
       {

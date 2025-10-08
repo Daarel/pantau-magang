@@ -20,7 +20,7 @@ interface SupervisorLayoutProps {
   children: ReactNode;
 }
 
-export default function SupervisorLayout({ children }: SupervisorLayoutProps) {
+export default function SupervisorLayoutClient({ children }: SupervisorLayoutProps) {
   const pathname = usePathname();
   const [hasPending, setHasPending] = useState(false);
 
