@@ -152,7 +152,6 @@ const adminMenu: MenuByRole[] = [
   { title: "Intern", path: "/admin/intern", Icon: FaUser },
   { title: "Supervisor", path: "/admin/supervisor", Icon: FaUserTie },
   { title: "Histori Perubahan", path: "/admin/histori-perubahan", Icon: HiDocumentChartBar },
-  { title: "Ubah Password", path: "/admin/reset", Icon: PiPassword },
 ];
 
 export type Gedung =

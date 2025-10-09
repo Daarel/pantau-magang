@@ -195,22 +195,30 @@ export default async function AdminDashboard() {
           <CardHeader>
             <CardTitle>Aksi Cepat</CardTitle>
           </CardHeader>
-          <CardContent className='flex flex-col gap-3'>
+          <CardContent className='grid grid-cols-3 gap-3 max-md:grid-cols-2 max-sm:grid-cols-1'>
             <NavigationButton
               variant='outline'
-              className='p-10'
+              className='card__navigation-button'
               href='/admin/intern?modalInsert=open'
             >
               <FaUser className='h-8 w-8 text-blue-600' />
-              <span className='text-sm'>Tambah anak magang</span>
+              <span className='text-xs font-normal'>Tambah anak magang</span>
             </NavigationButton>
             <NavigationButton
               variant='outline'
-              className='p-10'
+              className='card__navigation-button'
               href='/admin/supervisor?modalInsert=open'
             >
               <FaUserTie className='h-8 w-8 text-purple-600' />
-              <span className='text-sm'>tambah supervisor</span>
+              <span className='text-xs font-normal'>Tambah supervisor</span>
+            </NavigationButton>
+            <NavigationButton
+              variant='outline'
+              className='card__navigation-button'
+              href='/admin/reset-password'
+            >
+              <FaLock className='h-8 w-8 text-green-600' />
+              <span className='text-xs font-normal'>Ubah Password</span>
             </NavigationButton>
           </CardContent>
         </Card>
