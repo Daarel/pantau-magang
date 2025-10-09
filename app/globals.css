@@ -223,4 +223,8 @@
   .title_header {
     @apply text-3xl md:text-4xl font-medium text-white mb-2;
   }
+
+  .card__navigation-button {
+    @apply p-10 flex flex-col items-center justify-center text-center transition-all hover:shadow-md hover:scale-105
+  }
 }
