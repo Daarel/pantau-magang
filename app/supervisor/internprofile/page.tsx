@@ -1,18 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
 import { IoArrowBackOutline } from "react-icons/io5";
-import {
-  FaUniversity,
-  FaRegCalendarAlt,
-  FaIdBadge,
-  FaHourglassHalf,
-  FaCheckCircle,
-} from "react-icons/fa";
 import Link from "next/link";
-import Image from "next/image";
 import Startbutton from "./startbutton";
 import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
+import AnimatedInternList from "./AnimatedInternList";
 
 export default async function InternProfilePage() {
   const supabase = await createClient();
@@ -51,27 +43,6 @@ export default async function InternProfilePage() {
     console.error("Error fetching interns:", internsError);
   }
 
-  // helper sisa hari
-  const calculateRemainingWeekdays = (end: string | null) => {
-    if (!end) return null;
-
-    const today = new Date();
-    const endDate = new Date(end);
-
-    let count = 0;
-    const current = new Date(today);
-
-    while (current <= endDate) {
-      const day = current.getDay(); // 0 = Minggu, 6 = Sabtu
-      if (day !== 0 && day !== 6) {
-        count++;
-      }
-      current.setDate(current.getDate() + 1);
-    }
-
-    return count;
-  };
-
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Back button */}
@@ -90,7 +61,7 @@ export default async function InternProfilePage() {
           <h1 className="text-2xl font-bold text-gray-800">
             Daftar Intern Anda
           </h1>
-          <p className="text-gray-500">
+          <p className="text-gray-500 normal-case">
             Profil peserta magang di bawah pengawasan
           </p>
         </div>
@@ -105,116 +76,12 @@ export default async function InternProfilePage() {
         <p className="text-gray-600 italic">Belum ada intern yang terdaftar.</p>
       )}
 
-      {/* Cards */}
-      <div className="grid gap-6 sm:grid-cols-2">
-        {interns?.map((intern) => {
-          const daysRemaining = calculateRemainingWeekdays(
-            intern.intern_end_date
-          );
+      {/* Cards dengan animasi */}
+      <AnimatedInternList interns={interns || []} />
 
-          return (
-            <Card
-              key={intern.id}
-              className={`relative rounded-xl border shadow-sm hover:shadow-md transition-all duration-200 ${
-                daysRemaining === 0 ? "bg-red-50" : "bg-white"
-              }`}
-            >
-              {/* 🔹 Tambahan badge status per anak */}
-              <div
-                className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full ${
-                  intern.status?.toLowerCase().trim() === "aktif"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-200 text-gray-600"
-                }`}
-              >
-                {intern.status || "Tidak Aktif"}
-              </div>
-
-              <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                {/* 🔹 Kiri: Foto + Info */}
-                <div className="flex items-center gap-4 flex-1">
-                  {/* Avatar */}
-                  <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-blue-100 text-blue-700 font-semibold ring-2 ring-gray-200 shrink-0">
-                    {intern.photo_url ? (
-                      <Image
-                        width={48}
-                        height={48}
-                        src={intern.photo_url}
-                        alt={intern.full_name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span>{intern.full_name?.charAt(0) || "?"}</span>
-                    )}
-                  </div>
-                  {/* Info dasar */}
-                  <div className="space-y-1">
-                    <p className="font-semibold text-gray-800">
-                      {intern.full_name}
-                    </p>
-                    <p className="text-xs text-gray-500 flex items-center gap-1">
-                      <FaIdBadge className="text-gray-400" />{" "}
-                      {intern.nomor_induk}
-                    </p>
-                    <p className="text-xs text-gray-500 flex items-center gap-1">
-                      <FaUniversity className="text-gray-400" />{" "}
-                      {intern.institution || "Tidak ada institusi"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* 🔹 Kanan: Periode & Sisa Hari */}
-                <div className="text-left sm:text-right space-y-1">
-                  <p className="text-xs text-gray-500 flex items-center gap-1 sm:justify-end">
-                    <FaRegCalendarAlt className="text-gray-400" />
-                    {intern.intern_start_date
-                      ? new Date(intern.intern_start_date).toLocaleDateString(
-                          "id-ID",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )
-                      : "?"}{" "}
-                    -{" "}
-                    {intern.intern_end_date
-                      ? new Date(intern.intern_end_date).toLocaleDateString(
-                          "id-ID",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )
-                      : "?"}
-                  </p>
-
-                  {daysRemaining !== null && (
-                    <p
-                      className={`text-sm font-medium flex items-center gap-1 sm:justify-end ${
-                        daysRemaining === 0 ? "text-red-600" : "text-green-600"
-                      }`}
-                    >
-                      {daysRemaining === 0 ? (
-                        <>
-                          <FaCheckCircle className="text-red-600" /> Selesai
-                        </>
-                      ) : (
-                        <>
-                          <FaHourglassHalf className="text-green-600" />{" "}
-                          {daysRemaining} hari lagi
-                        </>
-                      )}
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
       <RealtimeDashboardRefresher />
     </div>
   );
 }
+
+

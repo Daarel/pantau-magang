@@ -13,7 +13,7 @@ export default function SupervisorInboxClient({ supervisorId }: { supervisorId: 
       <div className="flex items-center justify-between">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Daftar Perizinan</h1>
-          <p className="text-gray-500">
+          <p className="text-gray-500 normal-case">
             Konfirmasi dokumen perizinan peserta magang
           </p>
         </div>

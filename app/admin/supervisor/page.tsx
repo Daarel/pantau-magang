@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import AdminSupervisorClient from "./components/AdminSupervisorClient";
-import Loading from "../loading";
+import Loading from "../../loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -26,7 +26,7 @@ export default async function AdminUserPage() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className='min-h-screen bg-gray-50 p-6 overflow-x-hidden'>
+      <div className="min-h-screen bg-gray-50 p-6 overflow-x-hidden">
         <AdminSupervisorClient tableData={data ?? []} />
       </div>
     </Suspense>
