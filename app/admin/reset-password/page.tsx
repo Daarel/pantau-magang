@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
 
-export default function AdminReset() {
+export default function AdminResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
