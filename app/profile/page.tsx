@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { FiAlertCircle } from "react-icons/fi";
 import { IoArrowBackOutline } from "react-icons/io5";
+import { compressImage, processImage } from "@/lib/utils";
 import Link from "next/link";
 
 export default function Profile() {
@@ -15,6 +16,7 @@ export default function Profile() {
     null
   );
   const [profileData, setProfileData] = useState<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const fallbackAvatar = "/avatar_fallback.png";
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -59,16 +61,36 @@ export default function Profile() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const MAX_SIZE = 2 * 1024 * 1024;
-    if (file.size > MAX_SIZE) {
-      alert("Ukuran foto maksimal 2MB. Silakan pilih file lain.");
-      return;
+    setIsUploading(true);
+
+    // 🔹 Gunakan processImage() untuk auto-kompres gambar di atas 3MB
+    let finalFile = file;
+    const MAX_COMPRESS_SIZE_MB = 3; // batas 3 MB
+    if (file.size > MAX_COMPRESS_SIZE_MB * 1024 * 1024) {
+      try {
+        finalFile = await processImage(file, MAX_COMPRESS_SIZE_MB);
+        console.log(
+          `✅ Gambar berhasil dikompres dari ${(
+            file.size /
+            1024 /
+            1024
+          ).toFixed(2)}MB → ${(finalFile.size / 1024 / 1024).toFixed(2)}MB`
+        );
+      } catch (err) {
+        console.error("❌ Gagal mengkompres gambar:", err);
+        alert("Gagal mengkompres gambar, silakan coba ulang.");
+        setIsUploading(false);
+        return;
+      }
     }
 
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    if (!session?.user) return;
+    if (!session?.user) {
+      setIsUploading(false);
+      return;
+    }
 
     if (profileData.photo_url) {
       try {
@@ -82,15 +104,16 @@ export default function Profile() {
     }
 
     const uniqueSuffix = `${Date.now()}-${crypto.randomUUID()}`;
-    const ext = file.name.split(".").pop();
+    const ext = finalFile.name.split(".").pop();
     const fileName = `${session.user.id}-${uniqueSuffix}.${ext}`;
 
     const { error: uploadError } = await supabase.storage
       .from("avatars")
-      .upload(fileName, file);
+      .upload(fileName, finalFile); // 🔹 upload file hasil kompresi (finalFile)
 
     if (uploadError) {
       console.error("Gagal upload:", uploadError);
+      setIsUploading(false);
       return;
     }
 
@@ -107,6 +130,7 @@ export default function Profile() {
 
     if (updateError) {
       console.error("Gagal update avatar:", updateError);
+      setIsUploading(false);
       return;
     }
 
@@ -115,6 +139,7 @@ export default function Profile() {
       photo_url: `${publicUrl}?t=${Date.now()}`,
     }));
     window.dispatchEvent(new Event("profile-updated"));
+    setIsUploading(false);
   };
 
   // 📌 Hapus avatar
@@ -174,25 +199,48 @@ export default function Profile() {
       <div className="flex justify-center items-center flex-col mt-10">
         <Card>
           <CardContent className="flex flex-col justify-center items-center">
-            {/* 🔹 Avatar bulat rapi + tombol tidak terpotong */}
             <div className="relative w-[300px] h-[300px]">
-              <div className="relative w-[300px] h-[300px] rounded-full overflow-hidden">
-                <Image
-                  src={avatarUrl}
-                  fill
-                  alt="foto profil Anda"
-                  className="object-cover"
-                />
+              {/* Foto profil */}
+              <div className="w-full h-full rounded-full overflow-hidden relative z-0">
+                {isUploading ? (
+                  <div className="flex flex-col justify-center items-center gap-2 border-dashed border-black/30 border-2 h-full w-full rounded-full bg-gray-200">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                    <p className="text-center text-sm">
+                      Mengkompresi gambar...
+                    </p>
+                  </div>
+                ) : (
+                  <Image
+                    src={avatarUrl}
+                    fill
+                    alt="foto profil Anda"
+                    className="object-cover z-0"
+                  />
+                )}
               </div>
 
-              <div className="absolute bottom-2 right-2 flex gap-2">
-                <Button size="sm" onClick={() => fileInputRef.current?.click()}>
-                  <MdEdit />
-                </Button>
-                <Button size="sm" variant="destructive" onClick={handleDelete}>
-                  <MdDelete />
-                </Button>
-              </div>
+              {/* Tombol Edit & Hapus di atas foto */}
+              {!isUploading && (
+                <div className="absolute bottom-3 right-3 flex gap-2 z-50">
+                  <div className= "rounded-full flex p-1 bg-white/70 hover:bg-white/90 shadow-md gap-2">
+                    <Button
+                      size="icon"
+                      className="h-8 w-8 rounded-full"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <MdEdit />
+                    </Button>
+                    <Button
+                      size="icon"
+                      className="h-8 w-8 rounded-full"
+                      variant="destructive"
+                      onClick={handleDelete}
+                    >
+                      <MdDelete />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <input
@@ -203,13 +251,6 @@ export default function Profile() {
               onChange={handleUpload}
             />
 
-            {/* 🔹 Teks info ukuran maksimal */}
-            <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-              <FiAlertCircle size={14} className="text-gray-400" />
-              Ukuran foto maksimal 2 MB
-            </p>
-
-            {/* 🔹 Info User */}
             <div className="flex flex-row mt-5 gap-10">
               <ul className="flex flex-col items-start">
                 <li>
@@ -235,7 +276,7 @@ export default function Profile() {
                   {role === "intern" && (
                     <>
                       <p>{profileData.institution}</p>
-                      <p>{profileData.supervisor?.full_name ?? "-"}</p>{" "}
+                      <p>{profileData.supervisor?.full_name ?? "-"}</p>
                       <p>
                         {new Date(profileData.intern_start_date).toDateString()}{" "}
                         - {new Date(profileData.intern_end_date).toDateString()}
