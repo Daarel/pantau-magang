@@ -18,7 +18,8 @@ export default async function AdminHistoryPage() {
 
   const { data, error: errorGetData } = await supabase
     .from("activity_logs")
-    .select("id, full_name, action_type, description, target_name, created_at");
+    .select("id, full_name, action_type, description, target_name, created_at")
+    .order("created_at", { ascending: false });
 
   if (errorGetData) {
     console.error("Error fetching", errorGetData);
