@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import AdminInternClient from "./components/AdminInternClient";
-import Loading from "../loading";
+import Loading from "../../loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -43,7 +43,7 @@ export default async function AdminUserPage() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className='min-h-screen bg-gray-50 p-6 overflow-x-hidden pr-64 max-md:pr-0'>
+      <div className="min-h-screen bg-gray-50 p-6 overflow-x-hidden pr-64 max-md:pr-0">
         <AdminInternClient tableData={flatData ?? []} />
       </div>
     </Suspense>

@@ -10,6 +10,7 @@ import { FiAlertCircle } from "react-icons/fi";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { compressImage, processImage } from "@/lib/utils";
 import Link from "next/link";
+import Loading from "../loading";
 
 export default function Profile() {
   const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(
@@ -49,7 +50,7 @@ export default function Profile() {
     getUserProfile();
   }, []);
 
-  if (!role || !profileData) return <p>Loading...</p>;
+  if (!role || !profileData) return <Loading />;
 
   const avatarUrl = profileData.photo_url
     ? `${profileData.photo_url}?t=${Date.now()}`
@@ -222,7 +223,7 @@ export default function Profile() {
               {/* Tombol Edit & Hapus di atas foto */}
               {!isUploading && (
                 <div className="absolute bottom-3 right-3 flex gap-2 z-50">
-                  <div className= "rounded-full flex p-1 bg-white/70 hover:bg-white/90 shadow-md gap-2">
+                  <div className="rounded-full flex p-1 bg-white/70 hover:bg-white/90 shadow-md gap-2">
                     <Button
                       size="icon"
                       className="h-8 w-8 rounded-full"
