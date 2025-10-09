@@ -17,35 +17,3 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
-
-// import { NextResponse, NextRequest } from "next/server";
-
-// export function middleware(req: NextRequest) {
-//   const url = req.nextUrl.pathname;
-
-//   const sessionCookie = req.cookies.get("session")?.value;
-//   let session: { id?: string; role?: string } | null = null;
-
-//   if (sessionCookie) {
-//     try {
-//       session = JSON.parse(decodeURIComponent(sessionCookie));
-//     } catch {
-//       session = null;
-//     }
-//   }
-
-//   if (url.startsWith("/intern") && session?.role !== "intern") {
-//     console.log("redirecting to not authorized");
-//     return NextResponse.redirect(new URL("/not-authorized", req.url));
-//   }
-//   if (url.startsWith("/supervisor") && session?.role !== "supervisor") {
-//     console.log("redirecting to not authorized");
-//     return NextResponse.redirect(new URL("/not-authorized", req.url));
-//   }
-//   if (url.startsWith("/admin") && session?.role !== "admin") {
-//     console.log("redirecting to not authorized");
-//     return NextResponse.redirect(new URL("/not-authorized", req.url));
-//   }
-
-//   return NextResponse.next();
-// }
