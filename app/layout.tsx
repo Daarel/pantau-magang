@@ -34,17 +34,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <head>
-        <link rel="icon" href="/logoESDM.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/logoESDM.ico" />
+        <link rel='icon' href='/logoESDM.ico' sizes='any' />
+        <link rel='apple-touch-icon' href='/logoESDM.ico' />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
 
-        <Toaster position="top-center" richColors closeButton />
+        <Toaster position='top-center' richColors duration={3000} />
       </body>
     </html>
   );
