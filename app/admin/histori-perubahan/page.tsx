@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import AdminHistoryClient from "./components/AdminHistoryClient";
-import Loading from "../loading";
+import Loading from "../../loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -32,7 +32,7 @@ export default async function AdminHistoryPage() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className='min-h-screen bg-gray-50 p-6 overflow-x-hidden'>
+      <div className="min-h-screen bg-gray-50 p-6 overflow-x-hidden">
         <AdminHistoryClient tableData={flatData ?? []} />
       </div>
     </Suspense>
