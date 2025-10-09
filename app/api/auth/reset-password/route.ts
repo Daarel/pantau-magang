@@ -26,6 +26,10 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     await insertActivityLogs({
       action_type: "change_password",
       description: `Password akun ${userInfo.full_name} telah diubah`,
@@ -45,7 +49,7 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
 
-    if (userInfo.role === "admin") {
+    if (user?.app_metadata.role === "admin") {
       await supabase.auth.signOut();
       return NextResponse.json({ success: true, redirect: "/" });
     }
