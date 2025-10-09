@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import LoginButton from "@/components/LoginButton";
 import LoginInput from "@/components/LoginInput";
-import { FaRegUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock } from "react-icons/fa";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -79,7 +79,7 @@ export default function LoginPage() {
             )}
             <form onSubmit={handleSubmit} className='space-y-4 mt-6'>
               <div className='relative'>
-                <FaRegUser className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
+                <FaUser className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400' />
                 <Input
                   id='nomorInduk'
                   name='nomorInduk'

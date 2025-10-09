@@ -5,6 +5,7 @@ import Loading from "../../loading";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateID } from "@/lib/helper/formatDate.helper";
+import { toast } from "sonner";
 
 export default async function AdminHistoryPage() {
   const supabase = await createClient();
@@ -23,6 +24,7 @@ export default async function AdminHistoryPage() {
 
   if (errorGetData) {
     console.error("Error fetching", errorGetData);
+    toast.error("Gagal mendapatkan data");
   }
 
   const flatData = (data ?? []).map((user: any) => ({

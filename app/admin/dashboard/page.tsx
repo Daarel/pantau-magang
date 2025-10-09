@@ -43,11 +43,13 @@ export default async function AdminDashboard() {
     .select("*");
 
   if (error) {
-    toast.error("Data tidak berhasil didapatkan.");
+    console.error("error get data");
+    toast.error("Gagal mendapatkan data");
   }
 
   if (!summary || summary.length === 0) {
-    toast.error("Data ringkasan tidak tersedia.");
+    console.error("error get summary data");
+    toast.warning("Data tidak tersedia untuk saat ini")
   }
 
   const { data, error: errorGetData } = await supabase
@@ -58,6 +60,7 @@ export default async function AdminDashboard() {
 
   if (errorGetData) {
     console.error("Error fetching", errorGetData);
+    toast.error("Gagal mendapatkan data")
   }
 
   const stats = {
