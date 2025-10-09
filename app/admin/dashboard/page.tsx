@@ -10,7 +10,6 @@ import {
   FaPen,
   FaLock,
 } from "react-icons/fa";
-import { AiFillFileText } from "react-icons/ai";
 import Image from "next/image";
 import NavigationButton from "../../../components/NavigationButton";
 import DashboardClock from "@/components/DashboardClock";

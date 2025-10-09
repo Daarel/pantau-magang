@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { FaRegUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
 import { useRouter } from "next/navigation";
+import { IoArrowBackOutline } from "react-icons/io5";
+import Link from "next/link";
 
 export default function AdminReset() {
   const [error, setError] = useState<string | null>(null);
@@ -50,12 +52,17 @@ export default function AdminReset() {
 
   return (
     <div className='flex flex-col justify-center items-center min-h-screen gap-10 mt-[-100px] px-4'>
-      {/* Title */}
+      <Link
+        href='/admin/dashboard'
+        className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
+      >
+        <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
+      </Link>
+
       <div className='text-4xl max-sm:text-2xl font-bold text-gray-800 text-center'>
         Ubah Password
       </div>
 
-      {/* Card/Form Wrapper */}
       <div className='w-[400px] max-sm:w-full max-sm:max-w-sm'>
         {error && (
           <div className='text-sm text-red-600 bg-red-100 p-2 rounded mb-4'>

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { GoSearch } from "react-icons/go";
 import {
   ColumnFiltersState,
   flexRender,
@@ -62,16 +63,17 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
 
   return (
     <div className='w-full'>
-      <div className='flex items-center py-4'>
+      <div className='relative py-4'>
+        <GoSearch className='absolute left-3 top-1/2 -translate-y-1/2' />
         <Input
-          placeholder='Filter Nama...'
+          className='tracking-wide max-w-sm pl-10 text-xs'
+          placeholder='Filter nama...'
           value={
             (table.getColumn("full_name")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
             table.getColumn("full_name")?.setFilterValue(event.target.value)
           }
-          className='max-w-sm'
         />
       </div>
       <div className='overflow-hidden rounded-md border'>
