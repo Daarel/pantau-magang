@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import Startbutton from "./startbutton";
+import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
 
 export default async function InternProfilePage() {
   const supabase = await createClient();
@@ -41,7 +42,7 @@ export default async function InternProfilePage() {
   const { data: interns, error: internsError } = await supabase
     .from("users")
     .select(
-      "id, full_name, nomor_induk, institution, role, intern_start_date, intern_end_date, photo_url "
+      "id, full_name, nomor_induk, institution, role, intern_start_date, intern_end_date, photo_url, status"
     )
     .eq("role", "intern")
     .eq("supervisor_id", supervisorData.id);
@@ -114,10 +115,21 @@ export default async function InternProfilePage() {
           return (
             <Card
               key={intern.id}
-              className={`rounded-xl border shadow-sm hover:shadow-md transition-all duration-200 ${
+              className={`relative rounded-xl border shadow-sm hover:shadow-md transition-all duration-200 ${
                 daysRemaining === 0 ? "bg-red-50" : "bg-white"
               }`}
             >
+              {/* 🔹 Tambahan badge status per anak */}
+              <div
+                className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full ${
+                  intern.status?.toLowerCase().trim() === "aktif"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
+                {intern.status || "Tidak Aktif"}
+              </div>
+
               <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 {/* 🔹 Kiri: Foto + Info */}
                 <div className="flex items-center gap-4 flex-1">
@@ -135,7 +147,6 @@ export default async function InternProfilePage() {
                       <span>{intern.full_name?.charAt(0) || "?"}</span>
                     )}
                   </div>
-
                   {/* Info dasar */}
                   <div className="space-y-1">
                     <p className="font-semibold text-gray-800">
@@ -152,7 +163,7 @@ export default async function InternProfilePage() {
                   </div>
                 </div>
 
-                {/* 🔹 Kanan: Periode & Status */}
+                {/* 🔹 Kanan: Periode & Sisa Hari */}
                 <div className="text-left sm:text-right space-y-1">
                   <p className="text-xs text-gray-500 flex items-center gap-1 sm:justify-end">
                     <FaRegCalendarAlt className="text-gray-400" />
@@ -203,6 +214,7 @@ export default async function InternProfilePage() {
           );
         })}
       </div>
+      <RealtimeDashboardRefresher />
     </div>
   );
 }

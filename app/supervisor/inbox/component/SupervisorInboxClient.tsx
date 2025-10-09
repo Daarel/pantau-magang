@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ReportTable }  from "@/components/tabel-supervisor/AttendanceTable";
+import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
 
 export default function SupervisorInboxClient({ supervisorId }: { supervisorId: string }) {
   const [activeTab, setActiveTab] = useState("Semua Daftar");
@@ -41,6 +42,7 @@ export default function SupervisorInboxClient({ supervisorId }: { supervisorId: 
           <ReportTable activeTab={activeTab} supervisorId={supervisorId} />
         </div>
       </div>
+      <RealtimeDashboardRefresher />
     </div>
   );
 }
