@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface UpdateSupervisorFormProps {
   open: boolean;
@@ -87,16 +88,15 @@ const UpdateSupervisorForm: FC<UpdateSupervisorFormProps> = ({
 
       if (!res.ok) {
         console.error("Error: ", result.error);
-        alert(`Gagal update user`);
+        toast.error("Gagal update supervisor");
         return;
       }
 
-      console.log("User berhasil di-update:", result.data);
-      alert("User berhasil di-update!");
+      toast.success("Berhasil update data supervisor");
       onOpenChange(false);
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan jaringan");
+      toast.error("Terjadi kesalahan jaringan");
     }
   };
 

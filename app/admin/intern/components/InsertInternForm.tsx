@@ -41,6 +41,7 @@ import {
 } from "@/lib/helper/dataInsert.helper";
 import Combobox from "@/components/ui/combobox";
 import { pilihanGedung } from "@/const";
+import { toast } from "sonner";
 
 interface InternFormDialogProps {
   open: boolean;
@@ -82,16 +83,15 @@ const InsertInternForm: FC<InternFormDialogProps> = ({
 
       if (!res.ok) {
         console.error("Error:", result.error);
-        alert(`Gagal menambah user: ${result.error}`);
+        toast.error('Gagal menambah anak magang');
         return;
       }
 
-      console.log("User berhasil ditambahkan:", result.data);
-      alert("User berhasil ditambahkan!");
-      onOpenChange(false); // tutup dialog setelah submit sukses
+      toast.success('Berhasil menambah anak magang');
+      onOpenChange(false);
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan jaringan");
+      toast.error('Terjadi kesalahan jaringan');
     }
   };
 

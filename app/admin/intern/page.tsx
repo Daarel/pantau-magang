@@ -5,6 +5,7 @@ import Loading from "../loading";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateID } from "@/lib/helper/formatDate.helper";
+import { toast } from "sonner";
 
 export default async function AdminUserPage() {
   const supabase = await createClient();
@@ -29,6 +30,7 @@ export default async function AdminUserPage() {
     .eq("role", "intern");
   if (errorGetData) {
     console.error("Error fetching user data:", errorGetData);
+    toast.error("Gagal mendapatkan data anak magang");
   }
 
   const flatData = (data ?? []).map((user: any) => ({

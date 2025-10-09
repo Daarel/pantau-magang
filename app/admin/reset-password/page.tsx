@@ -2,7 +2,7 @@
 import { FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaRegUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
 import { useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
@@ -74,7 +74,7 @@ export default function AdminResetPassword() {
           <div>
             <Label>
               <span className='w-4 h-4 inline-block mr-1'>
-                <FaRegUser className='w-4 h-4 inline' />
+                <FaUser className='w-4 h-4 inline' />
               </span>
               Nomor Induk
             </Label>

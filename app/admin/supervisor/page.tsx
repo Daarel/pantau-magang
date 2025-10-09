@@ -4,6 +4,7 @@ import Loading from "../loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { toast } from "sonner";
 
 export default async function AdminUserPage() {
   const supabase = await createClient();
@@ -22,6 +23,7 @@ export default async function AdminUserPage() {
 
   if (errorGetData) {
     console.error("Error fetching user data:", errorGetData);
+    toast.error('Gagal mendapatkan data supervisor')
   }
 
   return (

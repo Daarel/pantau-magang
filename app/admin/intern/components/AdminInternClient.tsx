@@ -19,6 +19,7 @@ import { type FC, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import UpdateInternForm from "./UpdateInternForm";
 import DataTableHeader from "@/components/DataTableHeader";
+import { toast } from "sonner";
 
 interface AdminUserProps {
   tableData: DataColumn[];
@@ -49,8 +50,8 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
       if (!res.ok) {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
+        toast.error("Gagal menghapus data anak magang")
       } else {
-        console.log("User berhasil dihapus");
         if (onComplete) onComplete();
       }
     },

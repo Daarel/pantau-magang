@@ -35,6 +35,7 @@ import {
 } from "@/lib/validation/schema";
 import { insertDataToLowerCase } from "@/lib/helper/dataInsert.helper";
 import { pilihanGedung } from "@/const";
+import { toast } from "sonner";
 
 interface InsertSupervisorFormProps {
   open: boolean;
@@ -77,16 +78,15 @@ const InsertSupervisorForm: FC<InsertSupervisorFormProps> = ({
 
       if (!res.ok) {
         console.error("Error:", result.error);
-        alert(`Gagal menambah user: ${result.error}`);
+        toast.error("Gagal menambah supervisor");
         return;
       }
 
-      console.log("User berhasil ditambahkan:", result.data);
-      alert("User berhasil ditambahkan!");
+      toast.success("Berhasil menambah supervisor");
       onOpenChange(false);
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan jaringan");
+      toast.error("Terjadi kesalahan jaringan");
     }
   };
 

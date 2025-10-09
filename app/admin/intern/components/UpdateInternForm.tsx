@@ -40,6 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface UpdateInternFormProps {
   open: boolean;
@@ -105,16 +106,15 @@ const UpdateInternForm: FC<UpdateInternFormProps> = ({
 
       if (!res.ok) {
         console.error("Error: ", result.error);
-        alert(`Gagal update user`);
+        toast.error("Gagal update anak magang");
         return;
       }
 
-      console.log("User berhasil di-update:", result.data);
-      alert("User berhasil di-update!");
+      toast.success("Berhasil update data anak magang");
       onOpenChange(false);
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan jaringan");
+      toast.error("Terjadi kesalahan jaringan");
     }
   };
 

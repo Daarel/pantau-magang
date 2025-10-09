@@ -20,6 +20,7 @@ import { useModalQuery } from "@/hooks/useModalQuery";
 import { useRouter } from "next/navigation";
 import UpdateSupervisorForm from "./UpdateSupervisorForm";
 import DataTableHeader from "@/components/DataTableHeader";
+import { toast } from "sonner";
 
 interface AdminSupervisorProps {
   tableData: DataColumn[];
@@ -48,8 +49,8 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
       if (!res.ok) {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
+        toast.error("Gagal menghapus data supervisor")
       } else {
-        console.log("User berhasil dihapus.");
         if (onComplete) onComplete();
       }
     },
