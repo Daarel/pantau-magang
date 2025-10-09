@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserByNomorInduk } from "@/lib/helper/auth.helper";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { insertActivityLogs } from "@/lib/helper/insertActivityLogs.helper";
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,6 +25,12 @@ export async function POST(req: NextRequest) {
         { success: false, message: "Nomor induk tidak ditemukan" },
         { status: 404 }
       );
+
+    await insertActivityLogs({
+      action_type: "change_password",
+      description: `Password akun ${userInfo.full_name} telah diubah`,
+      target_name: userInfo.full_name,
+    });
 
     const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
       userInfo.auth_id,

@@ -8,6 +8,7 @@ import {
   FaUserGraduate,
   FaUserTie,
   FaPen,
+  FaLock,
 } from "react-icons/fa";
 import { AiFillFileText } from "react-icons/ai";
 import Image from "next/image";
@@ -24,7 +25,8 @@ type ActivityType =
   | "delete_intern"
   | "delete_supervisor"
   | "update_intern"
-  | "update_supervisor";
+  | "update_supervisor"
+  | "change_password";
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -82,7 +84,7 @@ export default async function AdminDashboard() {
       Icon: FaUserTie,
       title: "Supervisors",
       value: stats.supervisors,
-      contentColor: "text-indigo-600",
+      contentColor: "text-purple-600",
     },
     {
       Icon: FaBuilding,
@@ -103,6 +105,8 @@ export default async function AdminDashboard() {
       case type === "update_intern" || type === "update_supervisor":
         return <FaPen className='h-4 w-4 mx-1 text-yellow-600' />;
 
+      case type === "change_password":
+        return <FaLock className='h-4 w-4 mx-1 text-green-600' />;
       default:
         return null;
     }
@@ -205,7 +209,7 @@ export default async function AdminDashboard() {
               className='p-10'
               href='/admin/supervisor?modalInsert=open'
             >
-              <AiFillFileText className='h-8 w-8 text-green-600' />
+              <FaUserTie className='h-8 w-8 text-purple-600' />
               <span className='text-sm'>tambah supervisor</span>
             </NavigationButton>
           </CardContent>

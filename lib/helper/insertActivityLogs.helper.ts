@@ -1,7 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 
 interface InsertActivityLogsParams {
-  action_type: string;
+  action_type:
+    | "update_intern"
+    | "insert_intern"
+    | "delete_intern"
+    | "change_password"
+    | "update_supervisor"
+    | "insert_supervisor"
+    | "delete_supervisor";
   description: string;
   target_name: string;
 }
