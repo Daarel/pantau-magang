@@ -2,6 +2,7 @@ import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 import StatCard from "@/components/StatCard";
 
 import { AiOutlineUserAdd, AiOutlineUserDelete } from "react-icons/ai";
+import { PiCertificate } from "react-icons/pi";
 import {
   FaUser,
   FaBuilding,
@@ -10,7 +11,6 @@ import {
   FaPen,
   FaLock,
 } from "react-icons/fa";
-import { AiFillFileText } from "react-icons/ai";
 import Image from "next/image";
 import NavigationButton from "../../../components/NavigationButton";
 import DashboardClock from "@/components/DashboardClock";
@@ -84,13 +84,48 @@ export default async function AdminDashboard() {
       Icon: FaUserTie,
       title: "Supervisors",
       value: stats.supervisors,
-      contentColor: "text-purple-600",
+      contentColor: "text-indigo-600",
     },
     {
       Icon: FaBuilding,
       title: "Gedung Terdaftar",
       value: stats.departments,
       contentColor: "text-yellow-600",
+    },
+  ];
+
+  const navigationButtons = [
+    {
+      href: "/admin/intern?modalInsert=open",
+      icon: <FaUser className='h-8 w-8 text-blue-600' />,
+      label: "Tambah Anak Magang",
+    },
+    {
+      href: "/admin/supervisor?modalInsert=open",
+      icon: <FaUserTie className='h-8 w-8 text-indigo-600' />,
+      label: "Tambah Supervisor",
+    },
+    {
+      href: "/admin/reset-password",
+      icon: <FaLock className='h-8 w-8 text-green-600' />,
+      label: (
+        <>
+          Ubah Password
+          <br />
+          Pengguna
+        </>
+      ),
+    },
+    {
+      href: "/admin/generate-certificate",
+      icon: <PiCertificate className='h-8 w-8 text-red-600' />,
+      label: (
+        <>
+          Unggah Template
+          <br />
+          Certificate
+        </>
+      ),
     },
   ];
 
@@ -196,30 +231,17 @@ export default async function AdminDashboard() {
             <CardTitle>Aksi Cepat</CardTitle>
           </CardHeader>
           <CardContent className='grid grid-cols-3 gap-3 max-md:grid-cols-2 max-sm:grid-cols-1'>
-            <NavigationButton
-              variant='outline'
-              className='card__navigation-button'
-              href='/admin/intern?modalInsert=open'
-            >
-              <FaUser className='h-8 w-8 text-blue-600' />
-              <span className='text-xs font-normal'>Tambah anak magang</span>
-            </NavigationButton>
-            <NavigationButton
-              variant='outline'
-              className='card__navigation-button'
-              href='/admin/supervisor?modalInsert=open'
-            >
-              <FaUserTie className='h-8 w-8 text-purple-600' />
-              <span className='text-xs font-normal'>Tambah supervisor</span>
-            </NavigationButton>
-            <NavigationButton
-              variant='outline'
-              className='card__navigation-button'
-              href='/admin/reset-password'
-            >
-              <FaLock className='h-8 w-8 text-green-600' />
-              <span className='text-xs font-normal'>Ubah Password</span>
-            </NavigationButton>
+            {navigationButtons.map(({ href, icon, label }, index) => (
+              <NavigationButton
+                key={index}
+                variant='outline'
+                className='card__navigation-button'
+                href={href}
+              >
+                {icon}
+                <span className='text-xs font-normal'>{label}</span>
+              </NavigationButton>
+            ))}
           </CardContent>
         </Card>
       </div>
