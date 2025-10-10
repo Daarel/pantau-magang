@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export default function AdminUploadCertificate() {
   const supabase = createClient();
@@ -64,7 +65,7 @@ export default function AdminUploadCertificate() {
           />
 
           {preview && (
-            <img
+            <Image
               src={preview}
               alt='Preview'
               className='w-full rounded-lg shadow mt-2'
