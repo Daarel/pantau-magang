@@ -120,7 +120,7 @@ export default async function AdminDashboard() {
       ),
     },
     {
-      href: "/admin/generate-certificate",
+      href: "/admin/upload-certificate",
       icon: <PiCertificate className='h-8 w-8 text-red-600' />,
       label: (
         <>
