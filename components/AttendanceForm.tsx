@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -80,7 +81,7 @@ export function AttendanceForm() {
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [fileFile, setFileFile] = useState<File | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
-  // const router = useRouter();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const defaultValuesRef = useRef({
@@ -213,10 +214,15 @@ export function AttendanceForm() {
         dob: new Date(),
         location: undefined
       })
+
       setLocationStatus('idle')
       setUserLocation(null)
       setPhotoFile(null)
       setFileFile(null)
+
+      setTimeout(() => {
+        router.push("/intern/dashboard");
+      }, 1000);
 
     } catch (error) {
       console.error('Error saving attendance:', error);
