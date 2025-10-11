@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 const formatDateToYMD = (date: Date) => {
   const y = date.getFullYear();
@@ -45,6 +46,7 @@ export async function getSupervisors(): Promise<SelectOption[]> {
 
   if (error) {
     console.error(error);
+    toast.error("Gagal mengambil data pembimbing.");
     return [];
   }
 
@@ -54,4 +56,19 @@ export async function getSupervisors(): Promise<SelectOption[]> {
   }));
 }
 
+export async function getNomorIndukList(): Promise<SelectOption[]> {
+  const supabase = createClient();
 
+  const { data, error } = await supabase.from("users").select("nomor_induk");
+
+  if (error) {
+    console.error(error);
+    toast.error("Gagal mengambil data nomor induk.");
+    return [];
+  }
+
+  return data.map((user) => ({
+    value: String(user.nomor_induk),
+    label: String(user.nomor_induk),
+  }));
+}
