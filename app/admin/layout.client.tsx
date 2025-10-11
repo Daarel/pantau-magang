@@ -29,6 +29,10 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
           <Sidebar>
             <SidebarMenu className='mt-16 max-sm:mt-5'>
               {adminMenu.map((menu) => {
+                const href = menu.query
+                  ? `${menu.path}?${new URLSearchParams(menu.query).toString()}`
+                  : menu.path;
+
                 const isActive =
                   pathname === menu.path ||
                   pathname.startsWith(`${menu.path}/`);
@@ -40,7 +44,7 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
                       isActive={isActive}
                       className='flex items-center gap-3 pl-5 h-10 transition-colors'
                     >
-                      <Link href={menu.path}>
+                      <Link href={href}>
                         <menu.Icon className='h-9 w-9' />
                         {menu.title}
                       </Link>
@@ -50,6 +54,7 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
               })}
             </SidebarMenu>
           </Sidebar>
+
           <div className='flex h-full w-full'>
             <SidebarInset>
               <main className='p-4'>{children}</main>

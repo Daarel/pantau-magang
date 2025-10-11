@@ -47,7 +47,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
-  // 🧭 PAGINATION
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", newPage.toString());

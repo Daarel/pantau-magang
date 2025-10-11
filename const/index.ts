@@ -121,6 +121,7 @@ type MenuByRole = {
   title: string;
   path: string;
   Icon: IconType;
+  query?: Record<string, string>;
 };
 
 // untuk menu sidebar intern
@@ -146,7 +147,11 @@ const adminMenu: MenuByRole[] = [
   { title: "Dashboard", path: "/admin/dashboard", Icon: BsHouse },
   { title: "Intern", path: "/admin/intern", Icon: FaUser },
   { title: "Supervisor", path: "/admin/supervisor", Icon: FaUserTie },
-  { title: "Histori Perubahan", path: "/admin/histori-perubahan", Icon: HiDocumentChartBar },
+  {
+    title: "Histori Perubahan",
+    path: "/admin/histori-perubahan",
+    Icon: HiDocumentChartBar,
+  },
 ];
 
 export type Gedung =
