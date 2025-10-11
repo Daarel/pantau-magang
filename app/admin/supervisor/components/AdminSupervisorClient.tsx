@@ -105,11 +105,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({
         header: () => (
           <Button variant='ghost' className='-m-3' onClick={handleSortChange}>
             Nama Lengkap
-            <LuArrowUpDown
-              className={`ml-2 transition-transform ${
-                sort === "desc" ? "rotate-180" : ""
-              }`}
-            />
+            <LuArrowUpDown className={"ml-2"} />
           </Button>
         ),
         cell: ({ row }) => (
@@ -176,7 +172,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({
         },
       },
     ],
-    [loading, router, sort, deleteById, toggleEdit, handleSortChange]
+    [loading, router, deleteById, toggleEdit, handleSortChange]
   );
 
   return (

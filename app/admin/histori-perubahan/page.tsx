@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export default async function AdminHistoryPage({
   searchParams,
 }: {
-  searchParams: { page?: string; sort?: string };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const supabase = await createClient();
   const {
@@ -20,9 +20,9 @@ export default async function AdminHistoryPage({
   if (!user || user.user_metadata.role !== "admin") {
     redirect("/");
   }
-
-  const page = Number(searchParams.page ?? 1);
-  const sort = searchParams.sort ?? "asc";
+  const params = await searchParams;
+  const page = Number(params.page ?? 1);
+  const sort = Array.isArray(params.sort) ? params.sort[0] : params.sort ?? "asc";
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
 

@@ -87,11 +87,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({
         header: () => (
           <Button variant='ghost' className='-m-3' onClick={handleSortChange}>
             Nama Lengkap
-            <LuArrowUpDown
-              className={`ml-2 transition-transform ${
-                sort === "desc" ? "rotate-180" : ""
-              }`}
-            />
+            <LuArrowUpDown className={`ml-2`} />
           </Button>
         ),
         cell: ({ row }) => (
@@ -99,7 +95,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({
         ),
       },
     ],
-    [handleSortChange, sort]
+    [handleSortChange]
   );
 
   return (
