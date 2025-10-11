@@ -11,23 +11,33 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-
-import { type FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import InsertSupervisorForm from "./InsertSupervisorForm";
 import DataTable from "@/components/DataTable";
 import { useModalQuery } from "@/hooks/useModalQuery";
-import { useRouter } from "next/navigation";
 import UpdateSupervisorForm from "./UpdateSupervisorForm";
 import DataTableHeader from "@/components/DataTableHeader";
 import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface AdminSupervisorProps {
   tableData: DataColumn[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  sort: string;
 }
 
-const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
+const AdminSupervisor: FC<AdminSupervisorProps> = ({
+  tableData,
+  totalCount,
+  pageSize,
+  currentPage,
+  sort,
+}) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { open: insertOpen, toggleModal: toggleInsert } =
     useModalQuery("modalInsert");
   const { open: editOpen, toggleModal: toggleEdit } =
@@ -35,10 +45,36 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [editData, setEditData] = useState<DataColumn | null>(null);
 
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  // 🧭 PAGINATION
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", newPage.toString());
+    params.set("sort", sort);
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) handlePageChange(currentPage + 1);
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) handlePageChange(currentPage - 1);
+  };
+
+  const handleSortChange = useCallback(() => {
+    const newSort = sort === "asc" ? "desc" : "asc";
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sort", newSort);
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  }, [router, searchParams, sort]);
+
+  // 🗑️ DELETE
   const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
       setLoading(true);
-
       const res = await fetch("/api/supervisor", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -49,7 +85,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
       if (!res.ok) {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
-        toast.error("Gagal menghapus data supervisor")
+        toast.error("Gagal menghapus data supervisor");
       } else {
         if (onComplete) onComplete();
       }
@@ -57,6 +93,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
     []
   );
 
+  // 📋 COLUMNS
   const columns = useMemo<ColumnDef<DataColumn>[]>(
     () => [
       {
@@ -66,20 +103,16 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
       },
       {
         accessorKey: "full_name",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant='ghost'
-              className='-m-3'
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Nama Lengkap
-              <LuArrowUpDown />
-            </Button>
-          );
-        },
+        header: () => (
+          <Button variant='ghost' className='-m-3' onClick={handleSortChange}>
+            Nama Lengkap
+            <LuArrowUpDown
+              className={`ml-2 transition-transform ${
+                sort === "desc" ? "rotate-180" : ""
+              }`}
+            />
+          </Button>
+        ),
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("full_name")}</div>
         ),
@@ -108,7 +141,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         enableHiding: false,
         cell: ({ row }) => {
           const userData = row.original;
-
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -127,13 +159,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                 >
                   <RiEdit2Line className='mr-2' />
                   Edit
-                  {/* <RiEdit2Line />
-                  <Button onClick={() => {
-                      setEditData(userData);
-                      toggleEdit();
-                    }} variant={null}>
-                    Edit
-                  </Button> */}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onSelect={() =>
@@ -141,23 +166,10 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
                       router.refresh();
                     })
                   }
-                  className='text-red-500 cursor-pointer  hover:text-red-500'
+                  className='text-red-500 cursor-pointer hover:text-red-500'
                 >
-                  <RiDeleteBin6Fill className='mr-2 text-red-500 hover:text-red-500' />
+                  <RiDeleteBin6Fill className='mr-2 text-red-500' />
                   {loading ? "Deleting..." : "Delete"}
-                  {/* <RiDeleteBin6Fill className='text-red-500' />
-                  <Button
-                    variant={null}
-                    onClick={() =>
-                      deleteById(id, () => {
-                        router.refresh();
-                      })
-                    }
-                    disabled={loading}
-                    className='text-red-500'
-                  >
-                    {loading ? "Deleting..." : "Delete"}
-                  </Button> */}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -165,7 +177,7 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteById, router, toggleEdit]
+    [loading, router, sort, deleteById, toggleEdit, handleSortChange]
   );
 
   return (
@@ -176,7 +188,15 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({ tableData }) => {
         label='Tambah Supervisor'
         onAdd={toggleInsert}
       />
-      <DataTable data={tableData} columns={columns} />
+      <DataTable
+        data={tableData}
+        columns={columns}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onNextPage={handleNext}
+        onPreviousPage={handlePrev}
+        handlePageChange={handlePageChange}
+      />
       <InsertSupervisorForm open={insertOpen} onOpenChange={toggleInsert} />
       <UpdateSupervisorForm
         open={editOpen}

@@ -29,7 +29,9 @@ export default function AdminLayoutClient({ children }: AdminLayoutProps) {
           <Sidebar>
             <SidebarMenu className='mt-16 max-sm:mt-5'>
               {adminMenu.map((menu) => {
-                const isActive = pathname.startsWith(menu.path);
+                const isActive =
+                  pathname === menu.path ||
+                  pathname.startsWith(`${menu.path}/`);
 
                 return (
                   <SidebarMenuItem key={menu.title}>

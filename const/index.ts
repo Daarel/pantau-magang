@@ -126,7 +126,6 @@ type MenuByRole = {
 // untuk menu sidebar intern
 const internMenu: MenuByRole[] = [
   { title: "Dashboard", path: "/intern/dashboard", Icon: BsHouse },
-  // { title: "Attendance", path: "/intern/attendance", Icon: AiOutlineClockCircle,},
   { title: "History", path: "/intern/history", Icon: FiCalendar },
   { title: "Record", path: "/intern/record", Icon: IoDocumentTextOutline },
 ];

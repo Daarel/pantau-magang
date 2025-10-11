@@ -31,9 +31,14 @@ import type { DataColumn } from "@/types/adminTable";
 interface DataTableProps {
   data: DataColumn[];
   columns: ColumnDef<DataColumn>[];
+  currentPage?: number;
+  totalPages?: number;
+  onNextPage?: () => void;
+  onPreviousPage?: () => void;
+  handlePageChange?: (newPage: number) => void;
 }
 
-const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
+const DataTable: React.FC<DataTableProps> = ({ data, columns, onPreviousPage, onNextPage }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -128,23 +133,22 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>
         <div className='text-muted-foreground flex-1 text-sm'>
-          {/* {table.getFilteredSelectedRowModel().rows.length} dari {" "} */}
-          {table.getFilteredRowModel().rows.length} baris dipilih.
+          {table.getFilteredRowModel().rows.length} baris ditampilkan.
         </div>
         <div className='space-x-2'>
           <Button
             variant='outline'
             size='sm'
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={onPreviousPage}
+            disabled={!onPreviousPage}
           >
             Previous
           </Button>
           <Button
             variant='outline'
             size='sm'
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={onNextPage}
+            disabled={!onNextPage}
           >
             Next
           </Button>
