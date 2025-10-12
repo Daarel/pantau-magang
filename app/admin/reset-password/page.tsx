@@ -4,13 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
 import Combobox from "@/components/ui/combobox";
 import { getNomorIndukList } from "@/lib/helper/dataInsert.helper";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminResetPassword() {
+  const supabase = createClient();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedNomorInduk, setSelectedNomorInduk] = useState<string>("");
@@ -18,6 +20,20 @@ export default function AdminResetPassword() {
     { value: string; label: string }[]
   >([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user || user.user_metadata.role !== "admin") {
+        redirect("/");
+      }
+    };
+
+    getUser();
+  }, [supabase]);
 
   useEffect(() => {
     async function fetchData() {
