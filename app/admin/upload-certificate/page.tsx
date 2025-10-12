@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -9,13 +9,29 @@ import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
 import { IoArrowBackOutline } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 export default function AdminUploadCertificate() {
   const supabase = createClient();
+  const router = useRouter();
+
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user || user.user_metadata.role !== "admin") {
+        router.push("/");
+      }
+    };
+
+    getUser();
+  }, [supabase, router]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -34,18 +50,21 @@ export default function AdminUploadCertificate() {
     try {
       setUploading(true);
 
-      const { data, error } = await supabase.storage
-        .from("certificate-template")
-        .upload("template.png", file, { upsert: true });
+      const formData = new FormData();
+      formData.append("file", file);
 
-      if (error) throw error;
+      const res = await fetch("/api/upload-certificate", {
+        method: "POST",
+        body: formData,
+      });
 
-      const { data: publicData } = supabase.storage
-        .from("certificate-template")
-        .getPublicUrl("template.png");
+      const result = await res.json();
 
-      setUploadedUrl(publicData.publicUrl);
-      toast.success("Template berhasil diupload 🎉");
+      if (!res.ok) throw new Error(result.error || "Gagal upload");
+
+      toast.success("Template berhasil diupload");
+      setFile(null);
+      setPreview(null);
     } catch (err: any) {
       toast.error(`Gagal upload: ${err.message}`);
     } finally {
@@ -55,7 +74,6 @@ export default function AdminUploadCertificate() {
 
   return (
     <>
-      <div className='flex items-center justify-between mb-6'>
       <Link
         href='/admin/dashboard'
         className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
@@ -63,11 +81,6 @@ export default function AdminUploadCertificate() {
         <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
       </Link>
 
-        <div className='absolute left-1/2 -translate-x-1/2 text-center'>
-          <h1 className='h4 font-semibold'>Profile</h1>
-          <p className='text-gray-500'>Informasi tentang saya</p>
-        </div>
-      </div>
       <div className='container mx-auto p-8'>
         <Card className='max-w-md mx-auto'>
           <CardHeader>
@@ -76,38 +89,35 @@ export default function AdminUploadCertificate() {
           <CardContent className='space-y-4'>
             <Input
               type='file'
-              accept='image/*,.pdf'
+              accept='image/*,.png,.jpg,.jpeg'
               onChange={handleFileChange}
+              className='cursor-pointer file:cursor-pointer file:border-0 file:bg-transparent file:font-medium file:text-blue-600 hover:file:underline'
             />
 
             {preview && (
               <Image
                 src={preview}
                 alt='Preview'
+                width={400}
+                height={200}
                 className='w-full rounded-lg shadow mt-2'
               />
             )}
 
+            <div>
+              <p>
+                File harus kurang dari 3 MB dan hanya menerima format PNG, JPG,
+                atau JPEG.
+              </p>
+            </div>
+
             <Button
               onClick={handleUpload}
-              disabled={uploading}
-              className='w-full'
+              disabled={!file || uploading}
+              className='w-full text-[#fcf400] font-normal'
             >
               {uploading ? "Mengunggah..." : "Upload Template"}
             </Button>
-
-            {uploadedUrl && (
-              <div className='mt-4 text-center'>
-                <p className='text-sm text-gray-500'>File berhasil diupload:</p>
-                <a
-                  href={uploadedUrl}
-                  target='_blank'
-                  className='text-blue-600 underline'
-                >
-                  Lihat di Supabase Storage
-                </a>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
