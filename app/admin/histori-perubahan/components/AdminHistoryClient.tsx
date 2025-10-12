@@ -5,14 +5,53 @@ import DataTableHeader from "@/components/DataTableHeader";
 import { Button } from "@/components/ui/button";
 import type { DataColumn } from "@/types/adminTable";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useMemo, type FC } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useMemo, type FC } from "react";
 import { LuArrowUpDown } from "react-icons/lu";
 
 interface AdminHistoryProps {
   tableData: DataColumn[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  sort: string;
 }
 
-const AdminHistory: FC<AdminHistoryProps> = ({ tableData }) => {
+const AdminHistory: FC<AdminHistoryProps> = ({
+  tableData,
+  totalCount,
+  pageSize,
+  currentPage,
+  sort,
+}) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", newPage.toString());
+    params.set("sort", sort);
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) handlePageChange(currentPage + 1);
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) handlePageChange(currentPage - 1);
+  };
+
+  const handleSortChange = useCallback(() => {
+    const newSort = sort === "asc" ? "desc" : "asc";
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sort", newSort);
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  }, [router, searchParams, sort]);
+
   const columns = useMemo<ColumnDef<DataColumn>[]>(
     () => [
       {
@@ -26,7 +65,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({ tableData }) => {
         accessorKey: "action_type",
         header: "Tipe aksi",
         cell: ({ row }) => (
-          <div className="lowercase">{row.getValue("action_type")}</div>
+          <div className='lowercase'>{row.getValue("action_type")}</div>
         ),
       },
       {
@@ -45,26 +84,18 @@ const AdminHistory: FC<AdminHistoryProps> = ({ tableData }) => {
       },
       {
         accessorKey: "created_at",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant='ghost'
-              className='-m-3'
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Tanggal Aksi
-              <LuArrowUpDown />
-            </Button>
-          );
-        },
+        header: () => (
+          <Button variant='ghost' className='-m-3' onClick={handleSortChange}>
+            Nama Lengkap
+            <LuArrowUpDown className={`ml-2`} />
+          </Button>
+        ),
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("created_at")}</div>
         ),
       },
     ],
-    []
+    [handleSortChange]
   );
 
   return (
@@ -73,7 +104,15 @@ const AdminHistory: FC<AdminHistoryProps> = ({ tableData }) => {
         title='Histori perubahan'
         subtitle='List perubahan yang dilakukan oleh admin'
       />
-      <DataTable data={tableData} columns={columns} />
+      <DataTable
+        data={tableData}
+        columns={columns}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onNextPage={handleNext}
+        onPreviousPage={handlePrev}
+        handlePageChange={handlePageChange}
+      />
     </>
   );
 };

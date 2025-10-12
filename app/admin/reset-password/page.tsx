@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaUser, FaLock } from "react-icons/fa";
@@ -7,11 +7,26 @@ import LoginButton from "@/components/LoginButton";
 import { useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
+import Combobox from "@/components/ui/combobox";
+import { getNomorIndukList } from "@/lib/helper/dataInsert.helper";
 
 export default function AdminResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedNomorInduk, setSelectedNomorInduk] = useState<string>("");
+  const [dataUserByNomorInduk, setDataUserByNomorInduk] = useState<
+    { value: string; label: string }[]
+  >([]);
   const router = useRouter();
+
+  useEffect(() => {
+    async function fetchData() {
+      const dataUserByNomorInduk = await getNomorIndukList();
+      setDataUserByNomorInduk(dataUserByNomorInduk);
+    }
+
+    fetchData();
+  }, []);
 
   async function handleResetPassword(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,7 +39,7 @@ export default function AdminResetPassword() {
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         body: JSON.stringify({
-          nomorInduk: formData.get("nomorInduk"),
+          nomorInduk: selectedNomorInduk,
           password: formData.get("password"),
         }),
         headers: { "Content-Type": "application/json" },
@@ -78,12 +93,12 @@ export default function AdminResetPassword() {
               </span>
               Nomor Induk
             </Label>
-            <Input
-              id='nomorInduk'
-              name='nomorInduk'
-              placeholder='Masukkan nomor induk'
-              className='mt-3 w-full'
-              required
+            <Combobox
+              fields={dataUserByNomorInduk}
+              value={selectedNomorInduk}
+              onChange={setSelectedNomorInduk}
+              placeholder='Pilih nomor induk'
+              emptyText='Nomor induk tidak ditemukan'
             />
           </div>
 
