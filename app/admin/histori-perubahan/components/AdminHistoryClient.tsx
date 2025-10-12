@@ -109,6 +109,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({
         columns={columns}
         currentPage={currentPage}
         totalPages={totalPages}
+        totalCount={totalCount}
         onNextPage={handleNext}
         onPreviousPage={handlePrev}
         handlePageChange={handlePageChange}

@@ -33,12 +33,14 @@ interface DataTableProps {
   columns: ColumnDef<DataColumn>[];
   currentPage?: number;
   totalPages?: number;
+  totalCount?: number;
   onNextPage?: () => void;
   onPreviousPage?: () => void;
   handlePageChange?: (newPage: number) => void;
 }
 
-const DataTable: React.FC<DataTableProps> = ({ data, columns, onPreviousPage, onNextPage }) => {
+const DataTable: React.FC<DataTableProps> = ({ data, columns, totalCount, onPreviousPage, onNextPage }) => {
+  console.log({ totalCount });
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -133,7 +135,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns, onPreviousPage, on
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>
         <div className='text-muted-foreground flex-1 text-sm'>
-          {table.getFilteredRowModel().rows.length} baris ditampilkan.
+          Menampilkan {table.getFilteredRowModel().rows.length} dari {totalCount ?? 0} baris.
         </div>
         <div className='space-x-2'>
           <Button
