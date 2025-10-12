@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import { CiCircleInfo } from "react-icons/ci";
 
 export default function AdminUploadCertificate() {
   const supabase = createClient();
@@ -104,8 +105,9 @@ export default function AdminUploadCertificate() {
               />
             )}
 
-            <div>
-              <p>
+            <div className='flex flex-row items-center text-gray-500'>
+              <CiCircleInfo  className='inline mr-2 text-2xl' />
+              <p className='text-xs normal-case max-w-[45ch]'>
                 File harus kurang dari 3 MB dan hanya menerima format PNG, JPG,
                 atau JPEG.
               </p>
