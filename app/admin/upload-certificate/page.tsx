@@ -9,14 +9,15 @@ import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function AdminUploadCertificate() {
   const supabase = createClient();
+  const router = useRouter();
+
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -25,12 +26,12 @@ export default function AdminUploadCertificate() {
       } = await supabase.auth.getUser();
 
       if (!user || user.user_metadata.role !== "admin") {
-        redirect("/");
+        router.push("/");
       }
     };
 
-    getUser()
-  }, [supabase]);
+    getUser();
+  }, [supabase, router]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -49,18 +50,21 @@ export default function AdminUploadCertificate() {
     try {
       setUploading(true);
 
-      const { data, error } = await supabase.storage
-        .from("certificate-template")
-        .upload("template.png", file, { upsert: true });
+      const formData = new FormData();
+      formData.append("file", file);
 
-      if (error) throw error;
+      const res = await fetch("/api/upload-certificate", {
+        method: "POST",
+        body: formData,
+      });
 
-      const { data: publicData } = supabase.storage
-        .from("certificate-template")
-        .getPublicUrl("template.png");
+      const result = await res.json();
 
-      setUploadedUrl(publicData.publicUrl);
-      toast.success("Template berhasil diupload 🎉");
+      if (!res.ok) throw new Error(result.error || "Gagal upload");
+
+      toast.success("Template berhasil diupload");
+      setFile(null);
+      setPreview(null);
     } catch (err: any) {
       toast.error(`Gagal upload: ${err.message}`);
     } finally {
@@ -76,6 +80,7 @@ export default function AdminUploadCertificate() {
       >
         <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
       </Link>
+
       <div className='container mx-auto p-8'>
         <Card className='max-w-md mx-auto'>
           <CardHeader>
@@ -99,6 +104,13 @@ export default function AdminUploadCertificate() {
               />
             )}
 
+            <div>
+              <p>
+                File harus kurang dari 3 MB dan hanya menerima format PNG, JPG,
+                atau JPEG.
+              </p>
+            </div>
+
             <Button
               onClick={handleUpload}
               disabled={!file || uploading}
@@ -106,19 +118,6 @@ export default function AdminUploadCertificate() {
             >
               {uploading ? "Mengunggah..." : "Upload Template"}
             </Button>
-
-            {uploadedUrl && (
-              <div className='mt-4 text-center'>
-                <p className='text-sm text-gray-500'>File berhasil diupload:</p>
-                <a
-                  href={uploadedUrl}
-                  target='_blank'
-                  className='text-blue-600 underline'
-                >
-                  Lihat di Supabase Storage
-                </a>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
