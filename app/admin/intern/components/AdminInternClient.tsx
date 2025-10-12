@@ -16,24 +16,59 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import { useModalQuery } from "@/hooks/useModalQuery";
 import { type FC, useCallback, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import UpdateInternForm from "./UpdateInternForm";
 import DataTableHeader from "@/components/DataTableHeader";
 import { toast } from "sonner";
 
 interface AdminUserProps {
   tableData: DataColumn[];
+  totalCount: number;
+  pageSize: number;
+  currentPage: number;
+  sort: string;
 }
 
-const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
+const AdminInternClient: FC<AdminUserProps> = ({
+  tableData,
+  totalCount,
+  pageSize,
+  currentPage,
+  sort,
+}) => {
   const router = useRouter();
-
+  const searchParams = useSearchParams();
   const { open: insertOpen, toggleModal: toggleInsert } =
     useModalQuery("modalInsert");
   const { open: editOpen, toggleModal: toggleEdit } =
     useModalQuery("modalEdit");
   const [loading, setLoading] = useState<boolean>(false);
   const [editData, setEditData] = useState<DataColumn | null>(null);
+
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", newPage.toString());
+    params.set("sort", sort);
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) handlePageChange(currentPage + 1);
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) handlePageChange(currentPage - 1);
+  };
+
+  const handleSortChange = useCallback(() => {
+    const newSort = sort === "asc" ? "desc" : "asc";
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sort", newSort);
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  }, [router, searchParams, sort]);
 
   const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
@@ -50,7 +85,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
       if (!res.ok) {
         const err = await res.json();
         console.error("Gagal menghapus: ", err.error);
-        toast.error("Gagal menghapus data anak magang")
+        toast.error("Gagal menghapus data anak magang");
       } else {
         if (onComplete) onComplete();
       }
@@ -69,20 +104,12 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
       },
       {
         accessorKey: "full_name",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant='ghost'
-              className='-m-3'
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Nama Lengkap
-              <LuArrowUpDown />
-            </Button>
-          );
-        },
+        header: () => (
+          <Button variant='ghost' className='-m-3' onClick={handleSortChange}>
+            Nama Lengkap
+            <LuArrowUpDown className={"ml-2"} />
+          </Button>
+        ),
         cell: ({ row }) => (
           <div className='capitalize'>{row.getValue("full_name")}</div>
         ),
@@ -180,7 +207,7 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         },
       },
     ],
-    [loading, deleteById, router, toggleEdit]
+    [loading, deleteById, router, toggleEdit, handleSortChange]
   );
 
   return (
@@ -191,7 +218,15 @@ const AdminInternClient: FC<AdminUserProps> = ({ tableData }) => {
         label='Tambah User'
         onAdd={toggleInsert}
       />
-      <DataTable data={tableData} columns={columns} />
+      <DataTable
+        data={tableData}
+        columns={columns}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onNextPage={handleNext}
+        onPreviousPage={handlePrev}
+        handlePageChange={handlePageChange}
+      />
       <InsertInternForm open={insertOpen} onOpenChange={toggleInsert} />
       <UpdateInternForm
         open={editOpen}

@@ -70,7 +70,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({
     router.push(`?${params.toString()}`);
   }, [router, searchParams, sort]);
 
-  // 🗑️ DELETE
   const deleteById = useCallback(
     async (id: string, onComplete?: () => void) => {
       setLoading(true);
@@ -92,7 +91,6 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({
     []
   );
 
-  // 📋 COLUMNS
   const columns = useMemo<ColumnDef<DataColumn>[]>(
     () => [
       {
