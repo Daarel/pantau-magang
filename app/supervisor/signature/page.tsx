@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, DragEvent } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,11 +10,24 @@ import { FiSave } from "react-icons/fi";
 import { LuPenLine } from "react-icons/lu";
 import { HiOutlineTrash, HiOutlineUpload, HiOutlineEye } from "react-icons/hi";
 
+// 🔧 Deklarasi global property agar TS gak error waktu kita pakai window.signatureInput
+declare global {
+  interface Window {
+    signatureInput?: HTMLInputElement | null;
+  }
+}
+
 export default function DigitalSignaturePage() {
   const [isEmpty, setIsEmpty] = useState(true);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const sigCanvas = useRef<SignatureCanvas | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    window.signatureInput = fileInputRef.current;
+  }, []);
 
   const handleClear = () => {
     sigCanvas.current?.clear();
@@ -25,7 +38,7 @@ export default function DigitalSignaturePage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && file.type === "image/png") {
       const reader = new FileReader();
       reader.onload = () => {
         setUploadedImage(reader.result as string);
@@ -42,14 +55,37 @@ export default function DigitalSignaturePage() {
     } else if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
       dataUrl = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
     }
-
-    if (dataUrl) {
-      setPreviewImage(dataUrl);
-    }
+    if (dataUrl) setPreviewImage(dataUrl);
   };
 
   const handleSave = () => {
     alert("💾 Simpan tanda tangan ke database (belum diimplementasikan)");
+  };
+
+  // 📂 Fungsi Drag & Drop PNG
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type === "image/png") {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setUploadedImage(reader.result as string);
+        setIsEmpty(false);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert("⚠️ Hanya file PNG yang didukung!");
+    }
   };
 
   useEffect(() => {
@@ -77,19 +113,25 @@ export default function DigitalSignaturePage() {
               <LuPenLine className="text-blue-600" size={24} />
               Tanda Tangan Digital
             </CardTitle>
-            <p className="text-gray-500 text-sm px-2">
-              Buat atau unggah tanda tangan kamu untuk keperluan verifikasi
-              dokumen.
+            <p className="text-gray-500 text-sm px-2 normal-case">
+              Buat tanda tangan kamu untuk keperluan verifikasi dokumen.
             </p>
           </CardHeader>
 
           <Separator />
 
           <CardContent className="p-4 sm:p-6 space-y-6">
-            {/* Canvas Area */}
+            {/* 🎨 Area Canvas / Drag-drop */}
             <motion.div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
               whileHover={{ scale: 1.01 }}
-              className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl shadow-inner w-full aspect-[7/3] flex items-center justify-center relative overflow-hidden transition-all"
+              className={`relative bg-gray-50 border-2 border-dashed rounded-2xl shadow-inner w-full aspect-[7/3] flex items-center justify-center overflow-hidden transition-all ${
+                isDragging
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300 hover:border-blue-300"
+              }`}
             >
               {uploadedImage ? (
                 <img
@@ -109,12 +151,12 @@ export default function DigitalSignaturePage() {
                     onBegin={() => setIsEmpty(false)}
                   />
                   {isEmpty && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300">
-                      <p className="text-gray-400 text-sm select-none flex flex-col items-center gap-1 text-center">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300 text-center px-2">
+                      <p className="text-gray-400 text-sm flex flex-col items-center gap-1">
                         <LuPenLine className="text-gray-400" size={16} />
-                        <span>Tulis Tanda Tangan Di Sini</span>
-                        <span className="text-xs text-gray-400">
-                          Atau Unggah File Tanda Tangan (PNG)
+                        <span className="normal-case">Gambar tanda tangan kamu disini</span>
+                        <span className="text-xs text-gray-400 normal-case">
+                          (Seret atau unggah dari file)
                         </span>
                       </p>
                     </div>
@@ -123,7 +165,7 @@ export default function DigitalSignaturePage() {
               )}
             </motion.div>
 
-            {/* 👁️ Tombol Preview di tengah atas tombol lain */}
+            {/* 👁️ Tombol Preview */}
             {!isEmpty && (
               <div className="flex justify-center -mt-4 mb-2">
                 <Button
@@ -137,7 +179,7 @@ export default function DigitalSignaturePage() {
               </div>
             )}
 
-            {/* Tombol Bawah */}
+            {/* Tombol Aksi */}
             <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
               <Button
                 onClick={handleClear}
@@ -148,22 +190,23 @@ export default function DigitalSignaturePage() {
                 Bersihkan
               </Button>
 
-              <label className="w-full sm:w-auto">
-                <input
-                  type="file"
-                  accept="image/png"
-                  onChange={handleInputChange}
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
-                >
-                  <HiOutlineUpload size={18} />
-                  Upload PNG
-                </Button>
-              </label>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => window.signatureInput?.click()}
+                className="border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                <HiOutlineUpload size={18} />
+                Upload PNG
+              </Button>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png"
+                onChange={handleInputChange}
+                className="hidden"
+              />
 
               <Button
                 onClick={handleSave}
