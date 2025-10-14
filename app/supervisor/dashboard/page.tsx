@@ -166,6 +166,7 @@ export default async function SupervisorDashboard() {
     .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
     .eq("date", today)
     .eq("status", "izin")
+    .eq("dispensation", "approved")
     .eq("users.supervisor_id", data.id);
 
   if (izinError) console.error("Error fetching izinToday:", izinError);
@@ -177,6 +178,7 @@ export default async function SupervisorDashboard() {
     .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
     .eq("date", today)
     .eq("status", "sakit")
+    .eq("dispensation", "approved")
     .eq("users.supervisor_id", data.id);
 
   if (sakitError) console.error("Error fetching sakitToday:", sakitError);
