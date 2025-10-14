@@ -14,6 +14,7 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { PiPassword } from "react-icons/pi";
 import { MdEmail } from "react-icons/md";
 import { HiDocumentChartBar } from "react-icons/hi2";
+import { AiOutlineSignature } from "react-icons/ai";
 
 import type { IconType } from "react-icons";
 
@@ -138,12 +139,9 @@ const internMenu: MenuByRole[] = [
 // untuk menu sidebar supervisor
 const supervisorMenu: MenuByRole[] = [
   { title: "Dashboard", path: "/supervisor/dashboard", Icon: BsHouse },
-  {
-    title: "Attendance",
-    path: "/supervisor/attendance",
-    Icon: AiOutlineClockCircle,
-  },
+  { title: "Attendance", path: "/supervisor/attendance", Icon: AiOutlineClockCircle },
   { title: "Inbox", path: "/supervisor/inbox", Icon: FaRegFileAlt },
+  { title: "Signature", path: "/supervisor/signature", Icon: AiOutlineSignature },
 ];
 
 // untuk menu sidebar admin

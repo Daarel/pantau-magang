@@ -25,7 +25,8 @@ export default function StartAttendanceButton() {
   // ambil data jadwal yang sudah ada
   useEffect(() => {
     const fetchSchedule = async () => {
-      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
       if (userError || !userData?.user) return;
 
       const { data: userProfile } = await supabase
@@ -40,12 +41,14 @@ export default function StartAttendanceButton() {
         .from("attendance_schedules")
         .select("start_time, end_time")
         .eq("supervisor_id", userProfile.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (existingSchedule) {
         setHasSchedule(true);
-        setStartTime(existingSchedule.start_time);
-        setEndTime(existingSchedule.end_time);
+        setStartTime(existingSchedule.start_time ?? "");
+        setEndTime(existingSchedule.end_time ?? "");
       } else {
         setHasSchedule(false);
       }
@@ -63,7 +66,8 @@ export default function StartAttendanceButton() {
     try {
       setLoading(true);
 
-      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
       if (userError || !userData?.user) {
         toast.error("User belum login atau sesi berakhir");
         return;
@@ -80,37 +84,25 @@ export default function StartAttendanceButton() {
         return;
       }
 
-      if (hasSchedule) {
-        // update data lama
-        const { error: updateError } = await supabase
-          .from("attendance_schedules")
-          .update({
+      // 🔥 Selalu insert data baru (row baru setiap update)
+      const { error: insertError } = await supabase
+        .from("attendance_schedules")
+        .insert([
+          {
+            supervisor_id: userProfile.id,
             start_time: startTime,
             end_time: endTime,
-          })
-          .eq("supervisor_id", userProfile.id);
+          },
+        ]);
 
-        if (updateError) throw updateError;
+      if (insertError) throw insertError;
 
-        toast.success("Jadwal absen berhasil diperbarui!");
-      } else {
-        // insert data baru
-        const { error: insertError } = await supabase
-          .from("attendance_schedules")
-          .insert([
-            {
-              supervisor_id: userProfile.id,
-              start_time: startTime,
-              end_time: endTime,
-            },
-          ]);
-
-        if (insertError) throw insertError;
-
-        toast.success("Jadwal absen berhasil ditambahkan!");
-        setHasSchedule(true);
-      }
-
+      toast.success(
+        hasSchedule
+          ? "Jadwal absen berhasil diperbarui (versi baru disimpan)!"
+          : "Jadwal absen berhasil ditambahkan!"
+      );
+      setHasSchedule(true);
       setOpen(false);
     } catch (error: any) {
       toast.error("Terjadi kesalahan: " + error.message);
@@ -123,7 +115,8 @@ export default function StartAttendanceButton() {
     try {
       setLoading(true);
 
-      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
       if (userError || !userData?.user) {
         toast.error("User belum login atau sesi berakhir");
         return;
@@ -140,12 +133,18 @@ export default function StartAttendanceButton() {
         return;
       }
 
-      const { error: deleteError } = await supabase
+      // 🔥 Insert row baru tapi start_time dan end_time = null
+      const { error: insertError } = await supabase
         .from("attendance_schedules")
-        .delete()
-        .eq("supervisor_id", userProfile.id);
+        .insert([
+          {
+            supervisor_id: userProfile.id,
+            start_time: null,
+            end_time: null,
+          },
+        ]);
 
-      if (deleteError) throw deleteError;
+      if (insertError) throw insertError;
 
       toast.success("Jadwal absen berhasil direset!");
       setHasSchedule(false);
