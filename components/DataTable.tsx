@@ -33,13 +33,20 @@ interface DataTableProps {
   columns: ColumnDef<DataColumn>[];
   currentPage?: number;
   totalPages?: number;
-  totalCount?: number;
+  totalCount: number;
   onNextPage?: () => void;
   onPreviousPage?: () => void;
   handlePageChange?: (newPage: number) => void;
 }
 
-const DataTable: React.FC<DataTableProps> = ({ data, columns, totalCount, onPreviousPage, onNextPage }) => {
+const DataTable: React.FC<DataTableProps> = ({
+  data,
+  columns,
+  totalCount,
+  currentPage = 1,
+  onPreviousPage,
+  onNextPage,
+}) => {
   console.log({ totalCount });
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -67,6 +74,11 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns, totalCount, onPrev
       rowSelection,
     },
   });
+
+  // Perhitungan rentang berdasarkan server-side pagination
+  const pageSize = data.length;
+  const startRow = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const endRow = Math.min(currentPage * pageSize, totalCount);
 
   return (
     <div className='w-full'>
@@ -135,7 +147,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, columns, totalCount, onPrev
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>
         <div className='text-muted-foreground flex-1 text-sm'>
-          Menampilkan {table.getFilteredRowModel().rows.length} dari {totalCount ?? 0} baris.
+          Menampilkan {startRow}-{endRow} dari {totalCount ?? 0} baris.
         </div>
         <div className='space-x-2'>
           <Button
