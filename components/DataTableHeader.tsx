@@ -1,3 +1,4 @@
+'use client'
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { FC } from "react";

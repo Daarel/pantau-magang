@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 // Icons
 import { GoClock } from "react-icons/go";

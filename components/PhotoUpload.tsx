@@ -21,12 +21,6 @@ export function PhotoUpload({ onPhotoChange, maxSize = 2 }: PhotoUploadProps) {
     const file = e.target.files?.[0] || null;
     
     if (file) {
-      // Check file size (max 2MB)
-      // if (file.size > maxSize * 1024 * 1024) {
-      //   toast.error(`Ukuran foto melebihi ${maxSize} MB`);
-      //   return;
-      // }
-      
       // Check file type
       if (!file.type.startsWith('image/')) {
         toast.error("File harus berupa gambar");
@@ -100,7 +94,7 @@ export function PhotoUpload({ onPhotoChange, maxSize = 2 }: PhotoUploadProps) {
       {isCompressing ? (
         <div className="flex flex-col justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 bg-gray-200">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <p className="text-center text-sm">Mengkompresi gambar...</p>
+          {/* <p className="text-center text-sm">Mengkompresi gambar...</p> */}
         </div>
       ) : previewUrl ? (
         <div className="relative flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 overflow-hidden">
@@ -130,9 +124,6 @@ export function PhotoUpload({ onPhotoChange, maxSize = 2 }: PhotoUploadProps) {
           <div className='flex gap-2'>
             <TbCameraPlus className="w-4 h-4" />
             <span>Tambahkan foto</span>
-          </div>
-          <div className="flex items-center gap-1 text-[12px] text-black/40">
-            <h6>Ukuran foto maks. {maxSize} MB</h6>
           </div>
         </Button>
       )}
