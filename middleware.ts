@@ -25,7 +25,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Contoh redirect ke /login jika belum login
   if (!user && request.nextUrl.pathname.startsWith("/admin")) {
     const redirectUrl = new URL("/login", request.url);
     return NextResponse.redirect(redirectUrl);
@@ -34,7 +33,6 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-// optional (opsional, tergantung rute)
 export const config = {
   matcher: ["/admin/:path*"],
 };
