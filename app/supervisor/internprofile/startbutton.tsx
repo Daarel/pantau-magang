@@ -46,7 +46,11 @@ export default function StartAttendanceButton() {
         .maybeSingle();
 
       if (existingSchedule) {
-        setHasSchedule(true);
+        // Cek apakah jadwal valid (tidak null)
+        const isValid =
+          existingSchedule.start_time !== null &&
+          existingSchedule.end_time !== null;
+        setHasSchedule(isValid);
         setStartTime(existingSchedule.start_time ?? "");
         setEndTime(existingSchedule.end_time ?? "");
       } else {
@@ -102,6 +106,8 @@ export default function StartAttendanceButton() {
           ? "Jadwal absen berhasil diperbarui (versi baru disimpan)!"
           : "Jadwal absen berhasil ditambahkan!"
       );
+
+      // 🔥 Pastikan tombol berubah jadi "Edit Jadwal"
       setHasSchedule(true);
       setOpen(false);
     } catch (error: any) {
@@ -147,9 +153,12 @@ export default function StartAttendanceButton() {
       if (insertError) throw insertError;
 
       toast.success("Jadwal absen berhasil direset!");
+
+      // 🔥 Pastikan state langsung berubah
       setHasSchedule(false);
       setStartTime("");
       setEndTime("");
+      setOpen(false);
     } catch (error: any) {
       toast.error("Gagal mereset jadwal: " + error.message);
     } finally {

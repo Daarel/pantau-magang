@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 import { FiSave } from "react-icons/fi";
 import { LuPenLine } from "react-icons/lu";
 import { HiOutlineTrash, HiOutlineUpload, HiOutlineEye } from "react-icons/hi";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 // 🔧 Deklarasi global property agar TS gak error waktu kita pakai window.signatureInput
 declare global {
@@ -58,8 +60,93 @@ export default function DigitalSignaturePage() {
     if (dataUrl) setPreviewImage(dataUrl);
   };
 
-  const handleSave = () => {
-    alert("💾 Simpan tanda tangan ke database (belum diimplementasikan)");
+  const handleSave = async () => {
+    const supabase = createClient();
+
+    try {
+      // 🔹 Ambil user login
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError || !user) {
+        toast.warning("Kamu harus login dulu sebelum menyimpan tanda tangan!");
+        return;
+      }
+
+      // 🔹 Ambil ID dari tabel users
+      const { data: userData, error: userTableError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("auth_id", user.id)
+        .single();
+
+      if (userTableError || !userData) {
+        toast.warning("Data pengguna tidak ditemukan di tabel users!");
+        return;
+      }
+
+      const supervisorId = userData.id; // ✅ ini yang dipakai nanti
+
+      // 🔹 Ambil data dari canvas / upload
+      let dataUrl = "";
+      if (uploadedImage) {
+        dataUrl = uploadedImage;
+      } else if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
+        dataUrl = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+      }
+
+      if (!dataUrl) {
+        toast.warning(
+          "Tanda tangan kosong! Silakan gambar atau upload terlebih dahulu."
+        );
+        return;
+      }
+
+      // 🔹 Convert base64 ke blob
+      const blob = await (await fetch(dataUrl)).blob();
+
+      // 🔹 Buat nama file unik
+      const fileName = `signature_${supervisorId}_${Date.now()}.png`;
+
+      // 🔹 Upload ke bucket Supabase
+      const { error: uploadError } = await supabase.storage
+        .from("signature")
+        .upload(fileName, blob, {
+          contentType: "image/png",
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      // 🔹 Ambil public URL
+      const { data: publicUrlData } = supabase.storage
+        .from("signature")
+        .getPublicUrl(fileName);
+
+      const signatureUrl = publicUrlData.publicUrl;
+
+      // 🔹 Nonaktifkan tanda tangan lama supervisor
+      await supabase
+        .from("signatures")
+        .update({ is_active: false })
+        .eq("supervisor_id", supervisorId);
+
+      // 🔹 Simpan tanda tangan baru
+      const { error: insertError } = await supabase.from("signatures").insert({
+        supervisor_id: supervisorId,
+        signature_url: signatureUrl,
+        is_active: true,
+      });
+
+      if (insertError) throw insertError;
+
+      toast.success("Tanda tangan berhasil disimpan!");
+      handleClear();
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Gagal menyimpan tanda tangan: " + error.message);
+    }
   };
 
   // 📂 Fungsi Drag & Drop PNG
@@ -84,7 +171,7 @@ export default function DigitalSignaturePage() {
       };
       reader.readAsDataURL(file);
     } else {
-      alert("⚠️ Hanya file PNG yang didukung!");
+      toast.warning("Hanya file PNG yang didukung!");
     }
   };
 
@@ -154,7 +241,9 @@ export default function DigitalSignaturePage() {
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300 text-center px-2">
                       <p className="text-gray-400 text-sm flex flex-col items-center gap-1">
                         <LuPenLine className="text-gray-400" size={16} />
-                        <span className="normal-case">Gambar tanda tangan kamu disini</span>
+                        <span className="normal-case">
+                          Gambar tanda tangan kamu disini
+                        </span>
                         <span className="text-xs text-gray-400 normal-case">
                           (Seret atau unggah dari file)
                         </span>
