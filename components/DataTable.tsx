@@ -75,10 +75,9 @@ const DataTable: React.FC<DataTableProps> = ({
     },
   });
 
-  // Perhitungan rentang berdasarkan server-side pagination
-  const pageSize = data.length;
+  const pageSize = 10;
   const startRow = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const endRow = Math.min(currentPage * pageSize, totalCount);
+  const endRow = Math.min(startRow + data.length - 1, totalCount);
 
   return (
     <div className='w-full'>
