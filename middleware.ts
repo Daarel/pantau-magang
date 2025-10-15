@@ -6,94 +6,59 @@ export async function middleware(request: NextRequest) {
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SECRET_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll();
+          return request.cookies
+            .getAll()
+            .map((c) => ({ name: c.name, value: c.value }));
         },
         setAll(cookies) {
           cookies.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
+            response.cookies.set(name, value, options as any);
           });
         },
       },
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-  if (!user && request.nextUrl.pathname.startsWith("/admin")) {
-    const redirectUrl = new URL("/login", request.url);
-    return NextResponse.redirect(redirectUrl);
+    const pathname = request.nextUrl.pathname;
+
+    const ROLES = ["admin", "supervisor", "intern"] as const;
+    type Role = (typeof ROLES)[number];
+
+    const roleMap = [
+      { prefix: "/admin", role: "admin" },
+      { prefix: "/supervisor", role: "supervisor" },
+      { prefix: "/intern", role: "intern" },
+    ] satisfies { prefix: string; role: Role }[];
+
+    const matched = roleMap.find((r) => pathname.startsWith(r.prefix));
+    if (matched) {
+      if (!user) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+
+      const role = user.user_metadata?.role;
+      if (role !== matched.role) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+    }
+
+    return response;
+  } catch (err) {
+    console.error("Middleware supabase error:", err);
+    return NextResponse.redirect(new URL("/login", request.url));
   }
-
-  return response;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/supervisor/:path*", "/intern/:path*"],
 };
-
-
-// import { NextResponse, type NextRequest } from "next/server";
-// import { createServerClient } from "@supabase/ssr";
-
-// export async function middleware(request: NextRequest) {
-//   const response = NextResponse.next();
-
-//   const supabase = createServerClient(
-//     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//     process.env.SUPABASE_SECRET_KEY!,
-//     {
-//       cookies: {
-//         getAll() {
-//           return request.cookies.getAll().map((c) => ({
-//             name: c.name,
-//             value: c.value,
-//           }));
-//         },
-//         setAll(cookiesToSet) {
-//           cookiesToSet.forEach(({ name, value, options }) => {
-//             response.cookies.set(name, value, options);
-//           });
-//         },
-//       },
-//     }
-//   );
-
-//   const {
-//     data: { session },
-//     error,
-//   } = await supabase.auth.getSession();
-
-//   if (!session || error) {
-//     const homeUrl = new URL("/", request.url);
-//     return NextResponse.redirect(homeUrl);
-//   }
-
-//   const role = session.user.user_metadata?.role;
-//   const pathname = request.nextUrl.pathname;
-
-//   if (pathname.startsWith("/admin") && role !== "admin") {
-//     return NextResponse.redirect(new URL("/not-authorized", request.url));
-//   }
-
-//   if (pathname.startsWith("/supervisor") && role !== "supervisor") {
-//     return NextResponse.redirect(new URL("/not-authorized", request.url));
-//   }
-
-//   if (pathname.startsWith("/intern") && role !== "intern") {
-//     return NextResponse.redirect(new URL("/not-authorized", request.url));
-//   }
-
-//   return response;
-// }
-
-// export const config = {
-//   matcher: [
-//     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|not-authorized|$).*)",
-//   ],
-// };
