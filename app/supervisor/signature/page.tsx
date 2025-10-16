@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, DragEvent } from "react";
-import SignatureCanvas from "react-signature-canvas";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -12,6 +12,11 @@ import { HiOutlineTrash, HiOutlineUpload, HiOutlineEye } from "react-icons/hi";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import Image from "next/image";
+
+// ✅ Dynamic import supaya SignatureCanvas gak dijalankan di server (fix error vercel)
+const SignatureCanvas = dynamic<any>(() => import("react-signature-canvas"), {
+  ssr: false,
+});
 
 // 🔧 Deklarasi global property agar TS gak error waktu kita pakai window.signatureInput
 declare global {
@@ -24,7 +29,7 @@ export default function DigitalSignaturePage() {
   const [isEmpty, setIsEmpty] = useState(true);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const sigCanvas = useRef<SignatureCanvas | null>(null);
+  const sigCanvas = useRef<any>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -95,14 +100,11 @@ export default function DigitalSignaturePage() {
         dataUrl = uploadedImage;
       } else if (
         sigCanvas.current &&
-        typeof sigCanvas.current.getTrimmedCanvas === "function" && 
+        typeof sigCanvas.current.getTrimmedCanvas === "function" &&
         !sigCanvas.current.isEmpty()
       ) {
         const trimmedCanvas = sigCanvas.current.getTrimmedCanvas();
-        if (
-          trimmedCanvas &&
-          typeof trimmedCanvas.toDataURL === "function" 
-        ) {
+        if (trimmedCanvas && typeof trimmedCanvas.toDataURL === "function") {
           dataUrl = trimmedCanvas.toDataURL("image/png");
         }
       }
@@ -323,14 +325,18 @@ export default function DigitalSignaturePage() {
                 <p className='text-sm text-gray-600 mb-2 font-medium'>
                   Preview Tanda Tangan:
                 </p>
-                <motion.img
-                  src={previewImage}
-                  alt='Preview Signature'
-                  className='mx-auto border border-gray-300 rounded-lg shadow-sm bg-white max-h-40 object-contain'
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                />
+                  className="mx-auto border border-gray-300 rounded-lg shadow-sm bg-white max-h-40 w-fit flex justify-center"
+                >
+                  <Image
+                    src={previewImage}
+                    alt="Preview Signature"
+                    className="mx-auto border border-gray-300 rounded-lg shadow-sm bg-white max-h-40 object-contain"
+                  />
+                </motion.div>
               </div>
             )}
 
