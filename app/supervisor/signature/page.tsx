@@ -198,27 +198,27 @@ export default function DigitalSignaturePage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center via-slate-50 to-indigo-100 p-4 sm:p-6">
+    <div className='min-h-screen flex items-center justify-center via-slate-50 to-indigo-100 p-4 sm:p-6'>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="w-full max-w-3xl"
+        className='w-full max-w-3xl'
       >
-        <Card className="rounded-2xl border-gray-200 bg-white/80 backdrop-blur">
-          <CardHeader className="text-center space-y-2 pb-2">
-            <CardTitle className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center justify-center gap-2">
-              <LuPenLine className="text-blue-600" size={24} />
+        <Card className='rounded-2xl border-gray-200 bg-white/80 backdrop-blur'>
+          <CardHeader className='text-center space-y-2 pb-2'>
+            <CardTitle className='text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center justify-center gap-2'>
+              <LuPenLine className='text-blue-600' size={24} />
               Tanda Tangan Digital
             </CardTitle>
-            <p className="text-gray-500 text-sm px-2 normal-case">
+            <p className='text-gray-500 text-sm px-2 normal-case'>
               Buat tanda tangan kamu untuk keperluan verifikasi dokumen.
             </p>
           </CardHeader>
 
           <Separator />
 
-          <CardContent className="p-4 sm:p-6 space-y-6">
+          <CardContent className='p-4 sm:p-6 space-y-6'>
             {/* 🎨 Area Canvas / Drag-drop */}
             <motion.div
               onDragOver={handleDragOver}
@@ -234,14 +234,14 @@ export default function DigitalSignaturePage() {
               {uploadedImage ? (
                 <Image
                   src={uploadedImage}
-                  alt="Uploaded signature"
-                  className="object-contain w-full h-full"
+                  alt='Uploaded signature'
+                  className='object-contain w-full h-full'
                 />
               ) : (
                 <>
                   <SignatureCanvas
                     ref={sigCanvas}
-                    penColor="black"
+                    penColor='black'
                     canvasProps={{
                       className:
                         "rounded-xl cursor-crosshair bg-white w-full h-full",
@@ -249,13 +249,13 @@ export default function DigitalSignaturePage() {
                     onBegin={() => setIsEmpty(false)}
                   />
                   {isEmpty && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300 text-center px-2">
-                      <p className="text-gray-400 text-sm flex flex-col items-center gap-1">
-                        <LuPenLine className="text-gray-400" size={16} />
-                        <span className="normal-case">
+                    <div className='absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300 text-center px-2'>
+                      <p className='text-gray-400 text-sm flex flex-col items-center gap-1'>
+                        <LuPenLine className='text-gray-400' size={16} />
+                        <span className='normal-case'>
                           Gambar tanda tangan kamu disini
                         </span>
-                        <span className="text-xs text-gray-400 normal-case">
+                        <span className='text-xs text-gray-400 normal-case'>
                           (Seret atau unggah dari file)
                         </span>
                       </p>
@@ -267,34 +267,34 @@ export default function DigitalSignaturePage() {
 
             {/* 👁️ Tombol Preview */}
             {!isEmpty && (
-              <div className="flex justify-center -mt-4 mb-2">
+              <div className='flex justify-center -mt-4 mb-2'>
                 <Button
                   onClick={handlePreview}
-                  variant="outline"
-                  className="border-gray-400 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-300 shadow-md"
+                  variant='outline'
+                  className='border-gray-400 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-300 shadow-md'
                 >
-                  <HiOutlineEye size={18} className="mr-2" />
-                  Preview
+                  <HiOutlineEye size={18} className='mr-2' />
+                  Preview 
                 </Button>
               </div>
             )}
 
             {/* Tombol Aksi */}
-            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <div className='flex flex-col sm:flex-row justify-center gap-3 sm:gap-4'>
               <Button
                 onClick={handleClear}
-                variant="outline"
-                className="border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
+                variant='outline'
+                className='border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto'
               >
                 <HiOutlineTrash size={18} />
                 Bersihkan
               </Button>
 
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={() => window.signatureInput?.click()}
-                className="border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
+                className='border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto'
               >
                 <HiOutlineUpload size={18} />
                 Upload PNG
@@ -302,15 +302,15 @@ export default function DigitalSignaturePage() {
 
               <input
                 ref={fileInputRef}
-                type="file"
-                accept="image/png"
+                type='file'
+                accept='image/png'
                 onChange={handleInputChange}
-                className="hidden"
+                className='hidden'
               />
 
               <Button
                 onClick={handleSave}
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
+                className='bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto'
               >
                 <FiSave size={18} />
                 Simpan Tanda Tangan
@@ -319,14 +319,14 @@ export default function DigitalSignaturePage() {
 
             {/* Preview Gambar */}
             {previewImage && (
-              <div className="pt-6 text-center">
-                <p className="text-sm text-gray-600 mb-2 font-medium">
+              <div className='pt-6 text-center'>
+                <p className='text-sm text-gray-600 mb-2 font-medium'>
                   Preview Tanda Tangan:
                 </p>
                 <motion.img
                   src={previewImage}
-                  alt="Preview Signature"
-                  className="mx-auto border border-gray-300 rounded-lg shadow-sm bg-white max-h-40 object-contain"
+                  alt='Preview Signature'
+                  className='mx-auto border border-gray-300 rounded-lg shadow-sm bg-white max-h-40 object-contain'
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
@@ -334,7 +334,7 @@ export default function DigitalSignaturePage() {
               </div>
             )}
 
-            <p className="text-center text-xs text-gray-500 pt-2">
+            <p className='text-center text-xs text-gray-500 pt-2'>
               Pastikan tanda tangan terlihat jelas sebelum disimpan.
             </p>
           </CardContent>
