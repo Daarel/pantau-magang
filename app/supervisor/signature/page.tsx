@@ -11,6 +11,7 @@ import { LuPenLine } from "react-icons/lu";
 import { HiOutlineTrash, HiOutlineUpload, HiOutlineEye } from "react-icons/hi";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import Image from "next/image";
 
 // 🔧 Deklarasi global property agar TS gak error waktu kita pakai window.signatureInput
 declare global {
@@ -92,8 +93,18 @@ export default function DigitalSignaturePage() {
       let dataUrl = "";
       if (uploadedImage) {
         dataUrl = uploadedImage;
-      } else if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
-        dataUrl = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+      } else if (
+        sigCanvas.current &&
+        typeof sigCanvas.current.getTrimmedCanvas === "function" && 
+        !sigCanvas.current.isEmpty()
+      ) {
+        const trimmedCanvas = sigCanvas.current.getTrimmedCanvas();
+        if (
+          trimmedCanvas &&
+          typeof trimmedCanvas.toDataURL === "function" 
+        ) {
+          dataUrl = trimmedCanvas.toDataURL("image/png");
+        }
       }
 
       if (!dataUrl) {
@@ -221,7 +232,7 @@ export default function DigitalSignaturePage() {
               }`}
             >
               {uploadedImage ? (
-                <img
+                <Image
                   src={uploadedImage}
                   alt="Uploaded signature"
                   className="object-contain w-full h-full"
