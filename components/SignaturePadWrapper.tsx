@@ -21,12 +21,13 @@ interface Props {
 }
 
 /**
- * Wrapper SignaturePad — langsung hilangkan placeholder saat mouse/jari ditekan.
+ * ✅ Wrapper SignaturePad — placeholder langsung hilang & bisa gambar di interaksi pertama.
  */
 const SignaturePadWrapper = forwardRef<SignaturePadHandle, Props>(
   ({ penColor = "black", className, onBegin }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const padRef = useRef<SignaturePad | null>(null);
+    const hasStartedRef = useRef(false);
 
     useEffect(() => {
       const canvas = canvasRef.current;
@@ -34,7 +35,7 @@ const SignaturePadWrapper = forwardRef<SignaturePadHandle, Props>(
 
       const resizeCanvas = () => {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        const data = padRef.current?.toData(); // simpan coretan saat resize
+        const data = padRef.current?.toData();
         canvas.width = canvas.offsetWidth * ratio;
         canvas.height = canvas.offsetHeight * ratio;
         const ctx = canvas.getContext("2d");
@@ -44,20 +45,26 @@ const SignaturePadWrapper = forwardRef<SignaturePadHandle, Props>(
 
       resizeCanvas();
 
-      // ✍️ Inisialisasi SignaturePad
       const pad = new SignaturePad(canvas, { penColor });
       padRef.current = pad;
 
-      // 🔥 Hubungkan event onBegin bawaan SignaturePad
-      (pad as any).onBegin = () => {
-        if (typeof onBegin === "function") onBegin();
+      const triggerBeginOnce = () => {
+        // ⏱️ Hanya panggil sekali agar placeholder langsung hilang
+        if (!hasStartedRef.current) {
+          hasStartedRef.current = true;
+          if (typeof onBegin === "function") onBegin();
+        }
       };
 
-      // 🖱 Langsung trigger saat mouse/jari ditekan (agar placeholder hilang segera)
-      const handleStart = () => {
-        if (typeof onBegin === "function") onBegin();
+      // 🖱️ Dengarkan hanya event awal dan biarkan SignaturePad meng-handle drawing
+      const handleStart = (e: Event) => {
+        triggerBeginOnce();
+        // Jangan panggil metode internal (_strokeBegin/_strokeUpdate/_strokeEnd)
+        // SignaturePad sudah mengikat listener-nya sendiri pada elemen canvas.
       };
 
+      // Gunakan pointer events (lebih universal), tetap sertakan fallback untuk browser lama
+      canvas.addEventListener("pointerdown", handleStart);
       canvas.addEventListener("mousedown", handleStart);
       canvas.addEventListener("touchstart", handleStart);
 
@@ -65,6 +72,7 @@ const SignaturePadWrapper = forwardRef<SignaturePadHandle, Props>(
 
       return () => {
         window.removeEventListener("resize", resizeCanvas);
+        canvas.removeEventListener("pointerdown", handleStart);
         canvas.removeEventListener("mousedown", handleStart);
         canvas.removeEventListener("touchstart", handleStart);
         pad.off();
@@ -72,7 +80,10 @@ const SignaturePadWrapper = forwardRef<SignaturePadHandle, Props>(
     }, [penColor, onBegin]);
 
     useImperativeHandle(ref, () => ({
-      clear: () => padRef.current?.clear(),
+      clear: () => {
+        hasStartedRef.current = false; // reset biar bisa trigger ulang
+        padRef.current?.clear();
+      },
       isEmpty: () => padRef.current?.isEmpty() ?? true,
       toDataURL: (type = "image/png") =>
         canvasRef.current?.toDataURL(type) ?? "",
