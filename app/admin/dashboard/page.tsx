@@ -35,7 +35,7 @@ export default async function AdminDashboard() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/");
+    redirect("/"); 
   }
 
   const { data: summary, error } = await supabase
