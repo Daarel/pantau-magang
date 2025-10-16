@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, useEffect, DragEvent } from "react";
-import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -12,14 +11,10 @@ import { HiOutlineTrash, HiOutlineUpload, HiOutlineEye } from "react-icons/hi";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import Image from "next/image";
+import SignaturePadWrapper, {
+  SignaturePadHandle,
+} from "@/components/SignaturePadWrapper";
 
-// ✅ Dynamic import supaya SignatureCanvas gak dijalankan di server (fix error vercel)
-const SignatureCanvas = dynamic<any>(
-  () => import("react-signature-canvas").then((mod) => mod.default),
-  { ssr: false }
-);
-
-// 🔧 Deklarasi global property agar TS gak error waktu kita pakai window.signatureInput
 declare global {
   interface Window {
     signatureInput?: HTMLInputElement | null;
@@ -27,11 +22,11 @@ declare global {
 }
 
 export default function DigitalSignaturePage() {
+  const sigCanvas = useRef<SignaturePadHandle | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isEmpty, setIsEmpty] = useState(true);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const sigCanvas = useRef<any>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
@@ -57,31 +52,36 @@ export default function DigitalSignaturePage() {
     }
   };
 
+  // 🩵 Diperbarui: preview tidak menghapus isi canvas
   const handlePreview = () => {
     let dataUrl = "";
     if (uploadedImage) {
       dataUrl = uploadedImage;
     } else if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
-      dataUrl = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+      dataUrl = sigCanvas.current.toDataURL("image/png");
     }
-    if (dataUrl) setPreviewImage(dataUrl);
+
+    if (dataUrl) {
+      setPreviewImage(dataUrl);
+      // 🩵 Tambahan: simpan cache tanda tangan terakhir
+      sessionStorage.setItem("lastSignaturePreview", dataUrl);
+    }
   };
 
   const handleSave = async () => {
     const supabase = createClient();
 
     try {
-      // 🔹 Ambil user login
       const {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
+
       if (userError || !user) {
         toast.warning("Kamu harus login dulu sebelum menyimpan tanda tangan!");
         return;
       }
 
-      // 🔹 Ambil ID dari tabel users
       const { data: userData, error: userTableError } = await supabase
         .from("users")
         .select("id")
@@ -93,37 +93,30 @@ export default function DigitalSignaturePage() {
         return;
       }
 
-      const supervisorId = userData.id; // ✅ ini yang dipakai nanti
+      const supervisorId = userData.id;
 
-      // 🔹 Ambil data dari canvas / upload
       let dataUrl = "";
       if (uploadedImage) {
         dataUrl = uploadedImage;
-      } else if (
-        sigCanvas.current &&
-        typeof sigCanvas.current.getTrimmedCanvas === "function" &&
-        !sigCanvas.current.isEmpty()
-      ) {
-        const trimmedCanvas = sigCanvas.current.getTrimmedCanvas();
-        if (trimmedCanvas && typeof trimmedCanvas.toDataURL === "function") {
-          dataUrl = trimmedCanvas.toDataURL("image/png");
-        }
+      } else if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
+        dataUrl = sigCanvas.current.toDataURL("image/png");
+      } 
+      // 🩵 Tambahan fallback: pakai preview terakhir kalau canvas kosong
+      else if (previewImage) {
+        dataUrl = previewImage;
+      } else {
+        const cached = sessionStorage.getItem("lastSignaturePreview");
+        if (cached) dataUrl = cached;
       }
 
       if (!dataUrl) {
-        toast.warning(
-          "Tanda tangan kosong! Silakan gambar atau upload terlebih dahulu."
-        );
+        toast.warning("Tanda tangan kosong! Gambar atau upload dulu.");
         return;
       }
 
-      // 🔹 Convert base64 ke blob
       const blob = await (await fetch(dataUrl)).blob();
-
-      // 🔹 Buat nama file unik
       const fileName = `signature_${supervisorId}_${Date.now()}.png`;
 
-      // 🔹 Upload ke bucket Supabase
       const { error: uploadError } = await supabase.storage
         .from("signature")
         .upload(fileName, blob, {
@@ -133,20 +126,17 @@ export default function DigitalSignaturePage() {
 
       if (uploadError) throw uploadError;
 
-      // 🔹 Ambil public URL
       const { data: publicUrlData } = supabase.storage
         .from("signature")
         .getPublicUrl(fileName);
 
       const signatureUrl = publicUrlData.publicUrl;
 
-      // 🔹 Nonaktifkan tanda tangan lama supervisor
       await supabase
         .from("signatures")
         .update({ is_active: false })
         .eq("supervisor_id", supervisorId);
 
-      // 🔹 Simpan tanda tangan baru
       const { error: insertError } = await supabase.from("signatures").insert({
         supervisor_id: supervisorId,
         signature_url: signatureUrl,
@@ -163,7 +153,6 @@ export default function DigitalSignaturePage() {
     }
   };
 
-  // 📂 Fungsi Drag & Drop PNG
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
@@ -176,6 +165,7 @@ export default function DigitalSignaturePage() {
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
+
     const file = e.dataTransfer.files?.[0];
     if (file && file.type === "image/png") {
       const reader = new FileReader();
@@ -189,40 +179,29 @@ export default function DigitalSignaturePage() {
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (sigCanvas.current) {
-        sigCanvas.current.off();
-        sigCanvas.current.on();
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
-    <div className='min-h-screen flex items-center justify-center via-slate-50 to-indigo-100 p-4 sm:p-6'>
+    <div className="min-h-screen flex items-center justify-center via-slate-50 to-indigo-100 p-4 sm:p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className='w-full max-w-3xl'
+        className="w-full max-w-3xl"
       >
-        <Card className='rounded-2xl border-gray-200 bg-white/80 backdrop-blur'>
-          <CardHeader className='text-center space-y-2 pb-2'>
-            <CardTitle className='text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center justify-center gap-2'>
-              <LuPenLine className='text-blue-600' size={24} />
+        <Card className="rounded-2xl border-gray-200 bg-white/80 backdrop-blur">
+          <CardHeader className="text-center space-y-2 pb-2">
+            <CardTitle className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center justify-center gap-2">
+              <LuPenLine className="text-blue-600" size={24} />
               Tanda Tangan Digital
             </CardTitle>
-            <p className='text-gray-500 text-sm px-2 normal-case'>
+            <p className="text-gray-500 text-sm px-2 normal-case">
               Buat tanda tangan kamu untuk keperluan verifikasi dokumen.
             </p>
           </CardHeader>
 
           <Separator />
 
-          <CardContent className='p-4 sm:p-6 space-y-6'>
-            {/* 🎨 Area Canvas / Drag-drop */}
+          <CardContent className="p-4 sm:p-6 space-y-6">
+            {/* 🎨 Area Canvas / Upload */}
             <motion.div
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -237,31 +216,27 @@ export default function DigitalSignaturePage() {
               {uploadedImage ? (
                 <Image
                   src={uploadedImage}
-                  alt='Uploaded signature'
-                  width={600}
-                  height={300}
-                  className='object-contain w-full h-full'
+                  alt="Uploaded signature"
+                  className="object-contain w-full h-full"
                 />
               ) : (
                 <>
-                  <SignatureCanvas
+                  <SignaturePadWrapper
                     ref={sigCanvas}
-                    penColor='black'
-                    canvasProps={{
-                      className:
-                        "rounded-xl cursor-crosshair bg-white w-full h-full",
+                    penColor="black"
+                    onBegin={() => {
+                      if (isEmpty) setIsEmpty(false);
                     }}
-                    onBegin={() => setIsEmpty(false)}
                   />
                   {isEmpty && (
-                    <div className='absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300 text-center px-2'>
-                      <p className='text-gray-400 text-sm flex flex-col items-center gap-1'>
-                        <LuPenLine className='text-gray-400' size={16} />
-                        <span className='normal-case'>
-                          Gambar tanda tangan kamu disini
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-2">
+                      <p className="text-gray-400 text-sm flex flex-col items-center gap-1">
+                        <LuPenLine className="text-gray-400" size={16} />
+                        <span className="normal-case">
+                          Klik 1x lalu tanda tangan di area ini
                         </span>
-                        <span className='text-xs text-gray-400 normal-case'>
-                          (Seret atau unggah dari file)
+                        <span className="text-xs text-gray-400 normal-case">
+                          (Seret atau unggah file PNG)
                         </span>
                       </p>
                     </div>
@@ -270,36 +245,34 @@ export default function DigitalSignaturePage() {
               )}
             </motion.div>
 
-            {/* 👁️ Tombol Preview */}
             {!isEmpty && (
-              <div className='flex justify-center -mt-4 mb-2'>
+              <div className="flex justify-center -mt-4 mb-2">
                 <Button
                   onClick={handlePreview}
-                  variant='outline'
-                  className='border-gray-400 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-300 shadow-md'
+                  variant="outline"
+                  className="border-gray-400 bg-white/90 text-gray-700 hover:bg-gray-100 hover:text-black shadow-md"
                 >
-                  <HiOutlineEye size={18} className='mr-2' />
-                  Preview 
-                </Button> 
+                  <HiOutlineEye size={18} className="mr-2" />
+                  Preview
+                </Button>
               </div>
             )}
 
-            {/* Tombol Aksi */}
-            <div className='flex flex-col sm:flex-row justify-center gap-3 sm:gap-4'>
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
               <Button
                 onClick={handleClear}
-                variant='outline'
-                className='border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto'
+                variant="outline"
+                className="border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black flex items-center gap-2 w-full sm:w-auto"
               >
                 <HiOutlineTrash size={18} />
                 Bersihkan
               </Button>
 
               <Button
-                type='button'
-                variant='outline'
+                type="button"
+                variant="outline"
                 onClick={() => window.signatureInput?.click()}
-                className='border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto'
+                className="border-gray-400 text-gray-600 hover:bg-gray-100 hover:text-black flex items-center gap-2 w-full sm:w-auto"
               >
                 <HiOutlineUpload size={18} />
                 Upload PNG
@@ -307,25 +280,24 @@ export default function DigitalSignaturePage() {
 
               <input
                 ref={fileInputRef}
-                type='file'
-                accept='image/png'
+                type="file"
+                accept="image/png"
                 onChange={handleInputChange}
-                className='hidden'
+                className="hidden"
               />
 
               <Button
                 onClick={handleSave}
-                className='bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto'
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg flex items-center gap-2 w-full sm:w-auto"
               >
                 <FiSave size={18} />
                 Simpan Tanda Tangan
               </Button>
             </div>
 
-            {/* Preview Gambar */}
             {previewImage && (
-              <div className='pt-6 text-center'>
-                <p className='text-sm text-gray-600 mb-2 font-medium'>
+              <div className="pt-6 text-center">
+                <p className="text-sm text-gray-600 mb-2 font-medium">
                   Preview Tanda Tangan:
                 </p>
                 <motion.div
@@ -345,7 +317,7 @@ export default function DigitalSignaturePage() {
               </div>
             )}
 
-            <p className='text-center text-xs text-gray-500 pt-2'>
+            <p className="text-center text-xs text-gray-500 pt-2">
               Pastikan tanda tangan terlihat jelas sebelum disimpan.
             </p>
           </CardContent>
