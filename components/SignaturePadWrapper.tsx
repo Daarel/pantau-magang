@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef, useImperativeHandle, forwardRef } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import SignaturePad from "signature_pad";
 
 export interface SignaturePadHandle {
@@ -43,13 +48,12 @@ const SignaturePadWrapper = forwardRef<SignaturePadHandle, Props>(
       const pad = new SignaturePad(canvas, { penColor });
       padRef.current = pad;
 
-      // 🩵 Perbaikan di sini — trigger onBegin saat mulai menggambar
-      const handleBegin = () => {
+      // 🔥 Hubungkan event onBegin bawaan SignaturePad
+      (pad as any).onBegin = () => {
         if (typeof onBegin === "function") onBegin();
       };
-      pad.addEventListener("beginStroke", handleBegin); // event asli dari signature_pad
 
-      // 🖱 Langsung trigger saat mouse/jari ditekan (backup untuk browser tertentu)
+      // 🖱 Langsung trigger saat mouse/jari ditekan (agar placeholder hilang segera)
       const handleStart = () => {
         if (typeof onBegin === "function") onBegin();
       };
@@ -63,7 +67,6 @@ const SignaturePadWrapper = forwardRef<SignaturePadHandle, Props>(
         window.removeEventListener("resize", resizeCanvas);
         canvas.removeEventListener("mousedown", handleStart);
         canvas.removeEventListener("touchstart", handleStart);
-        pad.removeEventListener("beginStroke", handleBegin); // 🩵 tambahkan cleanup
         pad.off();
       };
     }, [penColor, onBegin]);
