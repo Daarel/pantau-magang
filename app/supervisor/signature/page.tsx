@@ -325,10 +325,7 @@ export default function DigitalSignaturePage() {
                 <p className='text-sm text-gray-600 mb-2 font-medium'>
                   Preview Tanda Tangan:
                 </p>
-                <motion.img
-                  src={previewImage}
-                  alt="Preview Signature"
-                  className="mx-auto border border-gray-300 rounded-lg shadow-sm bg-white max-h-40 object-contain"
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
