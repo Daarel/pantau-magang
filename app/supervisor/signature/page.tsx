@@ -14,9 +14,10 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 // ✅ Dynamic import supaya SignatureCanvas gak dijalankan di server (fix error vercel)
-const SignatureCanvas = dynamic<any>(() => import("react-signature-canvas"), {
-  ssr: false,
-});
+const SignatureCanvas = dynamic<any>(
+  () => import("react-signature-canvas").then((mod) => mod.default),
+  { ssr: false }
+);
 
 // 🔧 Deklarasi global property agar TS gak error waktu kita pakai window.signatureInput
 declare global {
@@ -237,6 +238,8 @@ export default function DigitalSignaturePage() {
                 <Image
                   src={uploadedImage}
                   alt='Uploaded signature'
+                  width={600}
+                  height={300}
                   className='object-contain w-full h-full'
                 />
               ) : (
@@ -334,6 +337,8 @@ export default function DigitalSignaturePage() {
                   <Image
                     src={previewImage}
                     alt="Preview Signature"
+                    width={300}
+                    height={150}
                     className="mx-auto border border-gray-300 rounded-lg shadow-sm bg-white max-h-40 object-contain"
                   />
                 </motion.div>
