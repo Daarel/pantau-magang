@@ -93,8 +93,18 @@ export default function DigitalSignaturePage() {
       let dataUrl = "";
       if (uploadedImage) {
         dataUrl = uploadedImage;
-      } else if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
-        dataUrl = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
+      } else if (
+        sigCanvas.current &&
+        typeof sigCanvas.current.getTrimmedCanvas === "function" && 
+        !sigCanvas.current.isEmpty()
+      ) {
+        const trimmedCanvas = sigCanvas.current.getTrimmedCanvas();
+        if (
+          trimmedCanvas &&
+          typeof trimmedCanvas.toDataURL === "function" 
+        ) {
+          dataUrl = trimmedCanvas.toDataURL("image/png");
+        }
       }
 
       if (!dataUrl) {
