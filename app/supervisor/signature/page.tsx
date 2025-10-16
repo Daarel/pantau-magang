@@ -274,7 +274,7 @@ export default function DigitalSignaturePage() {
                   className='border-gray-400 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-300 shadow-md'
                 >
                   <HiOutlineEye size={18} className='mr-2' />
-                  Preview
+                  Preview 
                 </Button>
               </div>
             )}
