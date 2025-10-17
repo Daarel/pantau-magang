@@ -1,0 +1,32 @@
+name: Auto Merge be/admin to main
+
+on:
+  push:
+    branches:
+      - be/admin
+
+permissions:
+  content: write
+  pull-requests: write
+
+jobs:
+  merge-to-main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: git fetch origin main
+
+      - name: Merge be/admin into main
+        run: |
+          git checkout main
+          git merge origin/be/admin --no-edit
+          git push origin main

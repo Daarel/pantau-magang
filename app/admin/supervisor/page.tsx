@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { toast } from "sonner";
 
+export const revalidate = 60
+
 export default async function AdminUserPage({
   searchParams,
 }: {

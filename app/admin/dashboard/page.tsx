@@ -28,6 +28,8 @@ type ActivityType =
   | "update_supervisor"
   | "change_password";
 
+export const revalidate = 60
+
 export default async function AdminDashboard() {
   const supabase = await createClient();
   const {
