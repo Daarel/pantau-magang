@@ -376,7 +376,7 @@ export function AttendanceForm() {
               <FormItem>
                 <FormLabel>
                   Lokasi
-                  <span className="text-[11px] text-gray-500 flex items-center gap-0.5">
+                  <span className="text-[10px] md:text-[11px] text-black/60 flex items-center gap-0.5">
                     <AiOutlineInfoCircle className="w-3 h-3" />
                     Pastikan Anda berada di area LEMIGAS
                   </span>

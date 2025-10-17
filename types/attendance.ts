@@ -17,7 +17,6 @@ export type AttendanceIntern = {
   user_id: string
   date: string
   check_in_time: string | null
-  check_out_time: string | null
   status: "hadir" | "sakit" | "izin" | "alfa"
   notes: string
   file_url: string

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AttendanceIntern, AttendanceCheckIn } from "@/types/attendance";
-import { redirect } from "next/navigation";
 import { toast } from "sonner";
+import { getUserData } from "@/lib/utils";
 
 // Fetch data user (intern)
 export function useAttendanceData(activeTab: string) {
@@ -14,27 +14,9 @@ export function useAttendanceData(activeTab: string) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: { user }, error: authError, } = await supabase.auth.getUser();
+        const userData = await getUserData(supabase);
 
-        if (authError || !user) {
-          redirect("/");
-          return;
-        }
-
-        // Dapatkan user_id dari tabel users berdasarkan auth_id
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select("id")
-          .eq("auth_id", user.id)
-          .single();
-
-        if (!userData) {
-          setError("User ID not found in user data");
-          setLoading(false);
-          return;
-        }
-
-        // Query data dari Supabase berdasarkan user_id
+        // Query data attendance berdasarkan user_id
         let query = supabase
           .from("attendance")
           .select("*")
@@ -113,45 +95,137 @@ export const InsertAttendanceIntern = async (
   return data;
 };
 
-// Update data attendance untuk menambahkan data checkout intern
-export const UpdateCheckOutTime = async (userId: string, date: string) => {
+// Cek dan insert status alfa jika belum absen setelah end_time
+export const InsertAlfaStatus = async() => {
   const supabase = createClient();
   try {
-    // Dapatkan record attendance untuk user pada tanggal tertentu
-    const { data: attendanceRecord, error: fetchError } = await supabase
-      .from("attendance")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("date", date)
-      .eq("status", "hadir")
-      .is("check_out_time", null)
+    const userData = await getUserData(supabase);
+
+    // Dapatkan jadwal dari supervisor
+    const { data: schedule, error: scheduleError } = await supabase
+      .from("attendance_schedules")
+      .select("start_time, end_time")
+      .eq("supervisor_id", userData.supervisor_id)
+      .order("created_at", { ascending: false })
+      .limit(1)
       .single();
 
-    if (fetchError) {
-      toast.error('Gagal melakukan sinkronisasi absensi')
+    if (scheduleError) {
+      console.error("Error fetching schedule:", scheduleError);
+      return;
     }
 
-    if (!attendanceRecord) {
-      toast.error('Data absensi hari ini tidak ditemukan');
+    const today = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+    const now = new Date();
+    
+    // Parse end_time dari schedule
+    const [hours, minutes, seconds] = schedule.end_time.split(':');
+    const endTimeToday = new Date();
+    endTimeToday.setHours(parseInt(hours), parseInt(minutes), parseInt(seconds), 0);
+
+    // Cek apakah sudah melewati end_time hari ini
+    if (now > endTimeToday) {
+      // Cek apakah user sudah memiliki record attendance untuk hari ini
+      const { data: existingAttendance, error: checkError } = await supabase
+        .from("attendance")
+        .select("id")
+        .eq("user_id", userData.id)
+        .eq("date", today)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
+        console.error("Error checking existing attendance:", checkError);
+        return;
+      }
+
+      // Jika tidak ada record attendance untuk hari ini, insert status alfa
+      if (!existingAttendance) {
+        const { data, error: insertError } = await supabase
+          .from("attendance")
+          .insert([
+            {
+              user_id: userData.id,
+              date: today,
+              check_in_time: null,
+              status: "alfa",
+              notes: null,
+              file_url: null,
+              dispensation: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+          ])
+          .select();
+
+        if (insertError) {
+          console.error("Error inserting auto absent:", insertError);
+        } else {
+          console.log("Auto absent inserted successfully:", data);
+          return data;
+        }
+      }
     }
-
-    // Update check_out_time
-    const { data, error } = await supabase
-      .from("attendance")
-      .update({
-        check_out_time: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", attendanceRecord?.id)
-      .select();
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
   } catch (error) {
-    console.error("Error updating check-out time:", error);
+    console.error("Error in InsertAutoAbsent:", error);
     throw error;
   }
-};
+}
+
+// Hook untuk mengecek dan insert auto absent
+export function useInsertAlfa() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const checkAndInsertAlfaStatus = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      await InsertAlfaStatus();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { checkAndInsertAlfaStatus, loading, error };
+}
+
+export const useScheduleSupervisor = () => {
+  const [schedule, setSchedule] = useState<{ start_time: string; end_time: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClient(); 
+  
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const userData = await getUserData(supabase);
+        const { data, error } = await supabase
+          .from("attendance_schedules")
+          .select("start_time, end_time")
+          .eq("supervisor_id", userData.supervisor_id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single();
+        if (error) {
+          setError(`Error fetching schedule: ${error.message}`);
+          console.error("Error fetching schedule:", error);
+        } else {
+          setSchedule(data);
+          setError(null);
+        }
+      } catch (err) {
+        setError("An unexpected error occurred");
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSchedule();
+  }, [supabase]);
+
+  return { schedule, loading, error };
+}

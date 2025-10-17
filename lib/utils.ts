@@ -206,3 +206,18 @@ export const processImage = async (file: File, maxSizeMB = 2): Promise<File> => 
   // Jika masih terlalu besar setelah beberapa percobaan, kembalikan file terkompresi terbaik
   return compressedFile;
 };
+
+// Kueri untuk mendapatkan data user dan supervisor_id
+export const getUserData = async (supabase: any) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("User not authenticated");
+
+  const { data: userData, error } = await supabase
+    .from("users")
+    .select("id, supervisor_id")
+    .eq("auth_id", user.id)
+    .single();
+
+  if (error || !userData) throw new Error("User data not found");
+  return userData;
+};
