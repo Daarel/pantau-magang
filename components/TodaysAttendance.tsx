@@ -1,24 +1,36 @@
 'use client'
-import React from "react";
+import { useEffect, useRef } from "react";
 // Icons
 import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
 // Components
 import { useInternData } from '@/hooks/useInternData'
+import { useInsertAlfa } from '@/hooks/useAttendance';
 import { statusColor } from '@/lib/utils';
 import { CheckInButton, DisabledButton } from "./AttendanceButtonHandler";
 
 export default function TodaysAttendance() {
   const { summaryData, loading, error } = useInternData();
+  const { checkAndInsertAlfaStatus, error: alfaError } = useInsertAlfa();
 
   const status = loading ? "-" : summaryData?.status ?? "-";
   const todayStatus = statusColor(status);
   const isAlfa = todayStatus.text === "Alfa";
   const isIzin = todayStatus.text === "Izin";
   const isSakit = todayStatus.text === "Sakit";
+  const hasInsertedAlfaRef = useRef(false);
 
   const showCheckInButton = !loading && (!summaryData?.status || summaryData.status === "-" || todayStatus.text === "Belum Tercatat");
   const hasCheckIn = !loading && summaryData?.today_check_in && summaryData.today_check_in !== "-";
+
+  useEffect(() => {
+    if (alfaError) console.error("Error inserting alfa status:", alfaError);
+
+  if (!loading && summaryData?.user_id && !summaryData?.status && !hasInsertedAlfaRef.current) {
+    checkAndInsertAlfaStatus();
+    hasInsertedAlfaRef.current = true; // tandai sudah insert alfa hari ini
+  }
+}, [loading, summaryData?.user_id, summaryData?.status, alfaError, checkAndInsertAlfaStatus]);
 
   return (
     <div className='flex flex-col border-2 gap-6 py-4 px-5 rounded-md'>
@@ -52,23 +64,23 @@ export default function TodaysAttendance() {
       ) : (
         <>
           {isAlfa && (
-            <DisabledButton message="Maaf, Anda Alfa Hari Ini!!" />
+            <DisabledButton message="Tidak hadir tanpa keterangan" />
           )}
 
           {isIzin && (
-            <DisabledButton message="Besok harus berangkat yaa.." />
+            <DisabledButton message="Izin tidak hadir" />
           )}
 
           {isSakit && (
-            <DisabledButton message="Semoga lekas sembuh yaa.." />
+            <DisabledButton message="Tidak hadir karena sakit" />
           )}
 
           {!isAlfa && showCheckInButton && (
-            <CheckInButton message="Silakan Absen" />
+            <CheckInButton message="Silakan lakukan absensi" />
           )}
 
           {hasCheckIn && (
-            <DisabledButton message="Besok masuk lagi yaa!" />
+            <DisabledButton message="Telah melakukan absensi" />
           )}
         </>
       )}
