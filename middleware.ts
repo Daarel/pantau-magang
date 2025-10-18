@@ -31,6 +31,12 @@ export async function middleware(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname;
 
+    if (pathname.startsWith("/profile")) {
+      if (!user) {
+        return NextResponse.redirect(new URL("/not-authorized", request.url));
+      }
+    }
+
     const ROLES = ["admin", "supervisor", "intern"] as const;
     type Role = (typeof ROLES)[number];
 
@@ -60,5 +66,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/supervisor/:path*", "/intern/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/supervisor/:path*",
+    "/intern/:path*",
+    "/profile/:path*",
+  ],
 };
