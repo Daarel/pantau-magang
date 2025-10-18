@@ -43,19 +43,19 @@ export async function middleware(request: NextRequest) {
     const matched = roleMap.find((r) => pathname.startsWith(r.prefix));
     if (matched) {
       if (!user) {
-        return NextResponse.redirect(new URL("/login", request.url));
+        return NextResponse.redirect(new URL("/not-authorized", request.url));
       }
 
       const role = user.user_metadata?.role;
       if (role !== matched.role) {
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/not-authorized", request.url));
       }
     }
 
     return response;
   } catch (err) {
     console.error("Middleware supabase error:", err);
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/not-authorized", request.url));
   }
 }
 

@@ -207,7 +207,7 @@ export default function Profile() {
                   <div className="flex flex-col justify-center items-center gap-2 border-dashed border-black/30 border-2 h-full w-full rounded-full bg-gray-200">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                     <p className="text-center text-sm">
-                      Mengkompresi gambar...
+                      Mengompres gambar...
                     </p>
                   </div>
                 ) : (
@@ -220,7 +220,6 @@ export default function Profile() {
                 )}
               </div>
 
-              {/* Tombol Edit & Hapus di atas foto */}
               {!isUploading && (
                 <div className="absolute bottom-3 right-3 flex gap-2 z-50">
                   <div className="rounded-full flex p-1 bg-white/70 hover:bg-white/90 shadow-md gap-2">
