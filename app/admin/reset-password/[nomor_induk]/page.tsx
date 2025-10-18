@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useParams, useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
 import Combobox from "@/components/ui/combobox";
@@ -20,6 +20,13 @@ export default function AdminResetPassword() {
     { value: string; label: string }[]
   >([]);
   const router = useRouter();
+  const { nomor_induk } = useParams<{ nomor_induk: string }>();
+
+  useEffect(() => {
+    if (nomor_induk) {
+      setSelectedNomorInduk(nomor_induk);
+    }
+  }, [nomor_induk]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -84,7 +91,7 @@ export default function AdminResetPassword() {
   return (
     <div className='flex flex-col justify-center items-center min-h-screen gap-10 mt-[-100px] px-4'>
       <Link
-        href='/admin/dashboard'
+        href=""
         className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
       >
         <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
@@ -109,13 +116,26 @@ export default function AdminResetPassword() {
               </span>
               Nomor Induk
             </Label>
-            <Combobox
-              fields={dataUserByNomorInduk}
-              value={selectedNomorInduk}
-              onChange={setSelectedNomorInduk}
-              placeholder='Pilih nomor induk'
-              emptyText='Nomor induk tidak ditemukan'
-            />
+            {nomor_induk ? (
+              <Input
+                id='nomor_induk'
+                name='nomor_induk'
+                value={selectedNomorInduk}
+                onChange={(e) => setSelectedNomorInduk(e.target.value)}
+                className='mt-3 w-full'
+                disabled
+                required
+              />
+            ) : (
+              <Combobox
+                fields={dataUserByNomorInduk}
+                value={selectedNomorInduk}
+                onChange={setSelectedNomorInduk}
+                defaultValue={nomor_induk ?? ""}
+                placeholder='Pilih nomor induk'
+                emptyText='Nomor induk tidak ditemukan'
+              />
+            )}
           </div>
 
           <div>

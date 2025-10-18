@@ -20,6 +20,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import UpdateInternForm from "./UpdateInternForm";
 import DataTableHeader from "@/components/DataTableHeader";
 import { toast } from "sonner";
+import { FaKey } from "react-icons/fa";
 
 interface AdminUserProps {
   tableData: DataColumn[];
@@ -180,6 +181,13 @@ const AdminInternClient: FC<AdminUserProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
+                <DropdownMenuItem
+                  onSelect={() => router.push(`/admin/reset-password/${userData.nomor_induk}`)}
+                  className='cursor-pointer'
+                >
+                  <FaKey className='mr-2' />
+                  Ubah Password
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onSelect={() => {
                     setEditData(userData);
