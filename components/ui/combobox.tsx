@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, type FC } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,20 +16,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
 export interface Option {
   value: string;
   label: string;
 }
-
 interface ComboboxProps {
   fields: Option[];
   value?: string;
   onChange?: (value: string) => void;
+  defaultValue: string;
   placeholder: string;
   emptyText: string;
 }
-
 const Combobox: FC<ComboboxProps> = ({
   fields,
   value,
@@ -39,13 +36,11 @@ const Combobox: FC<ComboboxProps> = ({
   emptyText,
 }) => {
   const [open, setOpen] = useState(false);
-
   const handleSelect = (currentValue: string) => {
     const newValue = currentValue === value ? "" : currentValue;
     onChange?.(newValue);
     setOpen(false);
   };
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild className='my-2'>
@@ -94,5 +89,4 @@ const Combobox: FC<ComboboxProps> = ({
     </Popover>
   );
 };
-
 export default Combobox;

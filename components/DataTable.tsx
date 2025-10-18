@@ -47,7 +47,6 @@ const DataTable: React.FC<DataTableProps> = ({
   onPreviousPage,
   onNextPage,
 }) => {
-  console.log({ totalCount });
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

@@ -31,6 +31,12 @@ export async function middleware(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname;
 
+    if (pathname.startsWith("/profile")) {
+      if (!user) {
+        return NextResponse.redirect(new URL("/not-authorized", request.url));
+      }
+    }
+
     const ROLES = ["admin", "supervisor", "intern"] as const;
     type Role = (typeof ROLES)[number];
 
@@ -43,22 +49,27 @@ export async function middleware(request: NextRequest) {
     const matched = roleMap.find((r) => pathname.startsWith(r.prefix));
     if (matched) {
       if (!user) {
-        return NextResponse.redirect(new URL("/login", request.url));
+        return NextResponse.redirect(new URL("/not-authorized", request.url));
       }
 
       const role = user.user_metadata?.role;
       if (role !== matched.role) {
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/not-authorized", request.url));
       }
     }
 
     return response;
   } catch (err) {
     console.error("Middleware supabase error:", err);
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/not-authorized", request.url));
   }
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/supervisor/:path*", "/intern/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/supervisor/:path*",
+    "/intern/:path*",
+    "/profile/:path*",
+  ],
 };
