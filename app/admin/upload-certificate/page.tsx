@@ -75,12 +75,13 @@ export default function AdminUploadCertificate() {
 
   return (
     <>
-      <Link
-        href='/admin/dashboard'
+      <Button
+        onClick={() => router.back()}
         className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
+        variant='ghost'
       >
         <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
-      </Link>
+      </Button>
 
       <div className='container mx-auto p-8'>
         <Card className='max-w-md mx-auto'>
@@ -106,7 +107,7 @@ export default function AdminUploadCertificate() {
             )}
 
             <div className='flex flex-row items-center text-gray-500'>
-              <CiCircleInfo  className='inline mr-2 text-2xl' />
+              <CiCircleInfo className='inline mr-2 text-2xl' />
               <p className='text-xs normal-case max-w-[45ch]'>
                 File harus kurang dari 3 MB dan hanya menerima format PNG, JPG,
                 atau JPEG.

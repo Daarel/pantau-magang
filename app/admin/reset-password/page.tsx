@@ -10,6 +10,7 @@ import Link from "next/link";
 import Combobox from "@/components/ui/combobox";
 import { getNomorIndukList } from "@/lib/helper/dataInsert.helper";
 import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export default function AdminResetPassword() {
   const supabase = createClient();
@@ -69,12 +70,13 @@ export default function AdminResetPassword() {
 
   return (
     <div className='flex flex-col justify-center items-center min-h-screen gap-10 mt-[-100px] px-4'>
-      <Link
-        href='/admin/dashboard'
+      <Button
+        onClick={() => router.back()}
         className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
+        variant="ghost"
       >
         <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
-      </Link>
+      </Button>
 
       <div className='text-4xl max-sm:text-2xl font-bold text-gray-800 text-center'>
         Ubah Password
