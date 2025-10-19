@@ -10,6 +10,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import Image from "next/image";
 import ProfileDropDown from "./ProfileDropdown";
 import { useEffect, useState } from "react";
+import clsx from "clsx";
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
@@ -49,7 +50,7 @@ export default function Navbar() {
       </div>
 
       <NavigationMenu>
-        <NavigationMenuList className='flex items-center gap-4'>
+        <NavigationMenuList className="flex items-center gap-4">
           <ProfileDropDown
             username={user ? user?.user_metadata.full_name?.split(" ")[0] : "Loading user..."}
             role={

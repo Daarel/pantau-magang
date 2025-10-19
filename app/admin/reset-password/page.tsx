@@ -4,23 +4,32 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
-import { useParams, useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
 import Link from "next/link";
+import Combobox from "@/components/ui/combobox";
+import { getNomorIndukList } from "@/lib/helper/dataInsert.helper";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export default function AdminResetPassword() {
+  const supabase = createClient();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedNomorInduk, setSelectedNomorInduk] = useState<string>("");
+  const [dataUserByNomorInduk, setDataUserByNomorInduk] = useState<
+    { value: string; label: string }[]
+  >([]);
   const router = useRouter();
-  const { nomor_induk } = useParams<{ nomor_induk: string }>();
 
   useEffect(() => {
-    if (nomor_induk) {
-      setSelectedNomorInduk(nomor_induk);
+    async function fetchData() {
+      const dataUserByNomorInduk = await getNomorIndukList();
+      setDataUserByNomorInduk(dataUserByNomorInduk);
     }
-  }, [nomor_induk]);
+
+    fetchData();
+  }, []);
 
   async function handleResetPassword(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -88,14 +97,12 @@ export default function AdminResetPassword() {
               </span>
               Nomor Induk
             </Label>
-            <Input
-              id='nomor_induk'
-              name='nomor_induk'
+            <Combobox
+              fields={dataUserByNomorInduk}
               value={selectedNomorInduk}
-              onChange={(e) => setSelectedNomorInduk(e.target.value)}
-              className='mt-3 w-full'
-              disabled
-              required
+              onChange={setSelectedNomorInduk}
+              placeholder='Pilih nomor induk'
+              emptyText='Nomor induk tidak ditemukan'
             />
           </div>
 

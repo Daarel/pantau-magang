@@ -10,13 +10,13 @@ import { FiAlertCircle } from "react-icons/fi";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { compressImage, processImage } from "@/lib/utils";
 import Link from "next/link";
-import Loading from "../loading";
+import Loading from "./loading";
 
 export default function Profile() {
   const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(
     null
   );
-  const [profileData, setProfileData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<any>(null); 
   const [isUploading, setIsUploading] = useState(false);
   const fallbackAvatar = "/avatar_fallback.png";
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -143,7 +143,6 @@ export default function Profile() {
     setIsUploading(false);
   };
 
-  // 📌 Hapus avatar
   const handleDelete = async () => {
     const supabase = createClient();
 
@@ -214,6 +213,7 @@ export default function Profile() {
                   <Image
                     src={avatarUrl}
                     fill
+                    sizes="10"
                     alt="foto profil Anda"
                     className="object-cover z-0"
                   />
