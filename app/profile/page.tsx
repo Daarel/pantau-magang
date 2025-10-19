@@ -16,7 +16,7 @@ export default function Profile() {
   const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(
     null
   );
-  const [profileData, setProfileData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<any>(null); 
   const [isUploading, setIsUploading] = useState(false);
   const fallbackAvatar = "/avatar_fallback.png";
   const fileInputRef = useRef<HTMLInputElement>(null);
