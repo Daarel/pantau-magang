@@ -10,7 +10,7 @@ import { FiAlertCircle } from "react-icons/fi";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { compressImage, processImage } from "@/lib/utils";
 import Link from "next/link";
-import Loading from "../loading";
+import Loading from "./loading";
 
 export default function Profile() {
   const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(
