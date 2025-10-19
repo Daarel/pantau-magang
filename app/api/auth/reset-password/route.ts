@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
 
-    if (user?.app_metadata.role === "admin") {
+    if (userInfo.role === "admin") {
       await supabase.auth.signOut();
       return NextResponse.json({ success: true, redirect: "/" });
     }
