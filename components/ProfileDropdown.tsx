@@ -86,32 +86,49 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
 
   return (
     <div className='flex flex-row justify-center items-center gap-3 capitalize'>
-      <span className='md:text-lg md:font-normal font-normal tracking-wide'>
+      <span
+        className={`${
+          username === "Loading user..." ? "text-xs font-light" : "text-xl font-normal"
+        } md:font-normal font-normal tracking-wide`}
+      >
         {username}
       </span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className='cursor-pointer'>
-            <Image src={avatarUrl} fill alt='Profile' className="w-full h-full object-cover"/>
+            <Image
+              src={avatarUrl}
+              fill
+              alt='Profile'
+              className='w-full h-full object-cover'
+            />
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-56' align='end'>
           <DropdownMenuLabel>{role}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => handleNavigate("profile")} className="cursor-pointer">
+          <DropdownMenuItem
+            onClick={() => handleNavigate("profile")}
+            className='cursor-pointer'
+          >
             <FaUser className='mr-2 h-4 w-4' />
             <span className='cursor-pointer'>Profil</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleOpenModal} className="cursor-pointer">
+          <DropdownMenuItem
+            onClick={handleOpenModal}
+            className='cursor-pointer'
+          >
             <IoLogOutOutline className='mr-2 h-4 w-4 text-red-600' />
             <span className=' text-red-600'>Keluar</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Modal */}
       <Dialog open={openModal} onOpenChange={setOpenModal}>
-        <DialogContent showCloseButton={false} className='max-w-md rounded-2xl w-5/6'>
+        <DialogContent
+          showCloseButton={false}
+          className='max-w-md rounded-2xl w-5/6'
+        >
           <DialogHeader>
             <DialogTitle className='title__header'>
               Apakah Anda yakin ingin keluar?

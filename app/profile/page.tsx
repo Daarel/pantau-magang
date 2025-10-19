@@ -143,7 +143,6 @@ export default function Profile() {
     setIsUploading(false);
   };
 
-  // 📌 Hapus avatar
   const handleDelete = async () => {
     const supabase = createClient();
 
@@ -214,6 +213,7 @@ export default function Profile() {
                   <Image
                     src={avatarUrl}
                     fill
+                    sizes="10"
                     alt="foto profil Anda"
                     className="object-cover z-0"
                   />
