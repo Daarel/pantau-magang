@@ -49,10 +49,23 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
 
-    if (userInfo.role === "admin") {
-      await supabase.auth.signOut();
-      return NextResponse.json({ success: true, redirect: "/" });
-    }
+    // if (userInfo.role === "admin") {
+    //   await supabase.auth.signOut();
+    //   return NextResponse.json({
+    //     success: true,
+    //     redirect: "/",
+    //     message: "Password berhasil diubah",
+    //   });
+    // }
+    // if (userInfo.role === "admin" && user?.id === userInfo.auth_id) {
+    //   // Admin sedang ubah password dirinya sendiri → logout dia sendiri
+    //   await supabase.auth.signOut();
+    //   return NextResponse.json({
+    //     success: true,
+    //     redirect: "/",
+    //     message: "Password berhasil diubah",
+    //   });
+    // }
 
     return NextResponse.json({
       success: true,
