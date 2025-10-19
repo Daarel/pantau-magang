@@ -24,7 +24,7 @@ interface ComboboxProps {
   fields: Option[];
   value?: string;
   onChange?: (value: string) => void;
-  defaultValue: string;
+  defaultValue?: string;
   placeholder: string;
   emptyText: string;
 }
