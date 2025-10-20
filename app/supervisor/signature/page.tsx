@@ -15,6 +15,8 @@ import SignaturePadWrapper, {
   SignaturePadHandle,
 } from "@/components/SignaturePadWrapper";
 
+export const revalidate = 60
+
 declare global {
   interface Window {
     signatureInput?: HTMLInputElement | null;

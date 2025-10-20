@@ -6,6 +6,8 @@ import Startbutton from "./startbutton";
 import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
 import AnimatedInternList from "./AnimatedInternList";
 
+export const revalidate = 60
+
 export default async function InternProfilePage() {
   const supabase = await createClient();
 

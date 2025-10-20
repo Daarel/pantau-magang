@@ -3,6 +3,8 @@ import AttendanceClient from "@/app/supervisor/attendance/component/AttendanceCl
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
+export const revalidate = 60
+
 export default async function AttendancePage() {
   const supabase = await createClient();
   const {
