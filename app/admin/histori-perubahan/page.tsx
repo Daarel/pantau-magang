@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import AdminHistoryClient from "./components/AdminHistoryClient";
-import Loading from "../loading";
+import Loading from "./loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
