@@ -7,10 +7,9 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Image from "next/image";
-import Link from "next/link";
-import { IoArrowBackOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { CiCircleInfo } from "react-icons/ci";
+import BackButton from "@/components/BackButton";
 
 export default function AdminUploadCertificate() {
   const supabase = createClient();
@@ -75,13 +74,7 @@ export default function AdminUploadCertificate() {
 
   return (
     <>
-      <Button
-        onClick={() => router.back()}
-        className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
-        variant='ghost'
-      >
-        <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
-      </Button>
+      <BackButton />
 
       <div className='container mx-auto p-8'>
         <Card className='max-w-md mx-auto'>

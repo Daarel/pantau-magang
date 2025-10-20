@@ -72,7 +72,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({
         accessorKey: "description",
         header: "Keterangan",
         cell: ({ row }) => (
-          <div className='capitalize'>{row.getValue("description")}</div>
+          <div className='capitalize text-xs'>{row.getValue("description")}</div>
         ),
       },
       {
@@ -86,7 +86,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({
         accessorKey: "created_at",
         header: () => (
           <Button variant='ghost' className='-m-3' onClick={handleSortChange}>
-            Nama Lengkap
+            Tanggal
             <LuArrowUpDown className={`ml-2`} />
           </Button>
         ),

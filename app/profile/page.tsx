@@ -6,17 +6,15 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MdEdit, MdDelete } from "react-icons/md";
-import { FiAlertCircle } from "react-icons/fi";
-import { IoArrowBackOutline } from "react-icons/io5";
 import { compressImage, processImage } from "@/lib/utils";
-import Link from "next/link";
 import Loading from "./loading";
+import BackButton from "@/components/BackButton";
 
 export default function Profile() {
   const [role, setRole] = useState<"intern" | "supervisor" | "admin" | null>(
     null
   );
-  const [profileData, setProfileData] = useState<any>(null); 
+  const [profileData, setProfileData] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fallbackAvatar = "/avatar_fallback.png";
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -176,64 +174,51 @@ export default function Profile() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
-        <Link
-          href={
-            role === "intern"
-              ? "/intern/dashboard"
-              : role === "supervisor"
-              ? "/supervisor/dashboard"
-              : "/admin/dashboard"
-          }
-          className="px-2 py-2 hover:bg-gray-200 rounded-full transition"
-        >
-          <IoArrowBackOutline className="text-2xl text-gray-700 hover:text-gray-900" />
-        </Link>
+      <BackButton />
 
-        <div className="absolute left-1/2 -translate-x-1/2 text-center">
-          <h1 className="h4 font-semibold">Profile</h1>
-          <p className="text-gray-500">Informasi tentang saya</p>
+      <div className='flex items-center justify-center mt-8'>
+        <div className='absolute left-1/2 -translate-x-1/2 text-center'>
+          <h1 className='h4 font-semibold'>Profile</h1>
+          <p className='text-gray-500'>Informasi tentang saya</p>
         </div>
       </div>
 
-      <div className="flex justify-center items-center flex-col mt-10">
+      <div className='flex justify-center items-center flex-col mt-10'>
         <Card>
-          <CardContent className="flex flex-col justify-center items-center">
-            <div className="relative w-[300px] h-[300px]">
+          <CardContent className='flex flex-col justify-center items-center'>
+            <div className='relative w-[300px] h-[300px]'>
               {/* Foto profil */}
-              <div className="w-full h-full rounded-full overflow-hidden relative z-0">
+              <div className='w-full h-full rounded-full overflow-hidden relative z-0'>
                 {isUploading ? (
-                  <div className="flex flex-col justify-center items-center gap-2 border-dashed border-black/30 border-2 h-full w-full rounded-full bg-gray-200">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                    <p className="text-center text-sm">
-                      Mengompres gambar...
-                    </p>
+                  <div className='flex flex-col justify-center items-center gap-2 border-dashed border-black/30 border-2 h-full w-full rounded-full bg-gray-200'>
+                    <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
+                    <p className='text-center text-sm'>Mengompres gambar...</p>
                   </div>
                 ) : (
                   <Image
                     src={avatarUrl}
                     fill
-                    sizes="10"
-                    alt="foto profil Anda"
-                    className="object-cover z-0"
+                    sizes='10'
+                    alt='foto profil Anda'
+                    className='object-cover z-0'
                   />
                 )}
               </div>
 
               {!isUploading && (
-                <div className="absolute bottom-3 right-3 flex gap-2 z-50">
-                  <div className="rounded-full flex p-1 bg-white/70 hover:bg-white/90 shadow-md gap-2">
+                <div className='absolute bottom-3 right-3 flex gap-2 z-50'>
+                  <div className='rounded-full flex p-1 bg-white/70 hover:bg-white/90 shadow-md gap-2'>
                     <Button
-                      size="icon"
-                      className="h-8 w-8 rounded-full"
+                      size='icon'
+                      className='h-8 w-8 rounded-full'
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <MdEdit />
                     </Button>
                     <Button
-                      size="icon"
-                      className="h-8 w-8 rounded-full"
-                      variant="destructive"
+                      size='icon'
+                      className='h-8 w-8 rounded-full'
+                      variant='destructive'
                       onClick={handleDelete}
                     >
                       <MdDelete />
@@ -244,15 +229,15 @@ export default function Profile() {
             </div>
 
             <input
-              type="file"
-              accept="image/*"
+              type='file'
+              accept='image/*'
               ref={fileInputRef}
-              className="hidden"
+              className='hidden'
               onChange={handleUpload}
             />
 
-            <div className="flex flex-row mt-5 gap-10">
-              <ul className="flex flex-col items-start">
+            <div className='flex flex-row mt-5 gap-10'>
+              <ul className='flex flex-col items-start'>
                 <li>
                   <p>Nama Lengkap: </p>
                   <p>Nomor Induk: </p>

@@ -4,16 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
-import { redirect, useRouter } from "next/navigation";
-import { IoArrowBackOutline } from "react-icons/io5";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Combobox from "@/components/ui/combobox";
 import { getNomorIndukList } from "@/lib/helper/dataInsert.helper";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
+import BackButton from "@/components/BackButton";
 
 export default function AdminResetPassword() {
-  const supabase = createClient();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedNomorInduk, setSelectedNomorInduk] = useState<string>("");
@@ -70,13 +66,7 @@ export default function AdminResetPassword() {
 
   return (
     <div className='flex flex-col justify-center items-center min-h-screen gap-10 mt-[-100px] px-4'>
-      <Button
-        onClick={() => router.back()}
-        className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
-        variant="ghost"
-      >
-        <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
-      </Button>
+      <BackButton />
 
       <div className='text-4xl max-sm:text-2xl font-bold text-gray-800 text-center'>
         Ubah Password
