@@ -10,7 +10,7 @@ const BackButton: FC = () => {
     <Button
       size='icon'
       onClick={() => router.back()}
-      className='absolute left-16 top-16 hover:bg-gray-200 rounded-full transition'
+      className='absolute left-16 top-16 hover:bg-gray-200 rounded-full transition max-sm:left-5 max-sm:top-7'
       variant='ghost'
     >
       <IoArrowBackOutline
