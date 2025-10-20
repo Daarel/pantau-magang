@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import SupervisorLayout from "@/app/supervisor/layout.client";
 import InternLayout from "@/app/intern/layout.client";
 import AdminLayout from "@/app/admin/layout.client";
-import Loading from "@/app/loading";
+import LoadingLayout from "@/components/LoadingLayout";
 
 export default function RoleBasedLayout({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
@@ -24,7 +24,7 @@ export default function RoleBasedLayout({ children }: { children: ReactNode }) {
   }, []);
 
   if (!role) {
-    return <Loading />;
+    return <LoadingLayout />;
   }
 
   if (role === "supervisor") {
@@ -38,5 +38,5 @@ export default function RoleBasedLayout({ children }: { children: ReactNode }) {
   }
 
   // fallback
-  return <Loading />;
+  return <LoadingLayout />;
 }
