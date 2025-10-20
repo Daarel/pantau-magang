@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
-import { useRouter } from "next/navigation";
 import Combobox from "@/components/ui/combobox";
 import { getNomorIndukList } from "@/lib/helper/dataInsert.helper";
 import BackButton from "@/components/BackButton";
+import { toast } from "sonner";
 
 export default function AdminResetPassword() {
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +16,6 @@ export default function AdminResetPassword() {
   const [dataUserByNomorInduk, setDataUserByNomorInduk] = useState<
     { value: string; label: string }[]
   >([]);
-  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
@@ -46,16 +45,12 @@ export default function AdminResetPassword() {
 
       const json = await res.json();
 
+      if (json.success) toast.success("Password berhasil diubah");
+      else if (json.redirect) window.location.href = json.redirect;
+      else toast.error("Password gagal diubah");
+
       if (!res.ok) {
         setError(json.message || "Reset password gagal, coba lagi.");
-      }
-
-      if (json.success) {
-        if (json.redirect) {
-          router.push(json.redirect);
-        } else {
-          router.push("/");
-        }
       }
     } catch (err) {
       setError("Gagal terhubung ke server.");

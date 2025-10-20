@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserByNomorInduk } from "@/lib/helper/auth.helper";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { insertActivityLogs } from "@/lib/helper/insertActivityLogs.helper";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
     const body = await req.json();
     const { nomorInduk, password } = body;
 
@@ -26,10 +24,6 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
     await insertActivityLogs({
       action_type: "change_password",
       description: `Password akun ${userInfo.full_name} telah diubah`,
@@ -48,6 +42,12 @@ export async function POST(req: NextRequest) {
         { success: false, message: "Terjadi kesalahan." },
         { status: 401 }
       );
+
+    console.log(userInfo.role);
+    
+    if (userInfo.role === "admin") {
+      return NextResponse.json({ success: false, redirect: "/" });
+    }
 
     return NextResponse.json({
       success: true,

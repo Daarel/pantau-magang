@@ -6,8 +6,8 @@ import { FaUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
 import { useParams, useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function AdminResetPassword() {
   const [error, setError] = useState<string | null>(null);
@@ -41,16 +41,12 @@ export default function AdminResetPassword() {
 
       const json = await res.json();
 
+      if (json.success) toast.success("Password berhasil diubah");
+      else if (json.redirect) window.location.href = json.redirect;
+      else toast.error("Password gagal diubah");
+
       if (!res.ok) {
         setError(json.message || "Reset password gagal, coba lagi.");
-      }
-
-      if (json.success) {
-        if (json.redirect) {
-          router.push(json.redirect);
-        } else {
-          router.push("/");
-        }
       }
     } catch (err) {
       setError("Gagal terhubung ke server.");
@@ -64,7 +60,7 @@ export default function AdminResetPassword() {
       <Button
         onClick={() => router.back()}
         className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
-        variant="ghost"
+        variant='ghost'
       >
         <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
       </Button>
