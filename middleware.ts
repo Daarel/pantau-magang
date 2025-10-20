@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
+  const pathname = request.nextUrl.pathname;
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,8 +29,6 @@ export async function middleware(request: NextRequest) {
       data: { user },
       error,
     } = await supabase.auth.getUser();
-
-    const pathname = request.nextUrl.pathname;
 
     if (pathname.startsWith("/profile")) {
       if (!user) {
