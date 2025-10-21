@@ -5,6 +5,7 @@ import Link from "next/link";
 import Startbutton from "./startbutton";
 import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
 import AnimatedInternList from "./AnimatedInternList";
+import BackButton from "@/components/BackButton";
 
 export const revalidate = 60
 
@@ -48,14 +49,10 @@ export default async function InternProfilePage() {
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Back button */}
-      <div className="flex items-center justify-between mb-6">
-        <Link
-          href="/supervisor/dashboard"
-          className="px-2 py-2 hover:bg-gray-200 rounded-full transition"
-        >
-          <IoArrowBackOutline className="text-2xl text-gray-700 hover:text-gray-900" />
-        </Link>
+      <div className="mb-10">
+      <BackButton />
       </div>
+
 
       {/* Header */}
       <div className="flex items-center justify-between w-full mb-6">
