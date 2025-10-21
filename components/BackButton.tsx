@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { IoArrowBackOutline } from "react-icons/io5";
@@ -10,7 +12,7 @@ const BackButton: FC = () => {
     <Button
       size='icon'
       onClick={() => router.back()}
-      className='absolute left-16 top-16 hover:bg-gray-200 rounded-full transition'
+      className='absolute left-10 top-10 hover:bg-gray-200 rounded-full transition'
       variant='ghost'
     >
       <IoArrowBackOutline

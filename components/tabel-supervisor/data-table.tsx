@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
   PaginationState,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -22,21 +22,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/data-table-column-visibility"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DataTableViewOptions } from "@/components/data-table-column-visibility";
 
 // Props
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  pageSize?: number // Prop pageSize
-  enableFilter?: boolean          // Prop filter
-  enableColumnVisibility?: boolean // Prop visibility
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  pageSize?: number; // Prop pageSize
+  enableFilter?: boolean; // Prop filter
+  enableColumnVisibility?: boolean; // Prop visibility
   // enablePagination?: boolean // Prop pagination
-  title?: string // Prop title
+  title?: string; // Prop title
 }
 
 export function DataTable<TData, TValue>({
@@ -48,18 +48,18 @@ export function DataTable<TData, TValue>({
   // enablePagination = true,
   title,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
+  );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({});
 
   // Tambahkan state pagination
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: pageSize,
-  })
+  });
 
   const table = useReactTable({
     data,
@@ -78,22 +78,25 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       pagination,
     },
-  })
+  });
 
   return (
     <div>
-      <div>
-        {title &&<h5 className="h5 font-semibold mb-4">{title}</h5>}
-      </div>
+      <div>{title && <h5 className="h5 font-semibold mb-4">{title}</h5>}</div>
       {/* Field input filter */}
       {(enableFilter || enableColumnVisibility) && (
         <div className="flex items-center pb-4">
           {enableFilter && (
             <Input
               placeholder="Filter keterangan..."
-              value={(table.getColumn("keterangan")?.getFilterValue() as string) ?? ""}
+              value={
+                (table.getColumn("keterangan")?.getFilterValue() as string) ??
+                ""
+              }
               onChange={(event) =>
-                table.getColumn("keterangan")?.setFilterValue(event.target.value)
+                table
+                  .getColumn("keterangan")
+                  ?.setFilterValue(event.target.value)
               }
               className="max-w-sm mt-4"
             />
@@ -117,7 +120,7 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -131,14 +134,20 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="h6">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   Data tidak ditemukan.
                 </TableCell>
               </TableRow>
@@ -158,17 +167,74 @@ export function DataTable<TData, TValue>({
           &lt;
         </Button>
 
-        {/* Angka Pagination */}
-        {Array.from({ length: table.getPageCount() }, (_, i) => (
-          <Button
-            key={i}
-            variant={table.getState().pagination.pageIndex === i ? "default" : "outline"}
-            size="sm"
-            onClick={() => table.setPageIndex(i)}
-          >
-            {i + 1}
-          </Button>
-        ))}
+        {/* Angka Pagination Responsif */}
+        {(() => {
+          const totalPages = table.getPageCount();
+          const currentPage = table.getState().pagination.pageIndex;
+
+          // 🧠 Tentukan windowSize responsif berdasarkan ukuran layar
+          const [windowSize, setWindowSize] = React.useState(5);
+
+          React.useEffect(() => {
+            const handleResize = () => {
+              if (window.innerWidth < 640) setWindowSize(3); // 📱 Mobile
+              else if (window.innerWidth < 1024) setWindowSize(5); // 💻 Tablet
+              else setWindowSize(7); // 🖥 Desktop
+            };
+
+            handleResize(); // panggil saat pertama kali
+            window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+          }, []);
+
+          // 🔢 Tentukan start dan end page untuk window pagination
+          let start = Math.max(currentPage - Math.floor(windowSize / 2), 0);
+          let end = Math.min(start + windowSize, totalPages);
+
+          if (end - start < windowSize) {
+            start = Math.max(end - windowSize, 0);
+          }
+
+          const visiblePages = Array.from(
+            { length: end - start },
+            (_, i) => i + start
+          );
+
+          return (
+            <>
+              {start > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.setPageIndex(0)}
+                >
+                  1...
+                </Button>
+              )}
+
+              {visiblePages.map((i) => (
+                <Button
+                  key={i}
+                  variant={currentPage === i ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => table.setPageIndex(i)}
+                >
+                  {i + 1}
+                </Button>
+              ))}
+
+              {end < totalPages && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.setPageIndex(totalPages - 1)}
+                >
+                  ...{totalPages}
+                </Button>
+              )}
+            </>
+          );
+        })()}
 
         {/* Tombol Next */}
         <Button
@@ -181,5 +247,5 @@ export function DataTable<TData, TValue>({
         </Button>
       </div>
     </div>
-  )
+  );
 }

@@ -279,7 +279,8 @@ export default async function SupervisorDashboard() {
         {statCards.map((card, i) => (
           <Card key={i}>
             {card.Icon === GoPeople ? (
-              <Link href="/supervisor/internprofile">
+              <Link href="/supervisor/internprofile"
+              prefetch={false}>
                 <CardContent
                   className={`flex justify-center items-center gap-0 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1 pr-8 cursor-pointer 
                 hover:scale-[1.02] 
