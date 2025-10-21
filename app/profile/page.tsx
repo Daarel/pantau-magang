@@ -176,17 +176,17 @@ export default function Profile() {
     <>
       <BackButton />
 
-      <div className='flex items-center justify-center mt-8'>
+      <div className='flex items-center justify-center mt-[50px]'>
         <div className='absolute left-1/2 -translate-x-1/2 text-center'>
           <h1 className='h4 font-semibold'>Profile</h1>
           <p className='text-gray-500'>Informasi tentang saya</p>
         </div>
       </div>
 
-      <div className='flex justify-center items-center flex-col mt-10'>
+      <div className='flex justify-center items-center flex-col mt-14'>
         <Card>
           <CardContent className='flex flex-col justify-center items-center'>
-            <div className='relative w-[300px] h-[300px]'>
+            <div className='relative w-[250px] h-[250px]'>
               {/* Foto profil */}
               <div className='w-full h-full rounded-full overflow-hidden relative z-0'>
                 {isUploading ? (
@@ -198,7 +198,7 @@ export default function Profile() {
                   <Image
                     src={avatarUrl}
                     fill
-                    sizes='10'
+                    sizes='5'
                     alt='foto profil Anda'
                     className='object-cover z-0'
                   />

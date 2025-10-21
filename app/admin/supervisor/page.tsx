@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import AdminSupervisorClient from "./components/AdminSupervisorClient";
-import Loading from "../loading";
+import Loading from "./loading";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";

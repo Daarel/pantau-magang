@@ -76,7 +76,7 @@ export default function AdminUploadCertificate() {
     <>
       <BackButton />
 
-      <div className='container mx-auto p-8'>
+      <div className='container mx-auto p-8 mt-[50px]'>
         <Card className='max-w-md mx-auto'>
           <CardHeader>
             <CardTitle>Upload Template Sertifikat</CardTitle>
