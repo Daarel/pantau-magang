@@ -32,20 +32,18 @@ import { DataTableViewOptions } from "@/components/data-table-column-visibility"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pageSize?: number; // Prop pageSize
-  enableFilter?: boolean; // Prop filter
-  enableColumnVisibility?: boolean; // Prop visibility
-  // enablePagination?: boolean // Prop pagination
-  title?: string; // Prop title
+  pageSize?: number;
+  enableFilter?: boolean;
+  enableColumnVisibility?: boolean;
+  title?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  pageSize = 5, // Default 5 data per halaman
-  enableFilter = true, // Default true
-  enableColumnVisibility = true, // Default true
-  // enablePagination = true,
+  pageSize = 5,
+  enableFilter = true,
+  enableColumnVisibility = true,
   title,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -54,12 +52,23 @@ export function DataTable<TData, TValue>({
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-
-  // Tambahkan state pagination
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: pageSize,
   });
+
+  // ✅ perbaikan utama: windowSize hook dipindah ke atas
+  const [windowSize, setWindowSize] = React.useState(5);
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) setWindowSize(3); // 📱 Mobile
+      else if (window.innerWidth < 1024) setWindowSize(5); // 💻 Tablet
+      else setWindowSize(7); // 🖥 Desktop
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const table = useReactTable({
     data,
@@ -71,7 +80,7 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination, // handler untuk pagination
+    onPaginationChange: setPagination,
     state: {
       sorting,
       columnFilters,
@@ -80,23 +89,31 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  // 🔢 pagination calculations
+  const totalPages = table.getPageCount();
+  const currentPage = table.getState().pagination.pageIndex;
+  let start = Math.max(currentPage - Math.floor(windowSize / 2), 0);
+  const end = Math.min(start + windowSize, totalPages);
+  if (end - start < windowSize) {
+    start = Math.max(end - windowSize, 0);
+  }
+  const visiblePages = Array.from({ length: end - start }, (_, i) => i + start);
+
   return (
     <div>
-      <div>{title && <h5 className="h5 font-semibold mb-4">{title}</h5>}</div>
-      {/* Field input filter */}
+      {title && <h5 className="h5 font-semibold mb-4">{title}</h5>}
+
+      {/* 🔍 Filter dan Column Visibility */}
       {(enableFilter || enableColumnVisibility) && (
-        <div className="flex items-center pb-4">
+        <div className="flex flex-wrap gap-2 items-center pb-4">
           {enableFilter && (
             <Input
               placeholder="Filter keterangan..."
               value={
-                (table.getColumn("keterangan")?.getFilterValue() as string) ??
-                ""
+                (table.getColumn("keterangan")?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
-                table
-                  .getColumn("keterangan")
-                  ?.setFilterValue(event.target.value)
+                table.getColumn("keterangan")?.setFilterValue(event.target.value)
               }
               className="max-w-sm mt-4"
             />
@@ -105,26 +122,26 @@ export function DataTable<TData, TValue>({
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-md">
+      {/* 🧾 Tabel Data */}
+      <div className="overflow-x-auto rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
@@ -133,11 +150,8 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="h6">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <TableCell key={cell.id} className="text-sm">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -146,7 +160,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-gray-500"
                 >
                   Data tidak ditemukan.
                 </TableCell>
@@ -156,8 +170,8 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
+      {/* 📄 Pagination */}
       <div className="flex items-center justify-center space-x-2 pt-4">
-        {/* Tombol Previous */}
         <Button
           variant="outline"
           size="sm"
@@ -167,76 +181,37 @@ export function DataTable<TData, TValue>({
           &lt;
         </Button>
 
-        {/* Angka Pagination Responsif */}
-        {(() => {
-          const totalPages = table.getPageCount();
-          const currentPage = table.getState().pagination.pageIndex;
+        {start > 0 && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.setPageIndex(0)}
+          >
+            1...
+          </Button>
+        )}
 
-          // 🧠 Tentukan windowSize responsif berdasarkan ukuran layar
-          const [windowSize, setWindowSize] = React.useState(5);
+        {visiblePages.map((i) => (
+          <Button
+            key={i}
+            variant={currentPage === i ? "default" : "outline"}
+            size="sm"
+            onClick={() => table.setPageIndex(i)}
+          >
+            {i + 1}
+          </Button>
+        ))}
 
-          React.useEffect(() => {
-            const handleResize = () => {
-              if (window.innerWidth < 640) setWindowSize(3); // 📱 Mobile
-              else if (window.innerWidth < 1024) setWindowSize(5); // 💻 Tablet
-              else setWindowSize(7); // 🖥 Desktop
-            };
+        {end < totalPages && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.setPageIndex(totalPages - 1)}
+          >
+            ...{totalPages}
+          </Button>
+        )}
 
-            handleResize(); // panggil saat pertama kali
-            window.addEventListener("resize", handleResize);
-            return () => window.removeEventListener("resize", handleResize);
-          }, []);
-
-          // 🔢 Tentukan start dan end page untuk window pagination
-          let start = Math.max(currentPage - Math.floor(windowSize / 2), 0);
-          let end = Math.min(start + windowSize, totalPages);
-
-          if (end - start < windowSize) {
-            start = Math.max(end - windowSize, 0);
-          }
-
-          const visiblePages = Array.from(
-            { length: end - start },
-            (_, i) => i + start
-          );
-
-          return (
-            <>
-              {start > 0 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.setPageIndex(0)}
-                >
-                  1...
-                </Button>
-              )}
-
-              {visiblePages.map((i) => (
-                <Button
-                  key={i}
-                  variant={currentPage === i ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => table.setPageIndex(i)}
-                >
-                  {i + 1}
-                </Button>
-              ))}
-
-              {end < totalPages && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.setPageIndex(totalPages - 1)}
-                >
-                  ...{totalPages}
-                </Button>
-              )}
-            </>
-          );
-        })()}
-
-        {/* Tombol Next */}
         <Button
           variant="outline"
           size="sm"

@@ -1,7 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { IoArrowBackOutline } from "react-icons/io5";
-import Link from "next/link";
 import Startbutton from "./startbutton";
 import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
 import AnimatedInternList from "./AnimatedInternList";
