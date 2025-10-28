@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import {
@@ -10,9 +11,13 @@ import {
   FaHourglassHalf,
   FaCheckCircle,
 } from "react-icons/fa";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AnimatedInternList({ interns }: { interns: any[] }) {
-  // 🔹 Pindahkan fungsi ke sini (client side)
+  const [visibleInterns, setVisibleInterns] = useState(interns);
+  const supabase = createClient();
+
+  // Fungsi hitung sisa hari kerja
   const calculateRemainingWeekdays = (end: string | null) => {
     if (!end) return null;
     const today = new Date();
@@ -20,19 +25,59 @@ export default function AnimatedInternList({ interns }: { interns: any[] }) {
     let count = 0;
     const current = new Date(today);
     while (current <= endDate) {
-      const day = current.getDay();
-      if (day !== 0 && day !== 6) count++;
+      count++;
       current.setDate(current.getDate() + 1);
     }
     return count;
   };
 
-  if (!interns || interns.length === 0) return null;
+  // 🔹 Efek untuk ubah status & auto-hide intern yang sudah selesai
+  useEffect(() => {
+    const updateStatuses = async () => {
+      for (const intern of visibleInterns) {
+        const daysRemaining = calculateRemainingWeekdays(
+          intern.intern_end_date
+        );
+
+        if (daysRemaining === 0 && intern.status !== "Nonaktif") {
+          // Update di UI
+          setVisibleInterns((prev) =>
+            prev.map((i) =>
+              i.id === intern.id
+                ? { ...i, status: "Nonaktif", _hideAfter: 5 }
+                : i
+            )
+          );
+
+          // Update di database Supabase
+          const { error } = await supabase
+            .from("users")
+            .update({ status: "Nonaktif" })
+            .eq("id", intern.id);
+
+          if (error) console.error("❌ Gagal update status intern:", error);
+          else
+            console.log(`✅ Status ${intern.full_name} diupdate ke Nonaktif`);
+        }
+      }
+    };
+
+    updateStatuses();
+
+    // Interval cek harian (misalnya 1x/hari)
+    const interval = setInterval(updateStatuses, 24 * 60 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [visibleInterns]);
+
+  // 🔹 Render UI
+  if (!visibleInterns || visibleInterns.length === 0) return null;
 
   return (
     <div className="grid gap-6 sm:grid-cols-2">
-      {interns.map((intern, i) => {
-        const daysRemaining = calculateRemainingWeekdays(intern.intern_end_date);
+      {visibleInterns.map((intern, i) => {
+        const daysRemaining = calculateRemainingWeekdays(
+          intern.intern_end_date
+        );
 
         return (
           <motion.div
