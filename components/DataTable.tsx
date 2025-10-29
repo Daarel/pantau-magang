@@ -79,7 +79,7 @@ const DataTable: React.FC<DataTableProps> = ({
   const endRow = Math.min(startRow + data.length - 1, totalCount);
 
   return (
-    <div className='w-full'>
+    <div className='w-full max-w-[1030px] 2xl:w-full'>
       <div className='relative py-4'>
         <GoSearch className='absolute left-3 top-1/2 -translate-y-1/2' />
         <Input
