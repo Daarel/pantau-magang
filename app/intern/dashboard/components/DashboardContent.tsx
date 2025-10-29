@@ -3,13 +3,14 @@ import PieChart from "@/components/PieChart";
 import TodaysAttendance from "@/components/TodaysAttendance";
 import DashboardStats from "./DashboardStatsClient";
 import DashboardHeader from "./DashboardHeaderClient";
-import { internSummary } from "@/types/intern";
+import { internSchedule, internSummary } from "@/types/intern";
 
 interface internDashboardContentProps {
   internData: internSummary | null;
+  scheduleData: internSchedule | null;
 }
 
-export default function DashboardContent({ internData }: internDashboardContentProps) {
+export default function DashboardContent({ internData, scheduleData }: internDashboardContentProps) {
   return (
     <>
       {/* 1. Informasi nama, tanggal, dan waktu */}
@@ -19,7 +20,7 @@ export default function DashboardContent({ internData }: internDashboardContentP
       <div className='flex flex-col md:flex-row w-full gap-2 md:gap-4'>
         {/* Attendance */}
         <div className="flex flex-col w-full md:w-1/2 gap-2 md:gap-4">
-          <TodaysAttendance internData={internData} />
+          <TodaysAttendance internData={internData} scheduleData={scheduleData} />
           <DashboardStats internData={internData} />
         </div>
 

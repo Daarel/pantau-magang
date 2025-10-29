@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 // Icons
 import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
@@ -8,14 +8,17 @@ import { useInsertAlfa } from '@/hooks/useAttendance';
 import { statusColor } from '@/lib/utils';
 import { CheckInButton, DisabledButton } from "./AttendanceButtonHandler";
 import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
-import { internSummary } from "@/types/intern";
+import { internSummary, internSchedule } from "@/types/intern";
+import { isWithinSchedule, getScheduleMessage } from "@/lib/helper/schedule.helper"
 
 interface internTodayAttendanceProps {
   internData: internSummary | null;
+  scheduleData: internSchedule | null;
 }
 
-export default function TodaysAttendance({ internData }: internTodayAttendanceProps) {
+export default function TodaysAttendance({ internData, scheduleData }: internTodayAttendanceProps) {
   const { checkAndInsertAlfaStatus, error: alfaError } = useInsertAlfa();
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const status = internData?.status ?? "-";
   const todayStatus = statusColor(status);
@@ -27,38 +30,30 @@ export default function TodaysAttendance({ internData }: internTodayAttendancePr
   const showCheckInButton = (!internData?.status || internData.status === "-" || todayStatus.text === "Belum Tercatat");
   const hasCheckIn = internData?.today_check_in && internData.today_check_in !== "-";
 
-  useEffect(() => {
-    // if (alfaError) console.error("Error inserting alfa status:", alfaError);
+  // Check if within schedule
+  const withinSchedule = scheduleData ? 
+    isWithinSchedule(scheduleData.start_time, scheduleData.end_time) : false;
+  
+  // Get appropriate message
+  const buttonMessage = scheduleData ? 
+    getScheduleMessage(scheduleData.start_time, scheduleData.end_time) : 
+    "Tidak ada jadwal absen";
 
+  // Update time every minute to refresh button state
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     if (internData?.user_id && !internData?.status && !hasInsertedAlfaRef.current) {
       checkAndInsertAlfaStatus();
       hasInsertedAlfaRef.current = true; // tandai sudah insert alfa hari ini
     }
   }, [internData?.user_id, internData?.status, alfaError, checkAndInsertAlfaStatus]);
-
-  // if (loading) {
-  //   return (
-  //     <div className='flex flex-col border-2 gap-6 py-4 px-5 rounded-md'>
-  //       <div className='flex items-center justify-center gap-3'>
-  //         <GoClock className='text-blue-500 w-6 h-6' />
-  //         <h4 className='h4 font-semibold'>Presensi Hari Ini</h4>
-  //       </div>
-  //       <DisabledButton message="Loading..." />
-  //     </div>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <div className='flex flex-col border-2 gap-6 py-4 px-5 rounded-md'>
-  //       <div className='flex items-center justify-center gap-3'>
-  //         <GoClock className='text-blue-500 w-6 h-6' />
-  //         <h4 className='h4 font-semibold'>Presensi Hari Ini</h4>
-  //       </div>
-  //       <div className="text-red-500 text-center">Error: {error}</div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className='flex flex-col border-2 gap-6 py-4 px-5 rounded-md'>

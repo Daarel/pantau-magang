@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import DashboardContent from "./components/DashboardContent" 
 import Loading from "./loading";
 import { formatTimeStamp, formatTime } from "@/lib/utils";
-import { internSummary } from "@/types/intern";
+import { internSummary, internSchedule } from "@/types/intern";
 
 async function checkAuth() {
   const supabase = await createClient();
@@ -18,7 +18,7 @@ async function getInternData(userId: string | null) {
 
   const { data: userData } = await supabase
     .from("users")
-    .select("id")
+    .select("id, supevisor_id")
     .eq("auth_id", userId)
     .single();
 
@@ -34,15 +34,30 @@ async function getInternData(userId: string | null) {
   return internData;
 }
 
+async function getSecheduleData(supervisorId: string) {
+  const supabase = await createClient();
+  
+  const { data: scheduleData } = await supabase
+    .from("attendance_schedules")
+    .select("*")
+    .eq("supervisor_id", supervisorId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+  
+    return scheduleData;
+}
+
 export default async function InternDashboard() {
   const user = await checkAuth()
-  console.log(user)
+  // console.log(user)
 
   if(!user){
     redirect("/");
   }
 
   const internData = await getInternData(user.id)
+  console.log(internData)
 
   if (!internData) {
     return (
@@ -54,15 +69,25 @@ export default async function InternDashboard() {
       </div>
     );
   }
-
+  
   const formattedData: internSummary = {
     ...internData,
     today_check_in: formatTimeStamp(internData.today_check_in),
   };
 
+  const scheduleData = await getSecheduleData(internData.supervisor_id)
+
+  const formattedSchedule: internSchedule | null = scheduleData ? {
+    start_time: formatTime(scheduleData.start_time),
+    end_time: formatTime(scheduleData.end_time),
+  } : null;
+
   return (
     <Suspense fallback={<Loading />}>
-      <DashboardContent internData={formattedData} />
+      <DashboardContent 
+        internData={formattedData} 
+        scheduleData={formattedSchedule} 
+      />
     </Suspense>
   );
 }
