@@ -4,34 +4,37 @@ import { useEffect, useRef } from "react";
 import { GoClock } from "react-icons/go";
 import { Badge } from "@/components/ui/badge";
 // Components
-import { useInternData } from '@/hooks/useInternData'
 import { useInsertAlfa } from '@/hooks/useAttendance';
 import { statusColor } from '@/lib/utils';
 import { CheckInButton, DisabledButton } from "./AttendanceButtonHandler";
 import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
+import { internSummary } from "@/types/intern";
 
-export default function TodaysAttendance() {
-  const { summaryData, loading, error } = useInternData();
+interface internTodayAttendanceProps {
+  internData: internSummary | null;
+}
+
+export default function TodaysAttendance({ internData }: internTodayAttendanceProps) {
   const { checkAndInsertAlfaStatus, error: alfaError } = useInsertAlfa();
 
-  const status = loading ? "-" : summaryData?.status ?? "-";
+  const status = internData?.status ?? "-";
   const todayStatus = statusColor(status);
   const isAlfa = todayStatus.text === "Alfa";
   const isIzin = todayStatus.text === "Izin";
   const isSakit = todayStatus.text === "Sakit";
   const hasInsertedAlfaRef = useRef(false);
 
-  const showCheckInButton = !loading && (!summaryData?.status || summaryData.status === "-" || todayStatus.text === "Belum Tercatat");
-  const hasCheckIn = !loading && summaryData?.today_check_in && summaryData.today_check_in !== "-";
+  const showCheckInButton = (!internData?.status || internData.status === "-" || todayStatus.text === "Belum Tercatat");
+  const hasCheckIn = internData?.today_check_in && internData.today_check_in !== "-";
 
   useEffect(() => {
-    if (alfaError) console.error("Error inserting alfa status:", alfaError);
+    // if (alfaError) console.error("Error inserting alfa status:", alfaError);
 
-    if (!loading && summaryData?.user_id && !summaryData?.status && !hasInsertedAlfaRef.current) {
+    if (internData?.user_id && !internData?.status && !hasInsertedAlfaRef.current) {
       checkAndInsertAlfaStatus();
       hasInsertedAlfaRef.current = true; // tandai sudah insert alfa hari ini
     }
-  }, [loading, summaryData?.user_id, summaryData?.status, alfaError, checkAndInsertAlfaStatus]);
+  }, [internData?.user_id, internData?.status, alfaError, checkAndInsertAlfaStatus]);
 
   // if (loading) {
   //   return (
@@ -71,44 +74,40 @@ export default function TodaysAttendance() {
           <h1>Status:</h1>
           <Badge
             variant='default'
-            className={loading ? "bg-gray-100" : todayStatus.class}
+            className={todayStatus.class}
           >
-            {loading ? "-" : todayStatus.text}
+            {todayStatus.text}
           </Badge>
         </div>
         <div className='flex justify-between'>
           <h1>Check In:</h1>
           <h1 className='font-semibold'>
-            {loading ? "-" : summaryData?.today_check_in ?? "-"}
+            {internData?.today_check_in ?? "-"}
           </h1>
         </div>
       </div>
 
-      {loading ? (
-        <DisabledButton message="Loading..." />
-      ) : (
-        <>
-          {isAlfa && (
-            <DisabledButton message="Tidak hadir tanpa keterangan" />
-          )}
+      <>
+        {isAlfa && (
+          <DisabledButton message="Tidak hadir tanpa keterangan" />
+        )}
 
-          {isIzin && (
-            <DisabledButton message="Izin tidak hadir" />
-          )}
+        {isIzin && (
+          <DisabledButton message="Izin tidak hadir" />
+        )}
 
-          {isSakit && (
-            <DisabledButton message="Tidak hadir karena sakit" />
-          )}
+        {isSakit && (
+          <DisabledButton message="Tidak hadir karena sakit" />
+        )}
 
-          {!isAlfa && showCheckInButton && (
-            <CheckInButton message="Silakan lakukan absensi" />
-          )}
+        {!isAlfa && showCheckInButton && (
+          <CheckInButton message="Silakan lakukan absensi" />
+        )}
 
-          {hasCheckIn && (
-            <DisabledButton message="Telah melakukan absensi" />
-          )}
-        </>
-      )}
+        {hasCheckIn && (
+          <DisabledButton message="Telah melakukan absensi" />
+        )}
+      </>
       <RealtimeDashboardRefresher />
     </div>
   );

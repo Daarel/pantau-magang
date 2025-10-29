@@ -1,19 +1,16 @@
-// components/DashboardStats.tsx
 'use client';
-
 import { GoClock } from "react-icons/go";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { useInternData } from "@/hooks/useInternData";
 import { getWorkdaysInMonth } from "@/lib/utils";
-import DashboardSkeleton from "./DashboardSkeleton";
+import { internSummary } from "@/types/intern";
 
-export default function DashboardStats() {
-  const { summaryData, loading } = useInternData();
+interface internDashboardStatsProps {
+  internData: internSummary | null;
+}
+
+export default function DashboardStats({ internData }: internDashboardStatsProps) {
   const totalHariKerja = getWorkdaysInMonth();
-
-  // if (loading) {
-  //   return <DashboardSkeleton />;
-  // }
 
   return (
     <div className='flex flex-col w-full gap-2 md:gap-4 sm:flex-row'>
@@ -27,7 +24,7 @@ export default function DashboardStats() {
               Bulan Ini
             </h1>
             <h1 className='h5 sm:h3 font-bold'>
-              {loading ? "-" : summaryData?.total_hadir_bulanan ?? "0"}/
+              {internData?.total_hadir_bulanan ?? "0"}/
               {totalHariKerja}
             </h1>
             <h1 className='text-xs sm:h6 font-semibold text-green-600'>
@@ -45,7 +42,7 @@ export default function DashboardStats() {
               Dispensasi
             </h1>
             <h1 className='h5 sm:h3 font-bold'>
-              {loading ? "-" : summaryData?.total_dispensasi ?? "0"}
+              {internData?.total_dispensasi ?? "0"}
             </h1>
             <h1 className='text-xs sm:h6 font-semibold text-[#CA8A04]'>
               Disetujui
