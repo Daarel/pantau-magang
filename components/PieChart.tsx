@@ -2,49 +2,23 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, Title, Tooltip, ArcElement } from "chart.js";
-import { useInternData } from '@/hooks/useInternData'
 // icons
 import { AiOutlinePieChart } from 'react-icons/ai';
+import { internSummary } from "@/types/intern";
 
 // Registrasi komponen Chart.js
 ChartJS.register(Title, Tooltip, ArcElement);
 
-export default function PieChart() {
-  const { summaryData, loading, error } = useInternData()
+interface internPieChartProps {
+  internData: internSummary | null;
+}
 
-  if (loading) {
-    return (
-      <div className='flex flex-col items-center justify-center gap-6'>
-        <div className="flex items-center gap-2">
-          <AiOutlinePieChart className="w-6 h-6 text-blue-500" />
-          <h3 className="h4 font-semibold">Persentase Kehadiran</h3>
-        </div>
-        <div className="flex flex-col items-center justify-center min-h-[200px]">
-          <div className="text-gray-500">Memuat data...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='flex flex-col items-center justify-center gap-6'>
-        <div className="flex items-center gap-2">
-          <AiOutlinePieChart className="w-6 h-6 text-blue-500" />
-          <h3 className="h4 font-semibold">Persentase Kehadiran</h3>
-        </div>
-        <div className="flex flex-col items-center justify-center min-h-[200px]">
-          <div className="text-red-500">Error: {error}</div>
-        </div>
-      </div>
-    );
-  }
-
+export default function PieChart({ internData }: internPieChartProps) {
   const {
     total_hadir = 0,
     total_alfa = 0,
     total_sakit_izin = 0,
-  } = summaryData || {};
+  } = internData || {};
   const labels = ["Hadir", "Alfa", "Sakit/Izin"];
   const dataValues = [total_hadir, total_alfa, total_sakit_izin];
   const total = dataValues.reduce((acc, val) => acc + val, 0);
