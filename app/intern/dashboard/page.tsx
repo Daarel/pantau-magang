@@ -18,10 +18,11 @@ async function getInternData(userId: string | null) {
 
   const { data: userData } = await supabase
     .from("users")
-    .select("id, supevisor_id")
+    .select("id, supervisor_id")
     .eq("auth_id", userId)
     .single();
 
+  // console.log("userData:", userData)
   if (!userData) return null;
 
   // Kueri berdasarkan user_id
@@ -31,6 +32,7 @@ async function getInternData(userId: string | null) {
     .eq("user_id", userData.id)
     .single();
   
+  // console.log("internData:", internData)
   return internData;
 }
 
@@ -45,7 +47,8 @@ async function getSecheduleData(supervisorId: string) {
     .limit(1)
     .single();
   
-    return scheduleData;
+  // console.log("scheduleData:",scheduleData)
+  return scheduleData;
 }
 
 export default async function InternDashboard() {
@@ -57,7 +60,7 @@ export default async function InternDashboard() {
   }
 
   const internData = await getInternData(user.id)
-  console.log(internData)
+  // console.log("internData berdasarkan ID user:", internData)
 
   if (!internData) {
     return (

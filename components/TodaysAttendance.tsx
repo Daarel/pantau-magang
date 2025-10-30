@@ -27,7 +27,7 @@ export default function TodaysAttendance({ internData, scheduleData }: internTod
   const isSakit = todayStatus.text === "Sakit";
   const hasInsertedAlfaRef = useRef(false);
 
-  const showCheckInButton = (!internData?.status || internData.status === "-" || todayStatus.text === "Belum Tercatat");
+  // const showCheckInButton = (!internData?.status || internData.status === "-" || todayStatus.text === "Belum Tercatat");
   const hasCheckIn = internData?.today_check_in && internData.today_check_in !== "-";
 
   // Check if within schedule
@@ -95,13 +95,18 @@ export default function TodaysAttendance({ internData, scheduleData }: internTod
           <DisabledButton message="Tidak hadir karena sakit" />
         )}
 
-        {!isAlfa && showCheckInButton && (
-          <CheckInButton message="Silakan lakukan absensi" />
-        )}
-
         {hasCheckIn && (
           <DisabledButton message="Telah melakukan absensi" />
         )}
+
+        { !isAlfa && !isIzin && !isSakit && !hasCheckIn && (
+          withinSchedule ? (
+            <CheckInButton message="Silakan lakukan absensi" />
+          ) : (
+            <DisabledButton message={buttonMessage} />
+          )
+          
+        ) }
       </>
       <RealtimeDashboardRefresher />
     </div>
