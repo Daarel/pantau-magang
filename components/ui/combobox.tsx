@@ -76,8 +76,8 @@ const Combobox: FC<ComboboxProps> = ({
               {fields.map((item) => (
                 <CommandItem
                   key={item.value}
-                  value={item.label} // pencarian berdasarkan label
-                  onSelect={() => handleSelect(item.value)} // simpan value asli
+                  value={item.label}
+                  onSelect={() => handleSelect(item.value)}
                 >
                   {item.label}
                   <Check
