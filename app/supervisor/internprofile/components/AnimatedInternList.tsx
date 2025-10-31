@@ -34,43 +34,52 @@ export default function AnimatedInternList({ interns }: { interns: any[] }) {
   // 🔹 Efek untuk ubah status & auto-hide intern yang sudah selesai
   useEffect(() => {
     const updateStatuses = async () => {
-      for (const intern of visibleInterns) {
-        const daysRemaining = calculateRemainingWeekdays(
-          intern.intern_end_date
-        );
+      const today = new Date();
 
-        if (daysRemaining === 0 && intern.status !== "Nonaktif") {
-          // Update di UI
-          setVisibleInterns((prev) =>
-            prev.map((i) =>
-              i.id === intern.id
-                ? { ...i, status: "Nonaktif", _hideAfter: 5 }
-                : i
-            )
+      const updatedInterns = await Promise.all(
+        visibleInterns.map(async (intern) => {
+          const endDate = new Date(intern.intern_end_date);
+          const diffDays = Math.floor(
+            (today.getTime() - endDate.getTime()) / (1000 * 60 * 60 * 24)
           );
 
-          // Update di database Supabase
-          const { error } = await supabase
-            .from("users")
-            .update({ status: "Nonaktif" })
-            .eq("id", intern.id);
+          // Kalau belum selesai magang
+          if (today < endDate) return intern;
 
-          if (error) console.error("❌ Gagal update status intern:", error);
-          else
-            console.log(`✅ Status ${intern.full_name} diupdate ke Nonaktif`);
-        }
-      }
+          // Kalau baru selesai dan belum update status ke Nonaktif
+          if (
+            today >= endDate &&
+            diffDays === 0 &&
+            intern.status !== "Nonaktif"
+          ) {
+            const { error } = await supabase
+              .from("users")
+              .update({ status: "Nonaktif" })
+              .eq("id", intern.id);
+
+            if (error) console.error("❌ Gagal update status:", error);
+            else console.log(`✅ ${intern.full_name} diupdate ke Nonaktif`);
+
+            return { ...intern, status: "Nonaktif", _hideAfter: 3 };
+          }
+
+          // Kalau sudah lewat 3 hari dari tanggal selesai → sembunyikan
+          if (diffDays > 3) return null;
+
+          return intern;
+        })
+      );
+
+      // Filter intern yang masih harus tampil
+      setVisibleInterns(updatedInterns.filter(Boolean));
     };
 
     updateStatuses();
 
-    // Interval cek harian (misalnya 1x/hari)
+    // Cek setiap hari (24 jam sekali)
     const interval = setInterval(updateStatuses, 24 * 60 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [visibleInterns]);
-
-  // 🔹 Render UI
-  if (!visibleInterns || visibleInterns.length === 0) return null;
+  }, []);
 
   return (
     <div className="grid gap-6 sm:grid-cols-2">
