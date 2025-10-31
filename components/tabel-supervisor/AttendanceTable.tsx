@@ -177,6 +177,7 @@ export default function AttendanceTable({
         data={filteredData}
         enableFilter={true}
         enableColumnVisibility={false}
+        filterMode="keterangan"
       />
     </div>
   );
@@ -213,6 +214,7 @@ export function ReportTable({
         data={filteredData}
         enableFilter={true}
         enableColumnVisibility={false}
+        filterMode="keterangan"
       />
     </div>
   );

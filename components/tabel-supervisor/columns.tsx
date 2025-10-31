@@ -11,6 +11,7 @@ import {
 import { FiMoreHorizontal } from "react-icons/fi";
 import { BiSolidCheckCircle } from "react-icons/bi";
 import { BiSolidXCircle } from "react-icons/bi";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
 // This type is used to define the shape of our data.
@@ -36,6 +37,14 @@ export type Dashboard = {
   institutions: string;
   check_in_time: string;
   file?: string;
+};
+
+export type History = {
+  id: string;
+  nomor_induk: string;
+  full_name: string;
+  institutions: string;
+  status: string;
 };
 
 const supabase = createClient();
@@ -413,5 +422,49 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
         </a>
       );
     },
+  },
+];
+export const historyColumns: ColumnDef<History>[] = [
+  {
+    accessorKey: "nomor_induk",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nomor Induk" />
+    ),
+  },
+  {
+    accessorKey: "full_name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nama" />
+    ),
+  },
+  {
+    accessorKey: "institutions",
+    // Sorting by institution name
+    header: ({ column }) => {
+      return (
+        <DataTableColumnHeader column={column} title="Sekolah/Universitas" />
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Keterangan" />
+    ),
+    cell: ({ row }) => (
+      <div className="normal-case text-xs text-gray-700">{row.getValue("status")}</div>
+    ),
+  },
+  {
+    id: "aksi",
+    header: "",
+    cell: () => (
+      <Button
+        variant="outline"
+        className="bg-green-200 text-gray-700 hover:bg-green-300 rounded-md text-sm"
+      >
+        Aktifkan
+      </Button>
+    ),
   },
 ];
