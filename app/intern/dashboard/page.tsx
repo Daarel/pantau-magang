@@ -91,6 +91,7 @@ export default async function InternDashboard() {
         internData={formattedData} 
         scheduleData={formattedSchedule} 
       />
+      {/* <Loading /> */}
     </Suspense>
   );
 }
