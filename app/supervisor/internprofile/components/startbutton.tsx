@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,13 +20,12 @@ export default function StartAttendanceButton() {
   const [endTime, setEndTime] = useState("");
   const [loading, setLoading] = useState(false);
   const [hasSchedule, setHasSchedule] = useState(false);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   // ambil data jadwal yang sudah ada
   useEffect(() => {
     const fetchSchedule = async () => {
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
+      const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData?.user) return;
 
       const { data: userProfile } = await supabase
@@ -69,9 +68,7 @@ export default function StartAttendanceButton() {
 
     try {
       setLoading(true);
-
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
+      const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData?.user) {
         toast.error("User belum login atau sesi berakhir");
         return;
@@ -120,9 +117,7 @@ export default function StartAttendanceButton() {
   const handleReset = async () => {
     try {
       setLoading(true);
-
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
+      const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData?.user) {
         toast.error("User belum login atau sesi berakhir");
         return;
@@ -197,6 +192,7 @@ export default function StartAttendanceButton() {
               {hasSchedule ? "Edit Jadwal Absen" : "Atur Waktu Absen"}
             </DialogTitle>
           </DialogHeader>
+
           <div className="flex flex-col gap-4 py-2">
             <div className="flex flex-col">
               <Label htmlFor="startTime">Jam Mulai</Label>
@@ -208,6 +204,7 @@ export default function StartAttendanceButton() {
                 className="mt-1"
               />
             </div>
+
             <div className="flex flex-col">
               <Label htmlFor="endTime">Jam Berakhir</Label>
               <Input
@@ -219,6 +216,7 @@ export default function StartAttendanceButton() {
               />
             </div>
           </div>
+
           <DialogFooter className="flex justify-between gap-2">
             {hasSchedule && (
               <Button
@@ -230,6 +228,7 @@ export default function StartAttendanceButton() {
                 Reset Jadwal
               </Button>
             )}
+
             <Button
               onClick={handleSubmit}
               disabled={loading}

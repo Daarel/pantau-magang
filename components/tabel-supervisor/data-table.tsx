@@ -35,6 +35,7 @@ interface DataTableProps<TData, TValue> {
   pageSize?: number;
   enableFilter?: boolean;
   enableColumnVisibility?: boolean;
+  filterMode?: "nama" | "keterangan" | "semua"; // 🆕 Tambahan prop
   title?: string;
 }
 
@@ -44,6 +45,7 @@ export function DataTable<TData, TValue>({
   pageSize = 5,
   enableFilter = true,
   enableColumnVisibility = true,
+  filterMode = "semua", // default: tampilkan dua-duanya
   title,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -57,13 +59,12 @@ export function DataTable<TData, TValue>({
     pageSize: pageSize,
   });
 
-  // ✅ perbaikan utama: windowSize hook dipindah ke atas
   const [windowSize, setWindowSize] = React.useState(5);
   React.useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 640) setWindowSize(3); // 📱 Mobile
-      else if (window.innerWidth < 1024) setWindowSize(5); // 💻 Tablet
-      else setWindowSize(7); // 🖥 Desktop
+      if (window.innerWidth < 640) setWindowSize(3);
+      else if (window.innerWidth < 1024) setWindowSize(5);
+      else setWindowSize(7);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -107,16 +108,41 @@ export function DataTable<TData, TValue>({
       {(enableFilter || enableColumnVisibility) && (
         <div className="flex flex-wrap gap-2 items-center pb-4">
           {enableFilter && (
-            <Input
-              placeholder="Filter keterangan..."
-              value={
-                (table.getColumn("keterangan")?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                table.getColumn("keterangan")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm mt-4"
-            />
+            <>
+              {/* 🆕 Filter berdasarkan Nama */}
+              {(filterMode === "nama" || filterMode === "semua") && (
+                <Input
+                  placeholder="Filter berdasarkan nama"
+                  value={
+                    (table.getColumn("full_name")?.getFilterValue() as string) ??
+                    ""
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn("full_name")
+                      ?.setFilterValue(event.target.value)
+                  }
+                  className="max-w-sm mt-4"
+                />
+              )}
+
+              {/* 🔍 Filter berdasarkan Keterangan */}
+              {(filterMode === "keterangan" || filterMode === "semua") && (
+                <Input
+                  placeholder="Filter berdasarkan keterangan"
+                  value={
+                    (table.getColumn("keterangan")?.getFilterValue() as string) ??
+                    ""
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn("keterangan")
+                      ?.setFilterValue(event.target.value)
+                  }
+                  className="max-w-sm mt-4"
+                />
+              )}
+            </>
           )}
           {enableColumnVisibility && <DataTableViewOptions table={table} />}
         </div>
