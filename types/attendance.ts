@@ -41,4 +41,5 @@ export type FileUploadProps = {
   orientation?: 'vertical' | 'horizontal';
   accept?: string;
   maxSize?: number; // in MB
+  titleName?: string;
 }

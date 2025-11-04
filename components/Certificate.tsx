@@ -38,7 +38,7 @@ export default function Certificate({ userName }: CertificateProps) {
   };
 
   return (
-    <div className="p-4">
+    <div className="py-4">
       {/* Canvas untuk sertifikat */}
       <canvas
         ref={canvasRef}
@@ -50,7 +50,7 @@ export default function Certificate({ userName }: CertificateProps) {
       {/* Tombol klaim sertifikat */}
       <button
         onClick={generateCertificate}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer"
       >
         Klaim Sertifikat
       </button>
