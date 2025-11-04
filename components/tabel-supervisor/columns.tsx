@@ -437,13 +437,18 @@ const AksiCell: React.FC<{ row: any }> = ({ row }) => {
     const fetchFile = async () => {
       const { data, error } = await supabase
         .from("certificate_requests")
-        .select("file_url, is_active")
+        .select("id, file_url, is_active")
         .eq("user_id", row.original.id)
-        .maybeSingle();
+        .order("id", { ascending: false }) // ambil berdasarkan id terbaru
+        .limit(1)
+        .single();
 
       if (!error && data) {
         setHasFile(!!data.file_url);
         setIsActivated(data.is_active);
+      } else {
+        setHasFile(false);
+        setIsActivated(false);
       }
     };
     fetchFile();
@@ -482,6 +487,43 @@ const AksiCell: React.FC<{ row: any }> = ({ row }) => {
     </Button>
   );
 };
+
+const FileCell: React.FC<{ userId: string }> = ({ userId }) => {
+  const supabase = createClient();
+  const [latestFile, setLatestFile] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchLatestFile = async () => {
+      const { data, error } = await supabase
+        .from("certificate_requests")
+        .select("file_url")
+        .eq("user_id", userId)
+        .order("id", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!error && data) setLatestFile(data.file_url);
+      else setLatestFile(null);
+    };
+
+    fetchLatestFile();
+  }, [userId, supabase]);
+
+  if (!latestFile)
+    return <span className="text-gray-400 italic">Belum Upload</span>;
+
+  return (
+    <a
+      href={latestFile}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 hover:text-blue-800 underline font-medium"
+    >
+      Lihat
+    </a>
+  );
+};
+
 export const historyColumns: ColumnDef<History>[] = [
   {
     accessorKey: "nomor_induk",
@@ -521,27 +563,10 @@ export const historyColumns: ColumnDef<History>[] = [
     cell: ({ row }) => <AksiCell row={row} />,
   },
   {
-    accessorKey: "file",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="File" />
-    ),
-    cell: ({ row }) => {
-      const file = row.getValue("file") as string | undefined;
-
-      if (!file) {
-        return <span className="text-gray-400 italic">Belum Upload</span>;
-      }
-
-      return (
-        <a
-          href={file}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-800 underline font-medium"
-        >
-          Lihat
-        </a>
-      );
-    },
-  },
+  accessorKey: "file",
+  header: ({ column }) => (
+    <DataTableColumnHeader column={column} title="File" />
+  ),
+  cell: ({ row }) => <FileCell userId={row.original.id} />,
+}
 ];
