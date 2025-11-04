@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import React from "react";
 import { DataTableColumnHeader } from "@/components/data-table-column-header";
 import {
   DropdownMenu,
@@ -13,6 +14,7 @@ import { BiSolidCheckCircle } from "react-icons/bi";
 import { BiSolidXCircle } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -45,6 +47,7 @@ export type History = {
   full_name: string;
   institutions: string;
   status: string;
+  file?: string;
 };
 
 const supabase = createClient();
@@ -424,6 +427,61 @@ export const Dashboardcolumns: ColumnDef<Dashboard>[] = [
     },
   },
 ];
+
+const AksiCell: React.FC<{ row: any }> = ({ row }) => {
+  const supabase = createClient();
+  const [hasFile, setHasFile] = React.useState(false);
+  const [isActivated, setIsActivated] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchFile = async () => {
+      const { data, error } = await supabase
+        .from("certificate_requests")
+        .select("file_url, is_active")
+        .eq("user_id", row.original.id)
+        .maybeSingle();
+
+      if (!error && data) {
+        setHasFile(!!data.file_url);
+        setIsActivated(data.is_active);
+      }
+    };
+    fetchFile();
+  }, [row.original.id, supabase]);
+
+  const handleAktifkan = async () => {
+    const internId = row.original.id;
+    const { error } = await supabase
+      .from("certificate_requests")
+      .update({ is_active: true })
+      .eq("user_id", internId);
+
+    if (error) {
+      toast.error("Gagal mengaktifkan sertifikat!");
+      return;
+    }
+
+    toast.success(`Sertifikat ${row.original.full_name} berhasil diaktifkan!`);
+    setIsActivated(true);
+  };
+
+  return (
+    <Button
+      variant="outline"
+      onClick={hasFile && !isActivated ? handleAktifkan : undefined}
+      disabled={!hasFile || isActivated}
+      className={`rounded-md text-sm transition-all duration-200 ${
+        isActivated
+          ? "bg-green-500 text-black cursor-not-allowed"
+          : hasFile
+          ? "bg-green-200 text-gray-700 hover:bg-green-300"
+          : "bg-gray-200 text-gray-500 cursor-not-allowed"
+      }`}
+    >
+      {isActivated ? "Aktif" : hasFile ? "Aktifkan" : "Tidak Aktif"}
+    </Button>
+  );
+};
 export const historyColumns: ColumnDef<History>[] = [
   {
     accessorKey: "nomor_induk",
@@ -452,19 +510,38 @@ export const historyColumns: ColumnDef<History>[] = [
       <DataTableColumnHeader column={column} title="Keterangan" />
     ),
     cell: ({ row }) => (
-      <div className="normal-case text-xs text-gray-700">{row.getValue("status")}</div>
+      <div className="normal-case text-xs text-gray-700">
+        {row.getValue("status")}
+      </div>
     ),
   },
   {
     id: "aksi",
     header: "",
-    cell: () => (
-      <Button
-        variant="outline"
-        className="bg-green-200 text-gray-700 hover:bg-green-300 rounded-md text-sm"
-      >
-        Aktifkan
-      </Button>
+    cell: ({ row }) => <AksiCell row={row} />,
+  },
+  {
+    accessorKey: "file",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="File" />
     ),
+    cell: ({ row }) => {
+      const file = row.getValue("file") as string | undefined;
+
+      if (!file) {
+        return <span className="text-gray-400 italic">Belum Upload</span>;
+      }
+
+      return (
+        <a
+          href={file}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline font-medium"
+        >
+          Lihat
+        </a>
+      );
+    },
   },
 ];

@@ -21,14 +21,26 @@ export default async function Page() {
     .single();
 
   if (!supervisorProfile) {
-    return <p className="text-center text-gray-500">Supervisor tidak ditemukan</p>;
+    return (
+      <p className="text-center text-gray-500">Supervisor tidak ditemukan</p>
+    );
   }
 
   // 📦 Ambil data intern di bawah supervisor
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("users")
     .select(
-      "id, nomor_induk, full_name, status, institution, intern_start_date, intern_end_date, supervisor_id"
+      `
+    id,
+    nomor_induk,
+    full_name,
+    status,
+    institution,
+    intern_start_date,
+    intern_end_date,
+    supervisor_id,
+    certificate_requests ( file_url )
+  `
     )
     .eq("role", "intern")
     .eq("supervisor_id", supervisorProfile.id);
@@ -64,6 +76,7 @@ export default async function Page() {
         full_name: intern.full_name ?? "Tanpa Nama",
         institutions: intern.institution ?? "-",
         status,
+        file: intern.certificate_requests?.[0]?.file_url ?? null,
       };
     }) ?? [];
 

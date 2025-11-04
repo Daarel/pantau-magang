@@ -102,7 +102,8 @@ export default async function SupervisorDashboard() {
       .eq("supervisor_id", data.id)
       .eq("status", "aktif");
 
-    if (internsError) console.error("Error fetching interns data:", internsError);
+    if (internsError)
+      console.error("Error fetching interns data:", internsError);
 
     let totalRate = 0;
 
@@ -192,15 +193,27 @@ export default async function SupervisorDashboard() {
   sakitCount = sakitTodayCount ?? 0;
 
   // hitung alfa hari ini
-  const { count: alfaTodayCount, error: alfaError } = await supabase
+  const { data: alfaData, error: alfaError } = await supabase
     .from("attendance")
-    .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
+    .select("id, users!inner(supervisor_id, status, intern_end_date)")
     .eq("date", today)
     .eq("status", "alfa")
     .eq("users.supervisor_id", data.id);
 
-  if (alfaError) console.error("Error fetching alfaToday:", alfaError);
-  alfaCount = alfaTodayCount ?? 0;
+  if (alfaError) {
+    console.error("Error fetching alfaToday:", alfaError);
+  } else {
+    // filter intern yang masih aktif atau belum melewati tanggal magang
+    const activeAlfa = alfaData?.filter((att: any) => {
+      const u = att.users;
+      if (!u) return false;
+      const endDate = u.intern_end_date ? new Date(u.intern_end_date) : null;
+      const todayDate = new Date(today);
+      return u.status === "aktif" && (!endDate || todayDate <= endDate);
+    });
+
+    alfaCount = activeAlfa?.length ?? 0;
+  }
 
   const stats = {
     totalInterns: totalInterns + " Anak",
