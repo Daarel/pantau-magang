@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import RecordContent from "./components/RecordContent";
 import Loading from "../loading";
+import { da } from "date-fns/locale";
 
 async function checkAuth() {
   const supabase = await createClient();
@@ -27,61 +28,60 @@ async function getUserData(userId: string | null) {
 
 }
 
-// async function getCertificate(userId: string) {
-//   const supabase = await createClient();
-//   console.log("Authenticated user:", userId);
+async function getCertificateTemplate() {
+  const supabase = await createClient();
 
-//   try {
-//     const { data: sertificateData, error: listError } = await supabase.storage
-//       .from("certificate-template")
-//       .list(userId, {
-//         limit: 1,
-//         sortBy: { column: "created_at", order: "desc" },
-//       });
-    
-//     if (listError) {
-//       console.error("Gagal mengambil file:", listError);
-//       return null;
-//     }
-  
-//     if (!sertificateData || sertificateData.length === 0) {
-//       console.warn("Tidak ada file untuk user", userId);
-//       return null;
-//     }
-  
-//     // Ambil file terbaru
-//     const latestFile = sertificateData[0];
-//     console.log("Latest file found:", latestFile.name);
-  
-//     // Buat URL public
-//     const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-//       .from("certificate-template")
-//       .createSignedUrl(`${userId}/${latestFile.name}`, 60 * 60);
-  
-//     if (signedUrlError) {
-//       console.error("Gagal membuat signed URL:", signedUrlError);
-//       return null;
-//     }
-//     console.log("Signed URL created successfully");
-//     return signedUrlData.signedUrl;
+  try {
+    const { data: fileList, error: listError } = await supabase.storage
+      .from("certificate-template")
+      .list();
 
-//   } catch (error) {
-//     console.error("Unexpected error in getCertificate:", error);
-//     return null;
-//   }
-// }
+    if (listError) {
+      console.error("Error listing files:", listError);
+      return null;
+    }
+
+    // Jika tidak ada file, return null
+    if (!fileList || fileList.length === 0) {
+      console.log("Tidak ada template yang ditemukan di bucket");
+      return null;
+    }
+
+    // Urutkan file berdasarkan created_at (descending) untuk mendapatkan yang terbaru
+    const sortedFiles = fileList.sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+    const latestFile = sortedFiles[0];
+    console.log("File terbaru:", latestFile.name, "dibuat pada:", latestFile.created_at);
+
+    // Buat signed URL untuk file terbaru
+    const { data, error } = await supabase.storage
+      .from("certificate-template")
+      .createSignedUrl(latestFile.name, 60 * 60); // URL berlaku 1 jam
+
+    if (error) {
+      console.error("Error creating signed URL:", error);
+      return null;
+    }
+
+    return data.signedUrl;
+
+  } catch (error) {
+    console.error("Error in getCertificateTemplate:", error);
+    return null;
+  }
+}
 
 export default async function InternRecord() {
   const user = await checkAuth();
-  console.log(user);
 
   if(!user){
     redirect("/");
   }
 
   const userData = await getUserData(user.id);
-  // console.log("internData berdasarkan ID user:", internData)
-
+  const templateUrl = await getCertificateTemplate();
   if (!userData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -96,6 +96,7 @@ export default async function InternRecord() {
       <RecordContent 
         userId={userData.id}
         supervisorId={userData.supervisor_id}
+        templateUrl={templateUrl}
       />
     </Suspense>
   )

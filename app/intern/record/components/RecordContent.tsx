@@ -14,13 +14,15 @@ import { useRouter } from "next/navigation";
 interface RecordContentProps {
   userId: string;
   supervisorId: string;
+  templateUrl: string | null;
 }
 
-export default function RecordContent({ userId, supervisorId }: RecordContentProps) {
+export default function RecordContent({ userId, supervisorId, templateUrl }: RecordContentProps) {
   const [fileHasilKerja, setFileHasilKerja] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [currentTemplate, setCurrentTemplate] = useState<string | null>(null);
   const router = useRouter()
 
   useEffect(() => {
@@ -38,6 +40,12 @@ export default function RecordContent({ userId, supervisorId }: RecordContentPro
       return () => clearTimeout(timer);
     };
   }, [uploadStatus])
+
+  useEffect(() => {
+    if (templateUrl) {
+      setCurrentTemplate(templateUrl);
+    }
+  }, [templateUrl]);
 
   const uploadRequestFile = async(file: File) => {
     const supabase = createClient();
@@ -198,7 +206,9 @@ export default function RecordContent({ userId, supervisorId }: RecordContentPro
         {/* Preview Sertificate */}
         <div className="w-full md:w-1/2">
           <Image
-            src={sertifDummy}
+            src={templateUrl || sertifDummy}
+            width={1200}
+            height={800}
             alt='Overlay'
             priority
             className='border select-none'
