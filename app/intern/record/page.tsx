@@ -1,78 +1,102 @@
-'use client'
-import { FileUpload } from "@/components/FileUpload";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import Image from "next/image";
-import sertifDummy from "@/public/sertif-dummy.png";
-import Sertificate from "@/components/Certificate";
+import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import RecordContent from "./components/RecordContent";
+import Loading from "../loading";
 
-export default function InternRecord() {
-  const [fileHasilKerja, setFileHasilKerja] = useState<string | null>(null);
-  const [fileUrl, setFileUrl] = useState<string | null>(null)
+async function checkAuth() {
+  const supabase = await createClient();
+  const { data: { user }, } = await supabase.auth.getUser();
+  return user;
+}
 
-  const handleFileChange = (file: File | null) => {
-    setFileHasilKerja(fileHasilKerja);
-    setFileUrl(fileUrl);
-  };
+async function getUserData(userId: string | null) {
+  const supabase = await createClient();
 
-  // Syarat & Ketentuan
-  const sk = [
-    'Peserta wajib mengunggah laporan hasil kerja magang dan absensi magang melalui sistem yang telah disediakan.', 
-    'Sertifikat hanya dapat diberikan kepada peserta dengan tingkat kehadiran minimal 75% selama periode magang.', 
-    'Laporan hasil kerja magang dapat diunggah paling lambat 1 (satu) minggu sebelum periode magang selesai.', 
-    'Sertifikat hanya dapat diklaim setelah seluruh syarat terpenuhi dan dilakukan paling lambat hingga hari terakhir periode magang.'
-  ];
+  const { data: userData } = await supabase
+    .from("users")
+    .select("id, supervisor_id")
+    .eq("auth_id", userId)
+    .single();
 
+  if (!userData) {
+    console.warn("User belum login");
+    return null;
+  }
+  return userData;
+
+}
+
+// async function getCertificate(userId: string) {
+//   const supabase = await createClient();
+//   console.log("Authenticated user:", userId);
+
+//   try {
+//     const { data: sertificateData, error: listError } = await supabase.storage
+//       .from("certificate-template")
+//       .list(userId, {
+//         limit: 1,
+//         sortBy: { column: "created_at", order: "desc" },
+//       });
+    
+//     if (listError) {
+//       console.error("Gagal mengambil file:", listError);
+//       return null;
+//     }
+  
+//     if (!sertificateData || sertificateData.length === 0) {
+//       console.warn("Tidak ada file untuk user", userId);
+//       return null;
+//     }
+  
+//     // Ambil file terbaru
+//     const latestFile = sertificateData[0];
+//     console.log("Latest file found:", latestFile.name);
+  
+//     // Buat URL public
+//     const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+//       .from("certificate-template")
+//       .createSignedUrl(`${userId}/${latestFile.name}`, 60 * 60);
+  
+//     if (signedUrlError) {
+//       console.error("Gagal membuat signed URL:", signedUrlError);
+//       return null;
+//     }
+//     console.log("Signed URL created successfully");
+//     return signedUrlData.signedUrl;
+
+//   } catch (error) {
+//     console.error("Unexpected error in getCertificate:", error);
+//     return null;
+//   }
+// }
+
+export default async function InternRecord() {
+  const user = await checkAuth();
+  console.log(user);
+
+  if(!user){
+    redirect("/");
+  }
+
+  const userData = await getUserData(user.id);
+  // console.log("internData berdasarkan ID user:", internData)
+
+  if (!userData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-gray-600">Tidak dapat memuat halaman</p>
+        </div>
+      </div>
+    );
+  }
   return (
-    <div className='flex flex-col min-h-dvh gap-4'>
-      {/* Header */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='h4 font-semibold'>Upload Hasil Kerja Anda</h1>
-          <p className='text-gray-500'>
-            Unggah untuk mengklaim sertifikat Anda
-          </p>
-        </div>
-      </div>
-
-      {/* Input & Preview Sertificate */}
-      <div className="flex flex-col-reverse items-center justify-center gap-4 md:flex-row pb-4">
-        {/* Input */}
-        <div className="w-full md:w-1/2">
-          <FileUpload 
-            onFileChange={handleFileChange}
-            cardClassName=""
-            className="rounded-lg pb-4"
-            buttonClassName="hover:bg-primary/10"
-          />
-          <Button 
-            type="submit" 
-            className="w-full active:bg-black/90 transition-colors duration-100 shadow"
-          >
-            Upload
-          </Button>
-        </div>
-        {/* Preview Sertificate */}
-        <div className="w-full md:w-1/2">
-          <Image
-            src={sertifDummy}
-            alt='Overlay'
-            priority
-            className='border'
-          />
-          <Sertificate userName="Dika Arnanda Putra"/>
-        </div>
-      </div>
-
-      {/* Syarat & Ketentuan */}
-      <div className="text-[12px] md:text-[16px] text-gray-500">
-        <p className="font-bold">Syarat dan Ketentuan Klaim Sertifikat Magang:</p>
-        <ul className="list-decimal list-outside pl-3 sm:pl-4 space-y-1">
-          {sk.map((item, index) => (
-            <li key={index} className="normal-case">{item}</li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    <Suspense fallback={<Loading />}>
+      <RecordContent 
+        userId={userData.id}
+        supervisorId={userData.supervisor_id}
+      />
+    </Suspense>
   )
 }
