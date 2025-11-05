@@ -1,5 +1,6 @@
 'use client'
 import { useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 interface CertificateProps {
   userName: string;
@@ -38,7 +39,7 @@ export default function Certificate({ userName }: CertificateProps) {
   };
 
   return (
-    <div className="py-4">
+    <div className="pt-4">
       {/* Canvas untuk sertifikat */}
       <canvas
         ref={canvasRef}
@@ -48,12 +49,12 @@ export default function Certificate({ userName }: CertificateProps) {
       />
 
       {/* Tombol klaim sertifikat */}
-      <button
+      <Button
         onClick={generateCertificate}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer"
+        className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-md cursor-pointer"
       >
         Klaim Sertifikat
-      </button>
+      </Button>
     </div>
   );
 }

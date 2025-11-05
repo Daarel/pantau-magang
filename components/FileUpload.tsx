@@ -95,7 +95,7 @@ export function FileUpload({
 
   return (
     <div className={cn(
-      "flex flex-col",
+      // "flex flex-col",
       orientation === 'horizontal' && "lg:flex-row lg:items-center",
       className
     )}>
@@ -108,7 +108,7 @@ export function FileUpload({
       />
       
       {selectedFile ? (
-        <div className="flex p-4 justify-center items-center border-2 border-dashed rounded-lg gap-3">
+        <div className="flex h-full p-4 justify-center items-center border-2 border-dashed rounded-lg gap-3">
           <div className='flex w-full justify-center items-center gap-2'>
             <FaFilePdf className='w-6 h-6' />
             <div className="flex flex-col min-w-0">
