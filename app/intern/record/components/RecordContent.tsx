@@ -23,8 +23,9 @@ export default function RecordContent({ userId, supervisorId }: RecordContentPro
   const uploadRequestFile = async(file: File) => {
     const supabase = createClient();
     
+    const originalName = file.name.replace(/\.[^/.]+$/, "");
     const fileExt = file.name.split('.').pop();
-    const fileName = `${userId}/fileRequest_${Date.now()}.${fileExt}`;
+    const fileName = `${Date.now()}_${originalName}.${fileExt}`;
     
     const { data, error } = await supabase.storage
       .from('requests_file')
@@ -151,7 +152,7 @@ export default function RecordContent({ userId, supervisorId }: RecordContentPro
       {/* Input & Preview Sertificate */}
       <div className="flex flex-col md:flex-row w-full items-center justify-center gap-4 pb-4">
         {/* Input */}
-        <div className="flex flex-col w-1/2">
+        <div className="flex flex-col w-full md:w-1/2">
           <FileUpload 
             titleName="Silakan unggah dokumen pendukung"
             onFileChange={handleFileChange}
@@ -173,7 +174,7 @@ export default function RecordContent({ userId, supervisorId }: RecordContentPro
           </Button>
         </div>
         {/* Preview Sertificate */}
-        <div className="w-1/2">
+        <div className="w-full md:w-1/2">
           <Image
             src={sertifDummy}
             alt='Overlay'
