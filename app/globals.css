@@ -218,7 +218,7 @@
   }
 
   *::-webkit-scrollbar {
-    @apply w-[8px] px-0.5 h-[8px];
+    @apply w-[8px] px-0.5 h-[6px];
   }
 
   *::-webkit-scrollbar-thumb {
