@@ -64,8 +64,8 @@ export default async function AdminUserPage({
   }));
 
   return (
-    <Suspense fallback={<Loading />}>
-      <div className='w-[calc(100vw-16rem)] h-screen overflow-y-auto bg-gray-50 pr-20 p-6'>
+    <Suspense fallback={Loading()}>
+      <div className='w-[calc(100vw-16rem)] h-screen overflow-y-auto bg-gray-50 pr-10 p-6'>
         <AdminInternClient
           tableData={flatData ?? []}
           totalCount={count ?? 0}
