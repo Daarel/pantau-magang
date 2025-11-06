@@ -6,7 +6,9 @@ import Loading from "../loading";
 
 async function checkAuth() {
   const supabase = await createClient();
-  const { data: { user }, } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return user;
 }
 
@@ -24,7 +26,6 @@ async function getUserData(userId: string | null) {
     return null;
   }
   return userData;
-
 }
 
 // async function getCertificate(userId: string) {
@@ -38,26 +39,26 @@ async function getUserData(userId: string | null) {
 //         limit: 1,
 //         sortBy: { column: "created_at", order: "desc" },
 //       });
-    
+
 //     if (listError) {
 //       console.error("Gagal mengambil file:", listError);
 //       return null;
 //     }
-  
+
 //     if (!sertificateData || sertificateData.length === 0) {
 //       console.warn("Tidak ada file untuk user", userId);
 //       return null;
 //     }
-  
+
 //     // Ambil file terbaru
 //     const latestFile = sertificateData[0];
 //     console.log("Latest file found:", latestFile.name);
-  
+
 //     // Buat URL public
 //     const { data: signedUrlData, error: signedUrlError } = await supabase.storage
 //       .from("certificate-template")
 //       .createSignedUrl(`${userId}/${latestFile.name}`, 60 * 60);
-  
+
 //     if (signedUrlError) {
 //       console.error("Gagal membuat signed URL:", signedUrlError);
 //       return null;
@@ -75,7 +76,7 @@ export default async function InternRecord() {
   const user = await checkAuth();
   console.log(user);
 
-  if(!user){
+  if (!user) {
     redirect("/");
   }
 
@@ -84,19 +85,19 @@ export default async function InternRecord() {
 
   if (!userData) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-gray-600">Tidak dapat memuat halaman</p>
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='text-center'>
+          <p className='text-gray-600'>Tidak dapat memuat halaman</p>
         </div>
       </div>
     );
   }
   return (
-    <Suspense fallback={<Loading />}>
-      <RecordContent 
+    <Suspense fallback={Loading()}>
+      <RecordContent
         userId={userData.id}
         supervisorId={userData.supervisor_id}
       />
     </Suspense>
-  )
+  );
 }
