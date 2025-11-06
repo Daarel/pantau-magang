@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDateID } from "@/lib/helper/formatDate.helper";
 import { toast } from "sonner";
 
-export const revalidate = 60
+export const revalidate = 60;
 
 export default async function AdminHistoryPage({
   searchParams,
@@ -24,7 +24,9 @@ export default async function AdminHistoryPage({
   }
   const params = await searchParams;
   const page = Number(params.page ?? 1);
-  const sort = Array.isArray(params.sort) ? params.sort[0] : params.sort ?? "asc";
+  const sort = Array.isArray(params.sort)
+    ? params.sort[0]
+    : params.sort ?? "asc";
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
 
@@ -52,7 +54,7 @@ export default async function AdminHistoryPage({
   }));
 
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={Loading()}>
       <div className='min-h-screen bg-gray-50 p-6 overflow-x-hidden'>
         <AdminHistoryClient
           tableData={flatData ?? []}
