@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react'
-import { InternAttendanceTable } from './today-intern-status/page';
+import { InternAttendanceTable } from './InternAttendanceTable';
 import { AttendanceIntern } from '@/types/attendance';
 
 interface TabData {

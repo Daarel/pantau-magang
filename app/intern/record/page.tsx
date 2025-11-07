@@ -136,7 +136,7 @@ export default async function InternRecord() {
   // const supId = (userData?.supervisor_id)
   const supName = await getSupervisorData(userData?.supervisor_id)
   
-  console.log("data supName:", supName)
+  // console.log("data supName:", supName)
   
   if (!userData || !templateUrl || !requestInfo || !signatureData) {
     return (

@@ -1,7 +1,7 @@
 "use client";
 import { AttendanceIntern } from "@/types/attendance";
-import { columns } from "./columns";
-import { DataTable } from "./data-table";
+import { columns } from "./today-intern-status/columns";
+import { DataTable } from "./today-intern-status/data-table";
 
 interface InternAttendanceTableProps {
   data: AttendanceIntern[];
