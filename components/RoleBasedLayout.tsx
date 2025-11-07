@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import SupervisorLayout from "@/app/supervisor/layout.client";
 import InternLayout from "@/app/intern/layout.client";
 import AdminLayout from "@/app/admin/layout.client";
+import LoadingLayout from "@/components/LoadingLayout";
 
 export default function RoleBasedLayout({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
@@ -16,14 +17,14 @@ export default function RoleBasedLayout({ children }: { children: ReactNode }) {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        setRole(user.user_metadata.role); // role harus disimpan di user_metadata
+        setRole(user.user_metadata.role);
       }
     }
     getRole();
   }, []);
 
   if (!role) {
-    return <div className='text-sm'>Loading</div>;
+    return <LoadingLayout />;
   }
 
   if (role === "supervisor") {
@@ -37,5 +38,5 @@ export default function RoleBasedLayout({ children }: { children: ReactNode }) {
   }
 
   // fallback
-  return <div>Akses tidak dikenali</div>;
+  return <LoadingLayout />;
 }

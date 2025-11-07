@@ -15,10 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "PantauMagang | Manajemen Magang",
-    template: "%s | PantauMagang",
-  },
+  title: "PantauMagang | Manajemen Magang",
   description:
     "PantauMagang membantu mengelola absensi dan perizinan anak magang secara mudah dan profesional.",
   keywords: [

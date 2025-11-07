@@ -1,24 +1,25 @@
+
+
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { IoArrowBackOutline } from "react-icons/io5";
-import Link from "next/link";
-import Startbutton from "./startbutton";
+import StartButton from "./components/startbutton";
 import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
-import AnimatedInternList from "./AnimatedInternList";
+import AnimatedInternList from "./components/AnimatedInternList";
+import BackButton from "@/components/BackButton";
+
+export const revalidate = 60;
 
 export default async function InternProfilePage() {
   const supabase = await createClient();
 
-  // cek user login
+  // Cek user login
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/");
-  }
+  if (!user) redirect("/");
 
-  // ambil supervisor id
+  // Ambil supervisor id
   const { data: supervisorData, error: supervisorError } = await supabase
     .from("users")
     .select("id")
@@ -30,7 +31,7 @@ export default async function InternProfilePage() {
     redirect("/");
   }
 
-  // ambil daftar interns
+  // Ambil daftar interns
   const { data: interns, error: internsError } = await supabase
     .from("users")
     .select(
@@ -45,18 +46,13 @@ export default async function InternProfilePage() {
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Back button */}
-      <div className="flex items-center justify-between mb-6">
-        <Link
-          href="/supervisor/dashboard"
-          className="px-2 py-2 hover:bg-gray-200 rounded-full transition"
-        >
-          <IoArrowBackOutline className="text-2xl text-gray-700 hover:text-gray-900" />
-        </Link>
+      {/* Tombol kembali */}
+      <div className="mb-10">
+        <BackButton />
       </div>
 
-      {/* Header */}
-      <div className="flex items-center justify-between w-full mb-6">
+      {/* Header dan tombol mulai */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
             Daftar Intern Anda
@@ -66,22 +62,18 @@ export default async function InternProfilePage() {
           </p>
         </div>
 
-        <div>
-          <Startbutton />
-        </div>
+        {/* Tombol mulai (opsi 1) */}
+        <StartButton />
       </div>
 
       {/* Kalau belum ada intern */}
-      {(!interns || interns.length === 0) && (
+      {(!interns || interns.length === 0) ? (
         <p className="text-gray-600 italic">Belum ada intern yang terdaftar.</p>
+      ) : (
+        <AnimatedInternList interns={interns} />
       )}
-
-      {/* Cards dengan animasi */}
-      <AnimatedInternList interns={interns || []} />
 
       <RealtimeDashboardRefresher />
     </div>
   );
 }
-
-

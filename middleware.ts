@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
+  const pathname = request.nextUrl.pathname;
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,11 +11,14 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies
-            .getAll()
-            .map((c) => ({ name: c.name, value: c.value }));
+          // Ambil semua cookie dari request
+          return request.cookies.getAll().map((cookie) => ({
+            name: cookie.name,
+            value: cookie.value,
+          }));
         },
         setAll(cookies) {
+          // Simpan cookie hasil refresh token ke response
           cookies.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, options as any);
           });
@@ -23,42 +27,42 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  try {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const pathname = request.nextUrl.pathname;
+  if (pathname.startsWith("/profile")) {
+    if (!user) {
+      return NextResponse.redirect(new URL("/not-authorized", request.url));
+    }
+  }
 
-    const ROLES = ["admin", "supervisor", "intern"] as const;
-    type Role = (typeof ROLES)[number];
+  const roleMap = [
+    { prefix: "/admin", role: "admin" },
+    { prefix: "/supervisor", role: "supervisor" },
+    { prefix: "/intern", role: "intern" },
+  ] as const;
 
-    const roleMap = [
-      { prefix: "/admin", role: "admin" },
-      { prefix: "/supervisor", role: "supervisor" },
-      { prefix: "/intern", role: "intern" },
-    ] satisfies { prefix: string; role: Role }[];
-
-    const matched = roleMap.find((r) => pathname.startsWith(r.prefix));
-    if (matched) {
-      if (!user) {
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
-
-      const role = user.user_metadata?.role;
-      if (role !== matched.role) {
-        return NextResponse.redirect(new URL("/", request.url));
-      }
+  const matched = roleMap.find((r) => pathname.startsWith(r.prefix));
+  if (matched) {
+    if (!user) {
+      return NextResponse.redirect(new URL("/not-authorized", request.url));
     }
 
-    return response;
-  } catch (err) {
-    console.error("Middleware supabase error:", err);
-    return NextResponse.redirect(new URL("/login", request.url));
+    const role = user.user_metadata?.role;
+    if (role !== matched.role) {
+      return NextResponse.redirect(new URL("/not-authorized", request.url));
+    }
   }
+
+  return response;
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/supervisor/:path*", "/intern/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/supervisor/:path*",
+    "/intern/:path*",
+    "/profile/:path*",
+  ],
 };

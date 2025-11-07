@@ -47,7 +47,6 @@ const DataTable: React.FC<DataTableProps> = ({
   onPreviousPage,
   onNextPage,
 }) => {
-  console.log({ totalCount });
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -78,9 +77,10 @@ const DataTable: React.FC<DataTableProps> = ({
   const pageSize = 10;
   const startRow = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const endRow = Math.min(startRow + data.length - 1, totalCount);
+  const filteredRowCount = table.getFilteredRowModel().rows.length;
 
   return (
-    <div className='w-full'>
+    <div className='w-full 2xl:w-full'>
       <div className='relative py-4'>
         <GoSearch className='absolute left-3 top-1/2 -translate-y-1/2' />
         <Input
@@ -94,7 +94,7 @@ const DataTable: React.FC<DataTableProps> = ({
           }
         />
       </div>
-      <div className='overflow-hidden rounded-md border'>
+      <div className='w-full overflow-x-auto rounded-md border'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -145,9 +145,15 @@ const DataTable: React.FC<DataTableProps> = ({
         </Table>
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>
-        <div className='text-muted-foreground flex-1 text-sm'>
-          Menampilkan {startRow}-{endRow} dari {totalCount ?? 0} baris.
-        </div>
+        {filteredRowCount === totalCount ? (
+          <div className='text-muted-foreground flex-1 text-sm normal-case'>
+            Menampilkan {startRow}-{endRow} dari {totalCount ?? 0} baris.
+          </div>
+        ) : (
+          <div className='text-muted-foreground flex-1 text-sm normal-case'>
+            Menampilkan {filteredRowCount} baris.
+          </div>
+        )}
         <div className='space-x-2'>
           <Button
             variant='outline'

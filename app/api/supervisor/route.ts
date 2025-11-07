@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { insertActivityLogs } from "@/lib/helper/insertActivityLogs.helper";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
     target_name: full_name,
   });
 
+  revalidatePath("/supervisor");
   return NextResponse.json({ data });
 }
 
@@ -97,6 +99,7 @@ export async function PATCH(req: NextRequest) {
       target_name: full_name,
     });
 
+    revalidatePath("/supervisor");
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -149,5 +152,6 @@ export async function DELETE(req: NextRequest) {
     target_name: userData.full_name,
   });
 
+  revalidatePath("/supervisor");
   return NextResponse.json({ success: true });
 }

@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserByNomorInduk } from "@/lib/helper/auth.helper";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { insertActivityLogs } from "@/lib/helper/insertActivityLogs.helper";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
     const body = await req.json();
     const { nomorInduk, password } = body;
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     const fieldErrors: Record<string, string> = {};
     if (!nomorInduk) fieldErrors.nomorInduk = "Nomor induk harus diisi";
@@ -25,10 +28,6 @@ export async function POST(req: NextRequest) {
         { success: false, message: "Nomor induk tidak ditemukan" },
         { status: 404 }
       );
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
 
     await insertActivityLogs({
       action_type: "change_password",
@@ -49,9 +48,8 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
 
-    if (user?.app_metadata.role === "admin") {
-      await supabase.auth.signOut();
-      return NextResponse.json({ success: true, redirect: "/" });
+    if (userInfo.auth_id === user?.role) {
+      return NextResponse.json({ success: false, redirect: "/" });
     }
 
     return NextResponse.json({

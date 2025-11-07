@@ -4,36 +4,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaUser, FaLock } from "react-icons/fa";
 import LoginButton from "@/components/LoginButton";
-import { redirect, useRouter } from "next/navigation";
-import { IoArrowBackOutline } from "react-icons/io5";
-import Link from "next/link";
 import Combobox from "@/components/ui/combobox";
 import { getNomorIndukList } from "@/lib/helper/dataInsert.helper";
-import { createClient } from "@/lib/supabase/client";
+import BackButton from "@/components/BackButton";
+import { toast } from "sonner";
 
 export default function AdminResetPassword() {
-  const supabase = createClient();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedNomorInduk, setSelectedNomorInduk] = useState<string>("");
   const [dataUserByNomorInduk, setDataUserByNomorInduk] = useState<
     { value: string; label: string }[]
   >([]);
-  const router = useRouter();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user || user.user_metadata.role !== "admin") {
-        redirect("/");
-      }
-    };
-
-    getUser();
-  }, [supabase]);
 
   useEffect(() => {
     async function fetchData() {
@@ -63,16 +45,12 @@ export default function AdminResetPassword() {
 
       const json = await res.json();
 
+      if (json.success) toast.success("Password berhasil diubah");
+      else if (json.redirect) window.location.href = json.redirect;
+      else toast.error("Password gagal diubah");
+
       if (!res.ok) {
         setError(json.message || "Reset password gagal, coba lagi.");
-      }
-
-      if (json.success) {
-        if (json.redirect) {
-          router.push(json.redirect);
-        } else {
-          router.push("/");
-        }
       }
     } catch (err) {
       setError("Gagal terhubung ke server.");
@@ -83,12 +61,7 @@ export default function AdminResetPassword() {
 
   return (
     <div className='flex flex-col justify-center items-center min-h-screen gap-10 mt-[-100px] px-4'>
-      <Link
-        href='/admin/dashboard'
-        className='absolute left-16 top-16 px-2 py-2 hover:bg-gray-200 rounded-full transition'
-      >
-        <IoArrowBackOutline className='text-2xl text-gray-700 hover:text-gray-900' />
-      </Link>
+      <BackButton />
 
       <div className='text-4xl max-sm:text-2xl font-bold text-gray-800 text-center'>
         Ubah Password
@@ -135,7 +108,7 @@ export default function AdminResetPassword() {
           </div>
 
           <LoginButton
-            buttonTitle={isLoading ? "Loading..." : "Masuk"}
+            buttonTitle={isLoading ? "Loading..." : "Ubah"}
             disabled={isLoading}
           />
         </form>

@@ -26,7 +26,8 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
       dispensation,
       users!inner (
         full_name,
-        supervisor_id
+        supervisor_id,
+        intern_end_date
       )
     `
     )
@@ -41,7 +42,17 @@ async function getAttendanceData(supervisorId: string): Promise<Attendance[]> {
     return [];
   }
 
-  return (data ?? []).map((att: any) => ({
+  // ✅ filter agar data nonaktif (intern_end_date lewat) tidak update setelah tanggal itu
+  const today = new Date();
+  const filteredData = (data ?? []).filter((att: any) => {
+    const endDate = att.users?.intern_end_date
+      ? new Date(att.users.intern_end_date)
+      : null;
+    // tampilkan semua history, tapi hanya sampai tanggal akhir magang
+    return !endDate || new Date(att.date) <= endDate;
+  });
+
+  return filteredData.map((att: any) => ({
     id: att.id,
     name: att.users?.full_name ?? "Unknown",
     status: att.status.charAt(0).toUpperCase() + att.status.slice(1),
@@ -115,11 +126,13 @@ async function getDashboardData(supervisorId: string): Promise<Dashboard[]> {
       users!inner (
         full_name,
         institution,
-        supervisor_id
+        supervisor_id,
+        status
       )
     `
     )
     .eq("users.supervisor_id", supervisorId)
+    .eq("users.status", "aktif")
     .eq("date", today)
     .or(
       "dispensation.eq.approved,dispensation.eq.n_approved,dispensation.is.null"
@@ -177,6 +190,7 @@ export default function AttendanceTable({
         data={filteredData}
         enableFilter={true}
         enableColumnVisibility={false}
+        filterMode="keterangan"
       />
     </div>
   );
@@ -213,6 +227,7 @@ export function ReportTable({
         data={filteredData}
         enableFilter={true}
         enableColumnVisibility={false}
+        filterMode="keterangan"
       />
     </div>
   );

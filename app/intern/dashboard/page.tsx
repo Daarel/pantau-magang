@@ -1,104 +1,101 @@
-"use client";
-import { useEffect } from "react";
-// Icons
-import { GoClock } from "react-icons/go";
-import { FiCalendar } from "react-icons/fi";
-import { IoDocumentTextOutline } from "react-icons/io5";
+import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 // Components
-import PieChart from "@/components/PieChart";
-import TodaysAttendance from "@/components/TodaysAttendance";
-import DashboardClock from "@/components/DashboardClock";
-import { getWorkdaysInMonth, formatNama } from "@/lib/utils";
-// Styles
-import "../../globals.css";
-import Image from "next/image";
+import DashboardContent from "./components/DashboardContent";
+import Loading from "./loading";
+import { formatTimeStamp, formatTime } from "@/lib/utils";
+import { internSummary, internSchedule } from "@/types/intern";
 
-import { useInternData } from "@/hooks/useInternData";
+async function checkAuth() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+}
 
-export default function InternDashboard() {
-  const { summaryData, loading, error } = useInternData();
-  const totalHariKerja = getWorkdaysInMonth();
+async function getInternData(userId: string | null) {
+  const supabase = await createClient();
 
-  useEffect(() => {
-    console.log("Summary data:", summaryData);
-    console.log("Loading:", loading);
-    console.log("Error:", error);
-  }, [summaryData, loading, error]);
+  const { data: userData } = await supabase
+    .from("users")
+    .select("id, supervisor_id")
+    .eq("auth_id", userId)
+    .single();
+
+  // console.log("userData:", userData)
+  if (!userData) return null;
+
+  // Kueri berdasarkan user_id
+  const { data: internData } = await supabase
+    .from("intern_data")
+    .select("*")
+    .eq("user_id", userData.id)
+    .single();
+
+  // console.log("internData:", internData)
+  return internData;
+}
+
+async function getSecheduleData(supervisorId: string) {
+  const supabase = await createClient();
+
+  const { data: scheduleData } = await supabase
+    .from("attendance_schedules")
+    .select("*")
+    .eq("supervisor_id", supervisorId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  // console.log("scheduleData:",scheduleData)
+  return scheduleData;
+}
+
+export default async function InternDashboard() {
+  const user = await checkAuth();
+  // console.log(user)
+
+  if (!user) {
+    redirect("/");
+  }
+
+  const internData = await getInternData(user.id);
+  // console.log("internData berdasarkan ID user:", internData)
+
+  if (!internData) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='text-center'>
+          <h1 className='h4 font-semibold'>Data Tidak Ditemukan</h1>
+          <p className='text-gray-600'>Tidak dapat memuat data dashboard</p>
+        </div>
+      </div>
+    );
+  }
+
+  const formattedData: internSummary = {
+    ...internData,
+    today_check_in: formatTimeStamp(internData.today_check_in),
+  };
+
+  const scheduleData = await getSecheduleData(internData.supervisor_id);
+
+  const formattedSchedule: internSchedule | null = scheduleData
+    ? {
+        start_time: formatTime(scheduleData.start_time),
+        end_time: formatTime(scheduleData.end_time),
+      }
+    : null;
 
   return (
-    <>
-      {/* 1. Informasi nama, tanggal, dan waktu */}
-      <div className='relative bg-blue-500 space-y-2 mb-2 md:mb-4 h-48 p-4 lg:p-8 rounded-lg overflow-hidden'>
-        <Image
-          src='/overlayBuilding.webp'
-          alt='Overlay'
-          fill
-          priority
-          className='absolute inset-0 object-cover opacity-25 z-0'
-        />
-
-        <div className='relative z-10'>
-          <h1 className='title_header capitalize'>
-            Selamat Datang, {loading ? "-" : summaryData?.nama ? formatNama(summaryData.nama) : "-"}
-          </h1>
-          <DashboardClock />
-        </div>
-      </div>
-
-      {/* 2. Today attendance, Piechart */}
-      <div className='flex flex-col md:flex-row w-full gap-2 md:gap-4'>
-        {/* Attendance */}
-        <div className="flex flex-col w-full md:w-1/2 gap-2 md:gap-4">
-          <TodaysAttendance />
-
-          <div className='flex flex-col w-full gap-2 md:gap-4 sm:flex-row'>
-            <div className='flex w-full gap-2 sm:gap-4'>
-              <div className='flex w-1/2 p-4 items-center justify-center sm:justify-evenly border-2 rounded-md gap-4'>
-                <div>
-                  <GoClock className='text-green-600 bg-green-200 p-3 w-11 lg:w-13 h-11 lg:h-13 rounded-md' />
-                </div>
-                <div className='flex flex-col gap-1'>
-                  <h1 className='text-sm lg:text-lg font-semibold text-black/50'>
-                    Bulan Ini
-                  </h1>
-                  <h1 className='h5 sm:h3 font-bold'>
-                    {loading ? "-" : summaryData?.total_hadir_bulanan ?? "0"}/
-                    {totalHariKerja}
-                  </h1>
-                  <h1 className='text-xs sm:h6 font-semibold text-green-600'>
-                    Kehadiran
-                  </h1>
-                </div>
-              </div>
-
-              <div className='flex w-1/2 p-4 border-2 items-center justify-center sm:justify-evenly rounded-md gap-4'>
-                <div>
-                  <IoDocumentTextOutline className='text-[#CA8A04] bg-[#FEF9C3] p-3 w-11 lg:w-13 h-11 lg:h-13 rounded-md' />
-                </div>
-                <div className='flex flex-col gap-1'>
-                  <h1 className='text-sm lg:text-lg font-semibold text-black/50'>
-                    Dispensasi
-                  </h1>
-                  <h1 className='h5 sm:h3 font-bold'>
-                    {loading ? "-" : summaryData?.total_dispensasi ?? "0"}
-                  </h1>
-                  <h1 className='text-xs sm:h6 font-semibold text-[#CA8A04]'>
-                    Disetujui
-                  </h1>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Piechart */}
-        <div className='flex flex-col w-full md:w-1/2 border-2 gap-4 py-4 px-5 rounded-md'>
-          {/* Chart */}
-          <div className='flex items-center justify-center w-full'>
-            <PieChart />
-          </div>
-        </div>
-      </div>
-    </>
+    <Suspense fallback={Loading()}>
+      <DashboardContent
+        internData={formattedData}
+        scheduleData={formattedSchedule}
+      />
+      {/* Loading() */}
+    </Suspense>
   );
 }

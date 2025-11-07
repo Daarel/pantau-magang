@@ -1,78 +1,167 @@
-'use client'
-import { FileUpload } from "@/components/FileUpload";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import Image from "next/image";
-import sertifDummy from "@/public/sertif-dummy.png";
-import Sertificate from "@/components/Certificate";
+import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import RecordContent from "./components/RecordContent";
+import Loading from "./loading";
 
-export default function InternRecord() {
-  const [fileHasilKerja, setFileHasilKerja] = useState<string | null>(null);
-  const [fileUrl, setFileUrl] = useState<string | null>(null)
+async function checkAuth() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+}
 
-  const handleFileChange = (file: File | null) => {
-    setFileHasilKerja(fileHasilKerja);
-    setFileUrl(fileUrl);
-  };
+async function getUserData(userId: string | null) {
+  const supabase = await createClient();
 
-  // Syarat & Ketentuan
-  const sk = [
-    'Peserta wajib mengunggah laporan hasil kerja magang dan absensi magang melalui sistem yang telah disediakan.', 
-    'Sertifikat hanya dapat diberikan kepada peserta dengan tingkat kehadiran minimal 75% selama periode magang.', 
-    'Laporan hasil kerja magang dapat diunggah paling lambat 1 (satu) minggu sebelum periode magang selesai.', 
-    'Sertifikat hanya dapat diklaim setelah seluruh syarat terpenuhi dan dilakukan paling lambat hingga hari terakhir periode magang.'
-  ];
+  const { data: userData } = await supabase
+    .from("users")
+    .select("*")
+    .eq("auth_id", userId)
+    .single();
 
+  if (!userData) {
+    console.warn("User belum login");
+    return null;
+  }
+  return userData;
+}
+
+async function getSupervisorData(userId: string | null) {
+  const supabase = await createClient();
+
+  const { data: supData } = await supabase
+    .from("users")
+    .select("full_name")
+    .eq("id", userId)
+    .single();
+
+  if (!supData) {
+    console.warn("nama supervisor tidak ada");
+    return null;
+  }
+  return supData;
+}
+
+async function getRequestInfo(userId: string) {
+  const supabase = await createClient();
+
+  const { data: requestData } = await supabase
+    .from("certificate_requests")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+  
+  return requestData;
+}
+
+async function getCertificateTemplate() {
+  const supabase = await createClient();
+
+  try {
+    const { data: fileList, error: listError } = await supabase.storage
+      .from("certificate-template")
+      .list();
+
+    if (listError) {
+      console.error("Error listing files:", listError);
+      return null;
+    }
+
+    // Jika tidak ada file, return null
+    if (!fileList || fileList.length === 0) {
+      console.log("Tidak ada template yang ditemukan di bucket");
+      return null;
+    }
+
+    // Urutkan file berdasarkan created_at (descending) untuk mendapatkan yang terbaru
+    const sortedFiles = fileList.sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+    const latestFile = sortedFiles[0];
+    // console.log("File terbaru:", latestFile.name, "dibuat pada:", latestFile.created_at);
+
+    // Buat signed URL untuk file terbaru
+    const { data, error } = await supabase.storage
+      .from("certificate-template")
+      .createSignedUrl(latestFile.name, 60 * 60); // URL berlaku 1 jam
+
+    if (error) {
+      console.error("Error creating signed URL:", error);
+      return null;
+    }
+
+    return data.signedUrl;
+
+  } catch (error) {
+    console.error("Error in getCertificateTemplate:", error);
+    return null;
+  }
+}
+
+async function getSupervisorSignature(userId: string) {
+  const supabase = await createClient();
+  const { data: signatureData, error } = await supabase
+    .from("signatures")
+    .select("signature_url")
+    .eq("supervisor_id", userId)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .limit(1) 
+    .single();
+
+  if (error) {
+    console.error("Error fetching supervisor signature:", error);
+    return null;
+  }
+
+  return signatureData?.signature_url ?? null;
+}
+
+export default async function InternRecord() {
+  const user = await checkAuth();
+
+  if (!user) {
+    redirect("/");
+  }
+
+  const userData = await getUserData(user.id);
+  const templateUrl = await getCertificateTemplate();
+  const requestInfo = await getRequestInfo(userData?.id);
+  const signatureData = await getSupervisorSignature(userData?.supervisor_id)
+  // const supId = (userData?.supervisor_id)
+  const supName = await getSupervisorData(userData?.supervisor_id)
+  
+  console.log("data supName:", supName)
+  
+  if (!userData || !templateUrl || !requestInfo || !signatureData) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='text-center'>
+          <p className='text-gray-600'>Tidak dapat memuat halaman</p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
-    <div className='flex flex-col min-h-dvh gap-4'>
-      {/* Header */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='h4 font-semibold'>Upload Hasil Kerja Anda</h1>
-          <p className='text-gray-500'>
-            Unggah untuk mengklaim sertifikat Anda
-          </p>
-        </div>
-      </div>
-
-      {/* Input & Preview Sertificate */}
-      <div className="flex flex-col-reverse items-center justify-center gap-4 md:flex-row pb-4">
-        {/* Input */}
-        <div className="w-full md:w-1/2">
-          <FileUpload 
-            onFileChange={handleFileChange}
-            cardClassName=""
-            className="rounded-lg pb-4"
-            buttonClassName="hover:bg-primary/10"
-          />
-          <Button 
-            type="submit" 
-            className="w-full active:bg-black/90 transition-colors duration-100 shadow"
-          >
-            Upload
-          </Button>
-        </div>
-        {/* Preview Sertificate */}
-        <div className="w-full md:w-1/2">
-          <Image
-            src={sertifDummy}
-            alt='Overlay'
-            priority
-            className='border'
-          />
-          <Sertificate userName="Dika Arnanda Putra"/>
-        </div>
-      </div>
-
-      {/* Syarat & Ketentuan */}
-      <div className="text-[12px] md:text-[16px] text-gray-500">
-        <p className="font-bold">Syarat dan Ketentuan Klaim Sertifikat Magang:</p>
-        <ul className="list-decimal list-outside pl-3 sm:pl-4 space-y-1">
-          {sk.map((item, index) => (
-            <li key={index} className="normal-case">{item}</li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  )
+    <Suspense fallback={Loading()}>
+      <RecordContent
+        userId={userData.id}
+        supervisorId={userData.supervisor_id}
+        supervisorName={supName?.full_name}
+        userName={userData.full_name}
+        start_date={userData.intern_start_date}
+        end_date={userData.intern_end_date}
+        department={userData.department}
+        templateUrl={templateUrl}
+        requestInfo={requestInfo.is_active}
+        signatureData={signatureData}
+      />
+    </Suspense>
+  );
 }

@@ -12,7 +12,7 @@ import {
   FaLock,
 } from "react-icons/fa";
 import Image from "next/image";
-import NavigationButton from "../../../components/NavigationButton";
+import NavigationButton from "@/components/NavigationButton";
 import DashboardClock from "@/components/DashboardClock";
 
 import { redirect } from "next/navigation";
@@ -27,6 +27,8 @@ type ActivityType =
   | "update_intern"
   | "update_supervisor"
   | "change_password";
+
+export const revalidate = 60
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -184,7 +186,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div className='flex flex-row mt-5 justify-center gap-6 items-center max-sm:flex-col'>
-        <Card className='w-1/2 max-sm:w-full h-[350px]'>
+        <Card className='w-1/2 max-sm:w-full h-[350px] max-sm:h-auto'>
           <CardHeader>
             <CardTitle>Aktivitas Terbaru</CardTitle>
           </CardHeader>
@@ -229,7 +231,7 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className='w-1/2 max-sm:w-full h-[350px]'>
+        <Card className='w-1/2 max-sm:w-full h-[350px] max-sm:h-auto'>
           <CardHeader>
             <CardTitle>Aksi Cepat</CardTitle>
           </CardHeader>
