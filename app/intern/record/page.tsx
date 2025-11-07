@@ -15,7 +15,7 @@ async function getUserData(userId: string | null) {
 
   const { data: userData } = await supabase
     .from("users")
-    .select("id, supervisor_id, full_name")
+    .select("*")
     .eq("auth_id", userId)
     .single();
 
@@ -24,6 +24,22 @@ async function getUserData(userId: string | null) {
     return null;
   }
   return userData;
+}
+
+async function getSupervisorData(userId: string | null) {
+  const supabase = await createClient();
+
+  const { data: supData } = await supabase
+    .from("users")
+    .select("full_name")
+    .eq("id", userId)
+    .single();
+
+  if (!supData) {
+    console.warn("nama supervisor tidak ada");
+    return null;
+  }
+  return supData;
 }
 
 async function getRequestInfo(userId: string) {
@@ -115,8 +131,10 @@ export default async function InternRecord() {
   const templateUrl = await getCertificateTemplate();
   const requestInfo = await getRequestInfo(userData?.id);
   const signatureData = await getSupervisorSignature(userData?.supervisor_id)
-  // const userName = await getUserData(userData?.full_name)
-  console.log("data signatureData:", signatureData)
+  // const supId = (userData?.supervisor_id)
+  const supName = await getSupervisorData(userData?.supervisor_id)
+  
+  console.log("data supName:", supName)
   
   if (!userData || !templateUrl || !requestInfo || !signatureData) {
     return (
@@ -133,7 +151,11 @@ export default async function InternRecord() {
       <RecordContent 
         userId={userData.id}
         supervisorId={userData.supervisor_id}
+        supervisorName={supName?.full_name}
         userName={userData.full_name}
+        start_date={userData.intern_start_date}
+        end_date={userData.intern_end_date}
+        department={userData.department}
         templateUrl={templateUrl}
         requestInfo={requestInfo.is_active}
         signatureData={signatureData}

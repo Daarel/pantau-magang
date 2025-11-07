@@ -14,13 +14,17 @@ import { useRouter } from "next/navigation";
 interface RecordContentProps {
   userId: string;
   supervisorId: string;
+  supervisorName: string;
   userName: string | null;
+  start_date: string;
+  end_date: string;
+  department: string;
   templateUrl: string | null;
   requestInfo: boolean;
   signatureData: string;
 }
 
-export default function RecordContent({ userId, supervisorId, userName, templateUrl, requestInfo, signatureData }: RecordContentProps) {
+export default function RecordContent({ userId, supervisorId, supervisorName, userName, start_date, end_date, department, templateUrl, requestInfo, signatureData }: RecordContentProps) {
   const [fileHasilKerja, setFileHasilKerja] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -221,6 +225,10 @@ export default function RecordContent({ userId, supervisorId, userName, template
           />
           <Sertificate 
             userName={userName}
+            supervisorName={supervisorName}
+            start_date={start_date}
+            end_date={end_date}
+            department={department}
             requestInfo={requestInfo}
             templateUrl={templateUrl}
             signatureData={signatureData}
