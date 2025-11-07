@@ -1,48 +1,110 @@
-// src/components/AttendanceHistory.tsx
-"use client";
-import React, { useState } from "react";
-import { InternAttendanceTable } from "@/components/today-intern-status/page"
-import ExportAttendanceButton from "@/components/ExportAttendanceButton";
+import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
+import TabNavigation from "./components/TabNavigation";
+import Loading from "./components/loading"
+import { AttendanceIntern } from "@/types/attendance";
+import { redirect } from "next/navigation";
 
-export default function InternHistory() {
-  const [activeTab, setActiveTab] = useState<string>("Semua Riwayat");
+async function checkAuth() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+}
+
+async function getUserData(userId: string | null) {
+  const supabase = await createClient();
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("*")
+    .eq("auth_id", userId)
+    .single();
+
+  if (!userData) {
+    console.warn("User belum login");
+    return null;
+  }
+  return userData;
+}
+
+async function getAttendanceData(activeTab: string, userId: string): Promise<AttendanceIntern[]> {
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("attendance")
+    .select("*")
+    .eq("user_id", userId);
+
+  // Filter berdasarkan tab aktif jika bukan "Semua Riwayat"
+  if (activeTab !== "Semua Riwayat") {
+    // Mapping antara tab dan status
+    const statusMap: Record<string, string> = {
+      Hadir: "hadir",
+      Sakit: "sakit",
+      Izin: "izin",
+      Alfa: "alfa",
+    };
+
+    const status = statusMap[activeTab];
+    if (status) {
+      query = query.eq("status", status);
+    }
+  }
+
+  const { data, error } = await query.order("date", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching attendance data:", error);
+    return [];
+  }
+  
+  // Transformasi data untuk memastikan konsistensi dengan tipe AttendanceIntern
+  const transformedData = data.map((item) => ({
+    ...item,
+    notes: item.notes || "-",
+    file_url: item.file_url || "-",
+  })) as AttendanceIntern[];
+
+  return transformedData;
+};
+
+export default async function InternHistory() {
+  const user = await checkAuth();
+  if (!user) {
+    redirect("/");
+  }
+
+  const userData = await getUserData(user.id);
+  const tabs = ["Semua Riwayat", "Hadir", "Sakit", "Izin", "Alfa"];
+  const tabDataPromises = tabs.map(tab => 
+    getAttendanceData(tab, userData.id)
+  );
+  const tabDataResults = await Promise.all(tabDataPromises);
+  
+  // Gabungkan data tab dengan nama tab
+  const tabData = tabs.map((tabName, index) => ({
+    tabName,
+    data: tabDataResults[index]
+  }));
 
   return (
     <div className='flex flex-col min-h-screen gap-4'>
       {/* Header */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='h4 font-semibold'>Riwayat Kehadiran</h1>
-          <p className='text-gray-500 text-[12px] md:text-[16px]'>
-            Lacak catatan dan pola kehadiran Anda
-          </p>
-        </div>
-        <ExportAttendanceButton />
+      <div>
+        <h1 className='h4 font-semibold'>Riwayat Kehadiran</h1>
+        <p className='text-gray-500 text-[12px] md:text-[16px]'>
+          Lacak catatan dan pola kehadiran Anda
+        </p>
       </div>
 
-      <div className="flex flex-col border-2 rounded-lg p-2">
-        {/* Tabs */}
-        <div className='flex gap-6 border-b text-[14px] md:text-[16px] justify-evenly sm:justify-normal'>
-          {["Semua Riwayat", "Hadir", "Sakit", "Izin", "Alfa"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`pb-2 cursor-pointer ${
-                activeTab === tab
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 hover:text-blue-600"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {/* Content */}
-        <div className='space-y-4'>
-          <InternAttendanceTable activeTab={activeTab} />
-        </div>
-      </div>
+      {/* Tabs */}
+      <Suspense fallback={<Loading />}>
+        <TabNavigation 
+          tabData={tabData}
+        />
+      </Suspense>
     </div>
   );
 }
