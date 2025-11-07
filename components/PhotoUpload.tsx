@@ -81,7 +81,8 @@ export function PhotoUpload({ onPhotoChange, maxSize = 2 }: PhotoUploadProps) {
   };
 
   return (
-    <div className="flex flex-col w-full items-center xl:items-start">
+    // h-[200px] lg:h-[350px] w-[200px] lg:w-[350px]
+    <div className="flex">
       <input
         type="file"
         ref={fileInputRef}
@@ -92,12 +93,12 @@ export function PhotoUpload({ onPhotoChange, maxSize = 2 }: PhotoUploadProps) {
       />
       
       {isCompressing ? (
-        <div className="flex flex-col justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 bg-gray-200">
+        <div className="flex w-full h-[350px] lg:h-full justify-center items-center gap-2 border-dashed border-black/30 border-2 rounded-md mb-2 bg-gray-200">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           {/* <p className="text-center text-sm">Mengkompresi gambar...</p> */}
         </div>
       ) : previewUrl ? (
-        <div className="relative flex justify-center items-center gap-2 border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md mb-2 overflow-hidden">
+        <div className="relative flex w-full h-[350px] lg:h-full justify-center items-center gap-2 border-dashed border-black/30 border-2 rounded-md mb-2 overflow-hidden">
           <Image
             src={previewUrl}
             alt="Preview"
@@ -118,7 +119,7 @@ export function PhotoUpload({ onPhotoChange, maxSize = 2 }: PhotoUploadProps) {
         <Button
           type="button"
           variant="outline"
-          className="flex flex-col justify-center items-center border-dashed border-black/30 border-2 h-[200px] lg:h-[350px] w-[200px] lg:w-[350px] rounded-md bg-gray-200"
+          className="flex flex-col w-full h-[350px] lg:h-full justify-center items-center border-dashed border-black/30 border-2 rounded-md bg-gray-200"
           onClick={(e) => { e.preventDefault(); handleClick(); }}
         >
           <div className='flex gap-2'>

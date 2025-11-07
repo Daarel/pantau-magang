@@ -248,8 +248,8 @@ export function AttendanceForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Foto */}
-        <div className="flex flex-col md:flex-row items-center justify-between md:justify-evenly gap-6 border-2 p-6 rounded-md">
-          <FormItem>
+        <div className="flex flex-col lg:flex-row items-stretch justify-between lg:justify-evenly gap-6 border-2 p-6 rounded-md">
+          <FormItem className="w-full lg:w-1/2">
             {form.watch('status') === 'hadir' ? (
               <PhotoUpload onPhotoChange={handlePhotoChange} />
             ) : (
@@ -258,7 +258,7 @@ export function AttendanceForm() {
             <FormMessage />
           </FormItem>
 
-          <div className="flex flex-col w-full md:w-1/2 space-y-6">
+          <div className="flex flex-col w-full lg:w-1/2 space-y-6">
             {/* Status */}
             <FormField
               control={form.control}
