@@ -10,7 +10,7 @@ export default function Loading() {
       </div>
 
       {/* Table */}
-      <Skeleton className='h-60 w-full bg-gray-300' />
+      <Skeleton className='h-72 w-full bg-gray-300' />
     </>
   )
 }

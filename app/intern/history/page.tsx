@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import TabNavigation from "./components/TabNavigation";
-import Loading from "./components/loading"
+import Loading from "./loading"
 import { AttendanceIntern } from "@/types/attendance";
 import { redirect } from "next/navigation";
 
@@ -90,9 +90,9 @@ export default async function InternHistory() {
   }));
 
   return (
-    <div className='flex flex-col min-h-screen gap-4'>
+    <Suspense fallback={Loading()}>
       {/* Header */}
-      <div>
+      <div className="pb-4">
         <h1 className='h4 font-semibold'>Riwayat Kehadiran</h1>
         <p className='text-gray-500 text-[12px] md:text-[16px]'>
           Lacak catatan dan pola kehadiran Anda
@@ -100,11 +100,9 @@ export default async function InternHistory() {
       </div>
 
       {/* Tabs */}
-      <Suspense fallback={<Loading />}>
-        <TabNavigation 
-          tabData={tabData}
-        />
-      </Suspense>
-    </div>
+      <TabNavigation 
+        tabData={tabData}
+      />
+    </Suspense>
   );
 }
