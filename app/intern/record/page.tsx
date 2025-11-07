@@ -2,8 +2,7 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import RecordContent from "./components/RecordContent";
-import Loading from "../loading";
-import { da } from "date-fns/locale";
+import Loading from "./loading";
 
 async function checkAuth() {
   const supabase = await createClient();
@@ -16,7 +15,7 @@ async function getUserData(userId: string | null) {
 
   const { data: userData } = await supabase
     .from("users")
-    .select("id, supervisor_id")
+    .select("id, supervisor_id, full_name")
     .eq("auth_id", userId)
     .single();
 
@@ -25,7 +24,20 @@ async function getUserData(userId: string | null) {
     return null;
   }
   return userData;
+}
 
+async function getRequestInfo(userId: string) {
+  const supabase = await createClient();
+
+  const { data: requestData } = await supabase
+    .from("certificate_requests")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+  
+  return requestData;
 }
 
 async function getCertificateTemplate() {
@@ -53,7 +65,7 @@ async function getCertificateTemplate() {
     });
 
     const latestFile = sortedFiles[0];
-    console.log("File terbaru:", latestFile.name, "dibuat pada:", latestFile.created_at);
+    // console.log("File terbaru:", latestFile.name, "dibuat pada:", latestFile.created_at);
 
     // Buat signed URL untuk file terbaru
     const { data, error } = await supabase.storage
@@ -73,6 +85,25 @@ async function getCertificateTemplate() {
   }
 }
 
+async function getSupervisorSignature(userId: string) {
+  const supabase = await createClient();
+  const { data: signatureData, error } = await supabase
+    .from("signatures")
+    .select("signature_url")
+    .eq("supervisor_id", userId)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .limit(1) 
+    .single();
+
+  if (error) {
+    console.error("Error fetching supervisor signature:", error);
+    return null;
+  }
+
+  return signatureData?.signature_url ?? null;
+}
+
 export default async function InternRecord() {
   const user = await checkAuth();
 
@@ -82,7 +113,12 @@ export default async function InternRecord() {
 
   const userData = await getUserData(user.id);
   const templateUrl = await getCertificateTemplate();
-  if (!userData) {
+  const requestInfo = await getRequestInfo(userData?.id);
+  const signatureData = await getSupervisorSignature(userData?.supervisor_id)
+  // const userName = await getUserData(userData?.full_name)
+  console.log("data signatureData:", signatureData)
+  
+  if (!userData || !templateUrl || !requestInfo || !signatureData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -91,12 +127,16 @@ export default async function InternRecord() {
       </div>
     );
   }
+  
   return (
     <Suspense fallback={<Loading />}>
       <RecordContent 
         userId={userData.id}
         supervisorId={userData.supervisor_id}
+        userName={userData.full_name}
         templateUrl={templateUrl}
+        requestInfo={requestInfo.is_active}
+        signatureData={signatureData}
       />
     </Suspense>
   )

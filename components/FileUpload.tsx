@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { TbFileUpload } from 'react-icons/tb';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { toast } from "sonner";
-import { FiX } from 'react-icons/fi';
-import { Card, CardContent } from "@/components/ui/card";
 import { FaFilePdf } from 'react-icons/fa';
 import { cn } from "@/lib/utils";
 import { FileUploadProps } from '@/types/attendance';

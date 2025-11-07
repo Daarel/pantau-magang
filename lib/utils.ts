@@ -5,9 +5,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// export const capitalize = (str: string) => {
+//   if (!str) return "";
+//   return str.charAt(0).toUpperCase() + str.slice(1);
+// };
+
 export const capitalize = (str: string) => {
-  if (!str) return "";
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 };
 
 // Format tanggal menjadi dd/mm/yy
