@@ -15,3 +15,9 @@ export type internSchedule = {
   start_time: string;
   end_time: string;
 }
+
+export type internAttendance = {
+  user_id: string;
+  status: string | null;
+  check_in_time: string | null;
+}

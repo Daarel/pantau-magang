@@ -8,35 +8,35 @@ import { useInsertAlfa } from '@/hooks/useAttendance';
 import { statusColor } from '@/lib/utils';
 import { CheckInButton, DisabledButton } from "./AttendanceButtonHandler";
 import RealtimeDashboardRefresher from "@/components/RealtimeDashboardRefresher";
-import { internSummary, internSchedule } from "@/types/intern";
-import { isWithinSchedule, getScheduleMessage } from "@/lib/helper/schedule.helper"
+import { internSchedule, internAttendance } from "@/types/intern";
+import { isWithinSchedule, getScheduleMessage, getWeekendMessage, isWeekend } from "@/lib/helper/schedule.helper"
 
 interface internTodayAttendanceProps {
-  internData: internSummary | null;
   scheduleData: internSchedule | null;
+  attendanceData: internAttendance | null;
 }
 
-export default function TodaysAttendance({ internData, scheduleData }: internTodayAttendanceProps) {
+export default function TodaysAttendance({ scheduleData, attendanceData }: internTodayAttendanceProps) {
   const { checkAndInsertAlfaStatus, error: alfaError } = useInsertAlfa();
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const status = internData?.status ?? "-";
+  const status = attendanceData?.status ?? "-";
   const todayStatus = statusColor(status);
   const isAlfa = todayStatus.text === "Alfa";
   const isIzin = todayStatus.text === "Izin";
   const isSakit = todayStatus.text === "Sakit";
   const hasInsertedAlfaRef = useRef(false);
+  const weekend = isWeekend();
 
-  // const showCheckInButton = (!internData?.status || internData.status === "-" || todayStatus.text === "Belum Tercatat");
-  const hasCheckIn = internData?.today_check_in && internData.today_check_in !== "-";
+  const hasCheckIn = attendanceData?.check_in_time && attendanceData.check_in_time !== "-";
 
   // Check if within schedule
-  const withinSchedule = scheduleData ? 
+  const withinSchedule = !weekend && scheduleData ? 
     isWithinSchedule(scheduleData.start_time, scheduleData.end_time) : false;
   
   // Get appropriate message
-  const buttonMessage = scheduleData ? 
-    getScheduleMessage(scheduleData.start_time, scheduleData.end_time) : 
+  const buttonMessage = weekend? getWeekendMessage() : 
+    scheduleData ? getScheduleMessage(scheduleData.start_time, scheduleData.end_time) : 
     "Tidak ada jadwal absen";
 
   // Update time every minute to refresh button state
@@ -49,11 +49,12 @@ export default function TodaysAttendance({ internData, scheduleData }: internTod
   }, []);
 
   useEffect(() => {
-    if (internData?.user_id && !internData?.status && !hasInsertedAlfaRef.current) {
+    if (weekend) return;
+    if (attendanceData?.user_id && !attendanceData?.status && !hasInsertedAlfaRef.current) {
       checkAndInsertAlfaStatus();
       hasInsertedAlfaRef.current = true; // tandai sudah insert alfa hari ini
     }
-  }, [internData?.user_id, internData?.status, alfaError, checkAndInsertAlfaStatus]);
+  }, [weekend, attendanceData?.user_id, attendanceData?.status, alfaError, checkAndInsertAlfaStatus]);
 
   return (
     <div className='flex flex-col border-2 gap-6 py-4 px-5 rounded-md'>
@@ -77,36 +78,45 @@ export default function TodaysAttendance({ internData, scheduleData }: internTod
         <div className='flex justify-between'>
           <h1>Check In:</h1>
           <h1 className='font-semibold'>
-            {internData?.today_check_in ?? "-"}
+            {attendanceData?.check_in_time ?? "-"}
           </h1>
         </div>
       </div>
 
       <>
-        {isAlfa && (
-          <DisabledButton message="Tidak hadir tanpa keterangan" />
+        {weekend && (
+          <DisabledButton message={buttonMessage} />
         )}
 
-        {isIzin && (
-          <DisabledButton message="Izin tidak hadir" />
+        {!weekend && (
+          <>
+            {isAlfa && (
+              <DisabledButton message={buttonMessage} />
+            )}
+
+            {isIzin && (
+              <DisabledButton message="Izin tidak hadir" />
+            )}
+
+            {isSakit && (
+              <DisabledButton message="Tidak hadir karena sakit" />
+            )}
+
+            {hasCheckIn && (
+              <DisabledButton message="Telah melakukan absensi" />
+            )}
+
+            { !isAlfa && !isIzin && !isSakit && !hasCheckIn && (
+              withinSchedule ? (
+                <CheckInButton message="Silakan lakukan absensi" />
+              ) : (
+                <DisabledButton message={buttonMessage} />
+              )
+              
+            ) }
+          </>
         )}
 
-        {isSakit && (
-          <DisabledButton message="Tidak hadir karena sakit" />
-        )}
-
-        {hasCheckIn && (
-          <DisabledButton message="Telah melakukan absensi" />
-        )}
-
-        { !isAlfa && !isIzin && !isSakit && !hasCheckIn && (
-          withinSchedule ? (
-            <CheckInButton message="Silakan lakukan absensi" />
-          ) : (
-            <DisabledButton message={buttonMessage} />
-          )
-          
-        ) }
       </>
       <RealtimeDashboardRefresher />
     </div>
