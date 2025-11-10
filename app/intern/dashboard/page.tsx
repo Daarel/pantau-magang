@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import DashboardContent from "./components/DashboardContent";
 import Loading from "./loading";
 import { formatTimeStamp, formatTime } from "@/lib/utils";
-import { internSummary, internSchedule, internAttendance } from "@/types/intern";
+import { internSchedule, internAttendance } from "@/types/intern";
+import { isWeekend } from "@/lib/helper/schedule.helper";
 
 async function checkAuth() {
   const supabase = await createClient();
@@ -79,6 +80,40 @@ async function getSecheduleData(supervisorId: string) {
   return scheduleData;
 }
 
+// function canAccessAttendancePage(attendanceData: internAttendance, scheduleData: internSchedule): boolean {
+//   // weekend?
+//   if (isWeekend()) {
+//     return false;
+//   }
+
+//   // sudah check-in?
+//   if (attendanceData?.check_in_time) {
+//     return false;
+//   }
+
+//   // status izin/sakit/alfa?
+//   if (attendanceData?.status && ['Izin', 'Sakit', 'Alfa'].includes(attendanceData.status)) {
+//     return false;
+//   }
+
+//   // dalam jam presensi?
+//   if (scheduleData) {
+//     const now = new Date();
+//     const currentTime = now.getHours() * 60 + now.getMinutes();
+//     const [startHour, startMinute] = scheduleData.start_time.split(':').map(Number);
+//     const [endHour, endMinute] = scheduleData.end_time.split(':').map(Number);
+    
+//     const startTime = startHour * 60 + startMinute;
+//     const endTime = endHour * 60 + endMinute;
+    
+//     if (currentTime < startTime || currentTime > endTime) {
+//       return false;
+//     }
+//   }
+
+//   return true;
+// }
+
 export default async function InternDashboard() {
   const user = await checkAuth();
   // console.log(user)
@@ -89,7 +124,7 @@ export default async function InternDashboard() {
 
   const internData = await getInternData(user.id);
   const attendanceData = await getAttendanceData(user.id);
-  console.log("attendanceData berdasarkan ID user:", attendanceData)
+  // console.log("attendanceData berdasarkan ID user:", attendanceData)
 
   if (!internData) {
     return (
@@ -102,10 +137,6 @@ export default async function InternDashboard() {
     );
   }
 
-  // const formattedData: internSummary = {
-  //   ...internData,
-  //   today_check_in: formatTimeStamp(internData.today_check_in),
-  // };
   const formattedData: internAttendance = {
     user_id: attendanceData?.user_id,
     status: attendanceData?.status,
@@ -128,7 +159,6 @@ export default async function InternDashboard() {
         scheduleData={formattedSchedule}
         attendanceData={formattedData}
       />
-      {/* Loading() */}
     </Suspense>
   );
 }
