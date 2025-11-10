@@ -133,12 +133,11 @@ export default async function InternRecord() {
   const templateUrl = await getCertificateTemplate();
   const requestInfo = await getRequestInfo(userData?.id);
   const signatureData = await getSupervisorSignature(userData?.supervisor_id)
-  // const supId = (userData?.supervisor_id)
   const supName = await getSupervisorData(userData?.supervisor_id)
   
-  // console.log("data supName:", supName)
+  // console.log("data supName:", requestInfo)
   
-  if (!userData || !templateUrl || !requestInfo || !signatureData) {
+  if (!userData) {
     return (
       <div className='flex items-center justify-center min-h-screen'>
         <div className='text-center'>
@@ -159,7 +158,7 @@ export default async function InternRecord() {
         end_date={userData.intern_end_date}
         department={userData.department}
         templateUrl={templateUrl}
-        requestInfo={requestInfo.is_active}
+        requestInfo={requestInfo?.is_active ?? false}
         signatureData={signatureData}
       />
     </Suspense>
