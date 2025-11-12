@@ -18,6 +18,54 @@ export default function AdminUploadCertificate() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getLatestCertificate = async () => {
+      const { data, error } = await supabase.storage
+        .from("certificate-template")
+        .list("", {
+          sortBy: { column: "created_at", order: "desc" },
+          limit: 1,
+        });
+
+      if (error) {
+        toast.error("Gagal mendapatkan template sertifikat terbaru");
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        toast.warning("Template sertifikat belum ada");
+        return;
+      }
+
+      const latestFile = data[0];
+
+      if (latestFile.name === ".emptyFolderPlaceholder") {
+        toast.warning("Belum ada file gambar yang valid di bucket");
+        return;
+      }
+
+      const { data: signedUrlData, error: signedError } = await supabase.storage
+        .from("certificate-template")
+        .createSignedUrl(latestFile.name, 60);
+
+      if (signedError) {
+        toast.error("Gagal membuat signed URL");
+        return;
+      }
+
+      setImageUrl(signedUrlData.signedUrl);
+    };
+
+    getLatestCertificate();
+
+    const interval = setInterval(() => {
+      getLatestCertificate();
+    }, 55 * 1000);
+
+    return () => clearInterval(interval);
+  }, [supabase]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -73,13 +121,14 @@ export default function AdminUploadCertificate() {
   };
 
   return (
-    <>
+    <div className='flex flex-row items-center justify-evenly mt-20 max-lg:flex-col max-lg:gap-8 min-h-4/5'>
       <BackButton />
-
-      <div className='container mx-auto p-8 mt-[50px]'>
+      <div className='flex-1'>
         <Card className='max-w-md mx-auto'>
           <CardHeader>
-            <CardTitle>Upload Template Sertifikat</CardTitle>
+            <CardTitle className='text-center'>
+              Upload Template Sertifikat
+            </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
             <Input
@@ -117,6 +166,20 @@ export default function AdminUploadCertificate() {
           </CardContent>
         </Card>
       </div>
-    </>
+      <div className='flex-1 flex flex-col items-center justify-center'>
+        <h1 className='font-semibold mb-7'>Template Sertifikat Terbaru</h1>
+        <div>
+          {imageUrl && (
+            <Image
+              src={imageUrl}
+              alt='Template Sertifikat Terbaru'
+              width={800}
+              height={600}
+              className='rounded-xl shadow-md object-contain p-8'
+            />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
