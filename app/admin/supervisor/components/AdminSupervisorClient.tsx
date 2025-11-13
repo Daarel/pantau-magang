@@ -226,9 +226,12 @@ const AdminSupervisor: FC<AdminSupervisorProps> = ({
             <DialogTitle className='title__header'>
               Apakah Anda yakin ingin menghapus data?
             </DialogTitle>
-            <p className='text-gray-600 max-sm:text-xs'>
-              Data yang sudah dihapus tidak dapat dipulihkan.
-            </p>
+            <div className='text-red-600 max-sm:text-xs text-sm'>
+              <p className="max-w-[50ch]">
+                Penghapusan data berdampak pada data akun di Table Attendance
+                &amp; User yang terhapus secara permanen dari database.
+              </p>
+            </div>
           </DialogHeader>
           <DialogFooter className='flex flex-row justify-center items-center gap-3'>
             <DialogClose asChild>

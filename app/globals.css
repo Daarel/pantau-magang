@@ -230,7 +230,7 @@
     background: #4b4b4b;
   }
 
-  body {
+  html {
     @apply pr-[2px];
   }
 }
