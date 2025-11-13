@@ -22,6 +22,7 @@ import Image from "next/image";
 import { FaUser } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useState, useEffect, type FC } from "react";
+import { toast } from "sonner";
 
 interface profileDropDown {
   username: string;
@@ -49,6 +50,7 @@ const ProfileDropDown: FC<profileDropDown> = ({ username, role }) => {
         .single();
 
       if (error) {
+        toast.error("Gagal mengambil avatar")
         console.error("Gagal ambil avatar:", error);
         return;
       }

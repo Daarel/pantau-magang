@@ -4,11 +4,9 @@ export default function Loading() {
   return (
     <div className='flex flex-col min-h-dvh gap-4 animate-pulse'>
       {/* Header */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <Skeleton className='h-9 bg-gray-300' />
-          <Skeleton className='h-6 w-64 bg-gray-300' />
-        </div>
+      <div className='flex flex-col gap-4'>
+        <Skeleton className='h-8 w-64 bg-gray-300' />
+        <Skeleton className='h-6 w-64 bg-gray-300' />
       </div>
 
       {/* Input & Preview Sertificate */}

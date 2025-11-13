@@ -49,7 +49,7 @@ export default async function AdminUserPage({
   }
 
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={Loading()}>
       <div className='min-h-screen bg-gray-50 p-6 overflow-x-hidden'>
         <AdminSupervisorClient
           tableData={data ?? []}

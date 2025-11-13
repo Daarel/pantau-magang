@@ -2,14 +2,17 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 // Components
-import DashboardContent from "./components/DashboardContent" 
+import DashboardContent from "./components/DashboardContent";
 import Loading from "./loading";
 import { formatTimeStamp, formatTime } from "@/lib/utils";
-import { internSummary, internSchedule } from "@/types/intern";
+import { internSchedule, internAttendance } from "@/types/intern";
+import { isWeekend } from "@/lib/helper/schedule.helper";
 
 async function checkAuth() {
   const supabase = await createClient();
-  const { data: { user }, } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return user;
 }
 
@@ -31,14 +34,40 @@ async function getInternData(userId: string | null) {
     .select("*")
     .eq("user_id", userData.id)
     .single();
-  
+
   // console.log("internData:", internData)
   return internData;
 }
 
+async function getAttendanceData(userId: string | null) {
+  const supabase = await createClient();
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("id, supervisor_id")
+    .eq("auth_id", userId)
+    .single();
+
+  // console.log("userData:", userData)
+  if (!userData) return null;
+
+  const today = new Date().toISOString().split('T')[0];
+
+  // Kueri berdasarkan user_id dan tanggal hari ini
+  const { data: attendanceData } = await supabase
+    .from("attendance")
+    .select("user_id, status, check_in_time")
+    .eq("user_id", userData.id)
+    .eq("date", today)
+    .single();
+
+  // console.log("attendanceData:", attendanceData)
+  return attendanceData;
+}
+
 async function getSecheduleData(supervisorId: string) {
   const supabase = await createClient();
-  
+
   const { data: scheduleData } = await supabase
     .from("attendance_schedules")
     .select("*")
@@ -46,52 +75,90 @@ async function getSecheduleData(supervisorId: string) {
     .order("created_at", { ascending: false })
     .limit(1)
     .single();
-  
+
   // console.log("scheduleData:",scheduleData)
   return scheduleData;
 }
 
+// function canAccessAttendancePage(attendanceData: internAttendance, scheduleData: internSchedule): boolean {
+//   // weekend?
+//   if (isWeekend()) {
+//     return false;
+//   }
+
+//   // sudah check-in?
+//   if (attendanceData?.check_in_time) {
+//     return false;
+//   }
+
+//   // status izin/sakit/alfa?
+//   if (attendanceData?.status && ['Izin', 'Sakit', 'Alfa'].includes(attendanceData.status)) {
+//     return false;
+//   }
+
+//   // dalam jam presensi?
+//   if (scheduleData) {
+//     const now = new Date();
+//     const currentTime = now.getHours() * 60 + now.getMinutes();
+//     const [startHour, startMinute] = scheduleData.start_time.split(':').map(Number);
+//     const [endHour, endMinute] = scheduleData.end_time.split(':').map(Number);
+    
+//     const startTime = startHour * 60 + startMinute;
+//     const endTime = endHour * 60 + endMinute;
+    
+//     if (currentTime < startTime || currentTime > endTime) {
+//       return false;
+//     }
+//   }
+
+//   return true;
+// }
+
 export default async function InternDashboard() {
-  const user = await checkAuth()
+  const user = await checkAuth();
   // console.log(user)
 
-  if(!user){
+  if (!user) {
     redirect("/");
   }
 
-  const internData = await getInternData(user.id)
-  // console.log("internData berdasarkan ID user:", internData)
+  const internData = await getInternData(user.id);
+  const attendanceData = await getAttendanceData(user.id);
+  // console.log("attendanceData berdasarkan ID user:", attendanceData)
 
   if (!internData) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="h4 font-semibold">Data Tidak Ditemukan</h1>
-          <p className="text-gray-600">Tidak dapat memuat data dashboard</p>
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='text-center'>
+          <h1 className='h4 font-semibold'>Data Tidak Ditemukan</h1>
+          <p className='text-gray-600'>Tidak dapat memuat data dashboard</p>
         </div>
       </div>
     );
   }
-  
-  const formattedData: internSummary = {
-    ...internData,
-    today_check_in: formatTimeStamp(internData.today_check_in),
+
+  const formattedData: internAttendance = {
+    user_id: attendanceData?.user_id,
+    status: attendanceData?.status,
+    check_in_time: attendanceData?.check_in_time ? formatTimeStamp(attendanceData?.check_in_time) : null,
   };
 
-  const scheduleData = await getSecheduleData(internData.supervisor_id)
+  const scheduleData = await getSecheduleData(internData.supervisor_id);
 
-  const formattedSchedule: internSchedule | null = scheduleData ? {
-    start_time: formatTime(scheduleData.start_time),
-    end_time: formatTime(scheduleData.end_time),
-  } : null;
+  const formattedSchedule: internSchedule | null = scheduleData
+    ? {
+        start_time: formatTime(scheduleData.start_time),
+        end_time: formatTime(scheduleData.end_time),
+      }
+    : null;
 
   return (
-    <Suspense fallback={<Loading />}>
-      <DashboardContent 
-        internData={formattedData} 
-        scheduleData={formattedSchedule} 
+    <Suspense fallback={Loading()}>
+      <DashboardContent
+        internData={internData}
+        scheduleData={formattedSchedule}
+        attendanceData={formattedData}
       />
-      {/* <Loading /> */}
     </Suspense>
   );
 }

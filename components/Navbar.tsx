@@ -10,7 +10,6 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import Image from "next/image";
 import ProfileDropDown from "./ProfileDropdown";
 import { useEffect, useState } from "react";
-import clsx from "clsx";
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);

@@ -20,3 +20,12 @@ export function getScheduleMessage(startTime: string, endTime: string): string {
   }
   return "Silakan lakukan absensi";
 }
+
+export function isWeekend(): boolean {
+  const today = new Date().getDay();
+  return today === 0 || today === 6; // 0 = Minggu, 6 = Sabtu
+}
+
+export function getWeekendMessage(): string {
+  return "Tidak ada jadwal absen";
+}

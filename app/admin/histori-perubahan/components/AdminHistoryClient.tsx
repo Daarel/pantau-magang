@@ -72,7 +72,7 @@ const AdminHistory: FC<AdminHistoryProps> = ({
         accessorKey: "description",
         header: "Keterangan",
         cell: ({ row }) => (
-          <div className='capitalize text-xs'>{row.getValue("description")}</div>
+          <div className='normal-case text-xs'>{row.getValue("description")}</div>
         ),
       },
       {

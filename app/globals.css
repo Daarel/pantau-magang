@@ -216,6 +216,23 @@
     width: 20px !important;
     height: 20px !important;
   }
+
+  *::-webkit-scrollbar {
+    @apply w-[8px] px-0.5 h-[6px];
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #2b2b2b;
+    border-radius: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #4b4b4b;
+  }
+
+  html {
+    @apply pr-[2px];
+  }
 }
 
 @layer utilities {
@@ -225,6 +242,6 @@
   }
 
   .card__navigation-button {
-    @apply p-10 flex flex-col items-center justify-center text-center transition-all hover:shadow-md hover:scale-105
+    @apply p-10 flex flex-col items-center justify-center text-center transition-all hover:shadow-md hover:scale-105;
   }
 }

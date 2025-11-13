@@ -48,7 +48,7 @@ export default function Profile() {
     getUserProfile();
   }, []);
 
-  if (!role || !profileData) return <Loading />;
+  if (!role || !profileData) return Loading();
 
   const avatarUrl = profileData.photo_url
     ? `${profileData.photo_url}?t=${Date.now()}`

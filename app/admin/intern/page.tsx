@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDateID } from "@/lib/helper/formatDate.helper";
 import { toast } from "sonner";
 
-export const revalidate = 60
+export const revalidate = 60;
 
 export default async function AdminUserPage({
   searchParams,
@@ -64,8 +64,8 @@ export default async function AdminUserPage({
   }));
 
   return (
-    <Suspense fallback={<Loading />}>
-      <div className='min-h-screen bg-gray-50 p-6 overflow-x-hidden'>
+    <Suspense fallback={Loading()}>
+      <div className='w-[calc(100vw-16rem)] max-md:w-full h-screen overflow-y-auto bg-gray-50 pr-10 p-6'>
         <AdminInternClient
           tableData={flatData ?? []}
           totalCount={count ?? 0}

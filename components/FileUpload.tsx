@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { TbFileUpload } from 'react-icons/tb';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { toast } from "sonner";
-import { FiX } from 'react-icons/fi';
-import { Card, CardContent } from "@/components/ui/card";
 import { FaFilePdf } from 'react-icons/fa';
 import { cn } from "@/lib/utils";
 import { FileUploadProps } from '@/types/attendance';
@@ -95,7 +93,7 @@ export function FileUpload({
 
   return (
     <div className={cn(
-      "flex flex-col",
+      // "flex flex-col",
       orientation === 'horizontal' && "lg:flex-row lg:items-center",
       className
     )}>
@@ -108,7 +106,7 @@ export function FileUpload({
       />
       
       {selectedFile ? (
-        <div className="flex p-4 justify-center items-center border-2 border-dashed rounded-lg gap-3">
+        <div className="flex h-full p-4 justify-center items-center border-2 border-dashed rounded-lg gap-3">
           <div className='flex w-full justify-center items-center gap-2'>
             <FaFilePdf className='w-6 h-6' />
             <div className="flex flex-col min-w-0">

@@ -1,24 +1,58 @@
 "use client";
 import { FileUpload } from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import sertifDummy from "@/public/sertif-dummy.png";
 import Sertificate from "@/components/Certificate";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { file } from "zod";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface RecordContentProps {
   userId: string;
   supervisorId: string;
+  supervisorName: string;
+  userName: string | null;
+  start_date: string;
+  end_date: string;
+  department: string;
+  templateUrl: string | null;
+  requestInfo: boolean;
+  signatureData: string;
 }
 
-export default function RecordContent({ userId, supervisorId }: RecordContentProps) {
+export default function RecordContent({ userId, supervisorId, supervisorName, userName, start_date, end_date, department, templateUrl, requestInfo, signatureData }: RecordContentProps) {
   const [fileHasilKerja, setFileHasilKerja] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [currentTemplate, setCurrentTemplate] = useState<string | null>(null);
+  const router = useRouter()
+
+  useEffect(() => {
+    if(uploadStatus === 'success')  {
+      toast.success("File berhasil diunggah");
+      const timer = setTimeout(() => {
+        setUploadStatus('idle')
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else if(uploadStatus === 'error')  {
+      toast.success("Terjadi kesalahan saat mengupload file. Silakan coba lagi.");
+      const timer = setTimeout(() => {
+        setUploadStatus('idle')
+      }, 2000);
+      return () => clearTimeout(timer);
+    };
+  }, [uploadStatus])
+
+  useEffect(() => {
+    if (templateUrl) {
+      setCurrentTemplate(templateUrl);
+    }
+  }, [templateUrl]);
 
   const uploadRequestFile = async(file: File) => {
     const supabase = createClient();
@@ -107,13 +141,29 @@ export default function RecordContent({ userId, supervisorId }: RecordContentPro
       // Reset form setelah sukses
       setFileHasilKerja(null);
       setFileUrl(null);
-      
+
+      setTimeout(() => {
+        router.push("/intern/record");
+      }, 2000);
+
     } catch (error) {
       console.error("Error during upload:", error);
       setUploadStatus('error');
+
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const preventRightClick = (e: React.MouseEvent<HTMLImageElement>) => {
+    e.preventDefault();
+    return false;
+  };
+
+  // Handler untuk mencegah drag gambar (mencegah drag-to-download)
+  const preventDragHandler = (e: React.DragEvent<HTMLImageElement>) => {
+    e.preventDefault();
+    return false;
   };
 
   // Syarat & Ketentuan
@@ -136,21 +186,8 @@ export default function RecordContent({ userId, supervisorId }: RecordContentPro
         </div>
       </div>
 
-      {/* Status Message */}
-      {uploadStatus === 'success' && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-          <p>File berhasil diupload dan permintaan sertifikat telah dikirim!</p>
-        </div>
-      )}
-      
-      {uploadStatus === 'error' && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p>Terjadi kesalahan saat mengupload file. Silakan coba lagi.</p>
-        </div>
-      )}
-
       {/* Input & Preview Sertificate */}
-      <div className="flex flex-col md:flex-row w-full items-center justify-center gap-4 pb-4">
+      <div className="flex flex-col md:flex-row w-full items-stretch justify-center gap-4 pb-4">
         {/* Input */}
         <div className="flex flex-col w-full md:w-1/2">
           <FileUpload 
@@ -176,12 +213,26 @@ export default function RecordContent({ userId, supervisorId }: RecordContentPro
         {/* Preview Sertificate */}
         <div className="w-full md:w-1/2">
           <Image
-            src={sertifDummy}
+            src={templateUrl || sertifDummy}
+            width={1200}
+            height={800}
             alt='Overlay'
             priority
-            className='border'
+            className='border select-none'
+            onContextMenu={preventRightClick}
+            onDragStart={preventDragHandler}
+            draggable={false}
           />
-          <Sertificate userName="Dika Arnanda Putra"/>
+          <Sertificate 
+            userName={userName}
+            supervisorName={supervisorName}
+            start_date={start_date}
+            end_date={end_date}
+            department={department}
+            requestInfo={requestInfo}
+            templateUrl={templateUrl}
+            signatureData={signatureData}
+          />
         </div>
       </div>
 
