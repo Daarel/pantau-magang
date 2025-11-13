@@ -44,24 +44,23 @@ export default async function SupervisorDashboard() {
     redirect("/");
   }
 
-  // hitung total interns untuk supervisor ini
+  // total interns (semua, aktif + nonaktif)
   const { count: internsCount } = await supabase
     .from("users")
     .select("*", { count: "exact", head: true })
     .eq("role", "intern")
-    .eq("supervisor_id", data.id)
-    .eq("status", "aktif");
+    .eq("supervisor_id", data.id);
 
   totalInterns = internsCount ?? 0;
 
-  // ambil tanggal hari ini (lokal)
+  // ambil tanggal hari ini
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   const today = `${year}-${month}-${day}`;
 
-  // hitung yang hadir hari ini
+  // hadir hari ini
   const { count: presentCount, error } = await supabase
     .from("attendance")
     .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
@@ -72,7 +71,7 @@ export default async function SupervisorDashboard() {
   if (error) console.error("Error fetching presentToday:", error);
   presentToday = presentCount ?? 0;
 
-  // hitung yang cuti/izin/sakit yang belum disetujui
+  // izin/sakit pending
   const { count: pendingCount, error: pendingError } = await supabase
     .from("attendance")
     .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
@@ -83,7 +82,7 @@ export default async function SupervisorDashboard() {
     console.error("Error fetching pendingLeaves:", pendingError);
   pendingLeaves = pendingCount ?? 0;
 
-  // ambil semua kehadiran intern supervisor ini
+  // ambil data kehadiran
   const { data: attendanceData, error: attendanceError } = await supabase
     .from("attendance")
     .select("user_id, date, status, users!inner(supervisor_id)")
@@ -93,43 +92,39 @@ export default async function SupervisorDashboard() {
     console.error("Error fetching attendance data:", attendanceError);
   }
 
-  if (attendanceData && attendanceData.length > 0) {
-    // === Perhitungan akurat per intern ===
-    const { data: internsData, error: internsError } = await supabase
-      .from("users")
-      .select("id")
-      .eq("role", "intern")
-      .eq("supervisor_id", data.id)
-      .eq("status", "aktif");
+  // hitung avg attendance HANYA untuk intern aktif
+  const { data: activeInterns, error: internsError } = await supabase
+    .from("users")
+    .select("id")
+    .eq("role", "intern")
+    .eq("supervisor_id", data.id)
+    .eq("status", "aktif");
 
-    if (internsError)
-      console.error("Error fetching interns data:", internsError);
+  if (internsError)
+    console.error("Error fetching active interns data:", internsError);
 
+  if (attendanceData && attendanceData.length > 0 && activeInterns) {
     let totalRate = 0;
 
-    if (internsData && internsData.length > 0) {
-      for (const intern of internsData) {
-        const internAttendance = attendanceData.filter(
-          (att: any) => att.user_id === intern.id
-        );
+    for (const intern of activeInterns) {
+      const internAttendance = attendanceData.filter(
+        (att: any) => att.user_id === intern.id
+      );
 
-        const totalDays = internAttendance.length;
-        const presentDays = internAttendance.filter(
-          (att: any) => att.status === "hadir"
-        ).length;
+      const totalDays = internAttendance.length;
+      const presentDays = internAttendance.filter(
+        (att: any) => att.status === "hadir"
+      ).length;
 
-        if (totalDays > 0) {
-          totalRate += presentDays / totalDays;
-        }
+      if (totalDays > 0) {
+        totalRate += presentDays / totalDays;
       }
-
-      avgAttendance =
-        internsData.length > 0 ? (totalRate / internsData.length) * 100 : 0;
-
-      avgAttendance = parseFloat(avgAttendance.toFixed(2));
-    } else {
-      avgAttendance = 0;
     }
+
+    avgAttendance =
+      activeInterns.length > 0 ? (totalRate / activeInterns.length) * 100 : 0;
+
+    avgAttendance = parseFloat(avgAttendance.toFixed(2));
 
     // === Weekly Attendance (Mon-Fri only) ===
     function countWorkdays(start: Date, end: Date) {
@@ -145,7 +140,7 @@ export default async function SupervisorDashboard() {
 
     const todayDate = new Date(today);
     const mondayDate = new Date(todayDate);
-    mondayDate.setDate(todayDate.getDate() - todayDate.getDay() + 1); // Senin minggu ini
+    mondayDate.setDate(todayDate.getDate() - todayDate.getDay() + 1);
 
     const workdaysCount = countWorkdays(mondayDate, todayDate);
 
@@ -160,7 +155,7 @@ export default async function SupervisorDashboard() {
       );
     }).length;
 
-    const totalOpportunity = totalInterns * workdaysCount;
+    const totalOpportunity = (activeInterns?.length ?? 0) * workdaysCount;
 
     weeklyAttendance =
       totalOpportunity > 0 ? (weeklyPresent / totalOpportunity) * 100 : 0;
@@ -168,7 +163,7 @@ export default async function SupervisorDashboard() {
     weeklyAttendance = parseFloat(weeklyAttendance.toFixed(2));
   }
 
-  // hitung izin hari ini
+  // izin hari ini
   const { count: izinTodayCount, error: izinError } = await supabase
     .from("attendance")
     .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
@@ -180,7 +175,7 @@ export default async function SupervisorDashboard() {
   if (izinError) console.error("Error fetching izinToday:", izinError);
   izinCount = izinTodayCount ?? 0;
 
-  // hitung sakit hari ini
+  // sakit hari ini
   const { count: sakitTodayCount, error: sakitError } = await supabase
     .from("attendance")
     .select("id, users!inner(supervisor_id)", { count: "exact", head: true })
@@ -192,7 +187,7 @@ export default async function SupervisorDashboard() {
   if (sakitError) console.error("Error fetching sakitToday:", sakitError);
   sakitCount = sakitTodayCount ?? 0;
 
-  // hitung alfa hari ini
+  // alfa hari ini (cuma yg masih aktif)
   const { data: alfaData, error: alfaError } = await supabase
     .from("attendance")
     .select("id, users!inner(supervisor_id, status, intern_end_date)")
@@ -203,7 +198,6 @@ export default async function SupervisorDashboard() {
   if (alfaError) {
     console.error("Error fetching alfaToday:", alfaError);
   } else {
-    // filter intern yang masih aktif atau belum melewati tanggal magang
     const activeAlfa = alfaData?.filter((att: any) => {
       const u = att.users;
       if (!u) return false;
@@ -211,7 +205,6 @@ export default async function SupervisorDashboard() {
       const todayDate = new Date(today);
       return u.status === "aktif" && (!endDate || todayDate <= endDate);
     });
-
     alfaCount = activeAlfa?.length ?? 0;
   }
 
@@ -299,7 +292,7 @@ export default async function SupervisorDashboard() {
         {statCards.map((card, i) => (
           <Card key={i}>
             {card.Icon === GoPeople ? (
-              <Link href="/supervisor/internprofile" prefetch={false}>
+              <Link href="/supervisor/histori-interns" prefetch={false}>
                 <CardContent
                   className={`flex justify-center items-center gap-0 p-3 max-lg:p-0 max-lg:flex-col max-lg:gap-1 pr-8 cursor-pointer 
                 hover:scale-[1.02] 

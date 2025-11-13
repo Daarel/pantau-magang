@@ -479,7 +479,7 @@ const AksiCell: React.FC<{ row: any }> = ({ row }) => {
         isActivated
           ? "bg-green-500 text-black cursor-not-allowed"
           : hasFile
-          ? "bg-green-200 text-gray-700 hover:bg-green-300"
+          ? "bg-yellow-200 text-gray-700 hover:bg-yellow-300"
           : "bg-gray-200 text-gray-500 cursor-not-allowed"
       }`}
     >
@@ -559,7 +559,7 @@ export const historyColumns: ColumnDef<History>[] = [
   },
   {
     id: "aksi",
-    header: "",
+    header: "Sertifikat",
     cell: ({ row }) => <AksiCell row={row} />,
   },
   {

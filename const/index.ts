@@ -138,11 +138,6 @@ const supervisorMenu: MenuByRole[] = [
   { title: "Attendance", path: "/supervisor/attendance", Icon: AiOutlineClockCircle },
   { title: "Inbox", path: "/supervisor/inbox", Icon: FaRegFileAlt },
   { title: "Signature", path: "/supervisor/signature", Icon: AiOutlineSignature },
-  {
-    title: "Histori Interns",
-    path: "/supervisor/histori-interns",
-    Icon: HiDocumentChartBar,
-  },
 ];
 
 // untuk menu sidebar admin
