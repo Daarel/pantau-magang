@@ -23,15 +23,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/data-table-column-visibility";
+import { DataTablePagination } from "@/components/DataTablePagination";
 
 // Props
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pageSize?: number; // Prop pageSize
   enableFilter?: boolean; // Prop filter
   enableColumnVisibility?: boolean; // Prop visibility
   // enablePagination?: boolean // Prop pagination
@@ -40,7 +39,6 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  pageSize = 5, // Default 5 data per halaman
   enableFilter = true, // Default true
   enableColumnVisibility = false, // Default false
 }: // enablePagination = true,
@@ -52,12 +50,6 @@ DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
-  // Tambahkan state pagination
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: pageSize,
-  });
-
   const table = useReactTable({
     data,
     columns,
@@ -68,12 +60,10 @@ DataTableProps<TData, TValue>) {
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination, // handler untuk pagination
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      pagination,
     },
   });
 
@@ -139,9 +129,9 @@ DataTableProps<TData, TValue>) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center lowercase'
+                  className='h-24 text-center'
                 >
-                  Data tidak ditemukan.
+                  Belum ada data presensi yang tercatat.
                 </TableCell>
               </TableRow>
             )}
@@ -150,43 +140,7 @@ DataTableProps<TData, TValue>) {
       </div>
 
       {/* Pagination */}
-      <div className='flex items-center justify-center space-x-2 pt-4'>
-        {/* Tombol Previous */}
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          &lt;
-        </Button>
-
-        {/* Angka Pagination */}
-        {Array.from({ length: table.getPageCount() }, (_, i) => (
-          <Button
-            key={i}
-            variant={
-              table.getState().pagination.pageIndex === i
-                ? "default"
-                : "outline"
-            }
-            size='sm'
-            onClick={() => table.setPageIndex(i)}
-          >
-            {i + 1}
-          </Button>
-        ))}
-
-        {/* Tombol Next */}
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          &gt;
-        </Button>
-      </div>
+      <DataTablePagination table={table} />
     </div>
   );
 }

@@ -15,7 +15,6 @@ export function InternAttendanceTable({ data }: InternAttendanceTableProps) {
         data={data}
         enableFilter={true}
         // enableColumnVisibility={false}
-        // pageSize={5}
       />
     </div>
   );
