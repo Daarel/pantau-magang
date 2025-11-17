@@ -31,6 +31,7 @@ import { DataTablePagination } from "@/components/DataTablePagination";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pageSize?: number;
   enableFilter?: boolean; // Prop filter
   enableColumnVisibility?: boolean; // Prop visibility
   // enablePagination?: boolean // Prop pagination
@@ -40,6 +41,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   enableFilter = true, // Default true
+  pageSize = 5,
   enableColumnVisibility = false, // Default false
 }: // enablePagination = true,
 DataTableProps<TData, TValue>) {
@@ -49,6 +51,11 @@ DataTableProps<TData, TValue>) {
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: pageSize,
+  });
 
   const table = useReactTable({
     data,
@@ -60,12 +67,24 @@ DataTableProps<TData, TValue>) {
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
+      pagination,
+    },
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: pageSize,
+      },
     },
   });
+
+  // React.useEffect(() => {
+  //   table.setPageSize(pageSize);
+  // }, [pageSize, table]);
 
   return (
     <div>
