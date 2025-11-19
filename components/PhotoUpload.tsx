@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { PhotoUploadProps } from '@/types/attendance';
 import { compressImage, processImage } from '@/lib/utils';
 
-export function PhotoUpload({ onPhotoChange, maxSize = 2 }: PhotoUploadProps) {
+export function PhotoUpload({ onPhotoChange, maxSize = 0.5 }: PhotoUploadProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);

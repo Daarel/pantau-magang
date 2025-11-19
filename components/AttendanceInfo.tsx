@@ -49,7 +49,7 @@ export const AttendanceInfo: React.FC<PresensiInfoProps> = ({ status }) => {
   const info = getStatusInfo(status)
 
   return (
-    <Card className="flex w-full rounded-md">
+    <Card className="w-full rounded-md">
       <CardContent className="flex flex-col items-center justify-center gap-4 p-6">
         {info.icon}
         <p className={info.color + " px-3 py-1 text-lg md:text-2xl text-center font-bold"}>
