@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/data-table-column-visibility";
+import { DataTablePagination } from "../DataTablePagination";
 
 // Props
 interface DataTableProps<TData, TValue> {
@@ -197,56 +198,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* 📄 Pagination */}
-      <div className="flex items-center justify-center space-x-2 pt-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          &lt;
-        </Button>
-
-        {start > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex(0)}
-          >
-            1...
-          </Button>
-        )}
-
-        {visiblePages.map((i) => (
-          <Button
-            key={i}
-            variant={currentPage === i ? "default" : "outline"}
-            size="sm"
-            onClick={() => table.setPageIndex(i)}
-          >
-            {i + 1}
-          </Button>
-        ))}
-
-        {end < totalPages && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex(totalPages - 1)}
-          >
-            ...{totalPages}
-          </Button>
-        )}
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          &gt;
-        </Button>
-      </div>
+        <DataTablePagination table={table} />
     </div>
   );
 }
