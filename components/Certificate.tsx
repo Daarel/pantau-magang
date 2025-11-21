@@ -111,7 +111,7 @@ export default function Certificate({ userName, supervisorName, start_date, end_
         };
 
         signatureImg.onerror = () => {
-          console.warn("Gagal load tanda tangan dari URL:", signatureData);
+          // console.warn("Gagal load tanda tangan dari URL:", signatureData);
           const link = document.createElement("a");
           link.download = `Certificate-${capitalize(NamaPeserta)}.png`;
           link.href = canvas.toDataURL("image/png");

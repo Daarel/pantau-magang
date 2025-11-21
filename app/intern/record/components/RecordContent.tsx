@@ -49,10 +49,13 @@ export default function RecordContent({ userId, supervisorId, supervisorName, us
   }, [uploadStatus])
 
   useEffect(() => {
-    if (templateUrl) {
+    if (templateUrl && templateUrl.startsWith("https")) {
       setCurrentTemplate(templateUrl);
+    } else {
+      setCurrentTemplate(null);
     }
   }, [templateUrl]);
+  // console.log("TEMPLATE RESULT:", templateUrl);
 
   const uploadRequestFile = async(file: File) => {
     const supabase = createClient();
@@ -66,7 +69,7 @@ export default function RecordContent({ userId, supervisorId, supervisorName, us
       .upload(fileName, file);
   
     if (error) {
-      console.error("Error uploading file:", error);
+      // console.error("Error uploading file:", error);
       throw error;
     }
   
@@ -94,30 +97,30 @@ export default function RecordContent({ userId, supervisorId, supervisorName, us
       .select()
       
       if (error) {
-        console.error("Error inserting certificate request:", error);
+        // console.error("Error inserting certificate request:", error);
         throw error;
       }
   
-      console.log("Certificate request inserted successfully:", data);
+      // console.log("Certificate request inserted successfully:", data);
       return data;
   
     } catch (error) {
-      console.error("Unexpected error in insertCertificateRequests:", error);
+      // console.error("Unexpected error in insertCertificateRequests:", error);
       throw error;
     }
   }
 
   const handleFileChange = (file: File | null) => {
-    console.log("File received:", file);
+    // console.log("File received:", file);
     setFileHasilKerja(file);
     // Jika ingin membuat URL untuk preview, bisa ditambahkan di sini
     if (file) {
-      console.log("File name:", file.name);
-      console.log("File size:", file.size);
+      // console.log("File name:", file.name);
+      // console.log("File size:", file.size);
       const url = URL.createObjectURL(file);
       setFileUrl(url);
     } else {
-      console.log("File removed");
+      // console.log("File removed");
       setFileUrl(null);
     }
   };
@@ -136,7 +139,7 @@ export default function RecordContent({ userId, supervisorId, supervisorName, us
       await insertCertificateRequests(uploadedFileUrl);
       
       setUploadStatus('success');
-      console.log("Upload dan insert berhasil!");
+      // console.log("Upload dan insert berhasil!");
       
       // Reset form setelah sukses
       setFileHasilKerja(null);
@@ -147,7 +150,7 @@ export default function RecordContent({ userId, supervisorId, supervisorName, us
       }, 2000);
 
     } catch (error) {
-      console.error("Error during upload:", error);
+      // console.error("Error during upload:", error);
       setUploadStatus('error');
 
     } finally {
@@ -210,30 +213,55 @@ export default function RecordContent({ userId, supervisorId, supervisorName, us
             Upload
           </Button>
         </div>
-        {/* Preview Sertificate */}
-        <div className="w-full md:w-1/2">
-          <Image
-            src={templateUrl || sertifDummy}
-            width={1200}
-            height={800}
-            alt='Overlay'
-            priority
-            className='border select-none'
-            onContextMenu={preventRightClick}
-            onDragStart={preventDragHandler}
-            draggable={false}
-          />
-          <Sertificate 
-            userName={userName}
-            supervisorName={supervisorName}
-            start_date={start_date}
-            end_date={end_date}
-            department={department}
-            requestInfo={requestInfo}
-            templateUrl={templateUrl}
-            signatureData={signatureData}
-          />
-        </div>
+        
+          {/* Preview Sertificate */}
+          {templateUrl? (
+            <div className="w-full md:w-1/2">
+              <Image
+                key={templateUrl}
+                src={templateUrl || ""}
+                width={1200}
+                height={800}
+                alt='Overlay'
+                className='border select-none'
+                onContextMenu={preventRightClick}
+                onDragStart={preventDragHandler}
+                draggable={false}
+                onError={() => setCurrentTemplate(null)}
+                unoptimized
+              />
+              <Sertificate 
+                userName={userName}
+                supervisorName={supervisorName}
+                start_date={start_date}
+                end_date={end_date}
+                department={department}
+                requestInfo={requestInfo}
+                templateUrl={templateUrl}
+                signatureData={signatureData}
+              />
+            </div>
+          ) : (
+            <div className="w-full md:w-1/2">
+              <div className="flex h-40 border items-center justify-center bg-gray-100 text-gray-500 text-lg font-medium"
+                onContextMenu={preventRightClick}
+                onDragStart={preventDragHandler}
+                draggable={false}
+              >
+                Sertifikat belum tersedia
+              </div>
+              <Sertificate 
+                userName={userName}
+                supervisorName={supervisorName}
+                start_date={start_date}
+                end_date={end_date}
+                department={department}
+                requestInfo={false}
+                templateUrl={templateUrl}
+                signatureData={signatureData}
+              />
+            </div>
+          )}
       </div>
 
       {/* Syarat & Ketentuan */}

@@ -64,41 +64,57 @@ async function getCertificateTemplate() {
   try {
     const { data: fileList, error: listError } = await supabase.storage
       .from("certificate-template")
-      .list();
+      .list("", {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: "created_at", order: "desc" }
+      });
 
     if (listError) {
-      console.error("Error listing files:", listError);
+      // console.error("Error listing bucket:", listError);
       return null;
     }
 
-    // Jika tidak ada file, return null
     if (!fileList || fileList.length === 0) {
-      console.log("Tidak ada template yang ditemukan di bucket");
+      // console.log("Bucket certificate-template kosong.");
       return null;
     }
 
-    // Urutkan file berdasarkan created_at (descending) untuk mendapatkan yang terbaru
-    const sortedFiles = fileList.sort((a, b) => {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
+    // Sorting file berdasarkan created_at
+    // const sortedFiles = fileList.sort((a, b) => {
+    //   return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    // });
 
-    const latestFile = sortedFiles[0];
+    const latestFile = fileList[0];
     // console.log("File terbaru:", latestFile.name, "dibuat pada:", latestFile.created_at);
+    if (!latestFile?.name) {
+      // console.log("File terbaru tidak ditemukan");
+      return null;
+    }
+
+    const { data: fileDownload, error: downloadError } = await supabase.storage
+      .from("certificate-template")
+      .download(latestFile.name);
+
+    if (downloadError || !fileDownload) {
+      // console.log("File tidak ada, return null");
+      return null;
+    }
 
     // Buat signed URL untuk file terbaru
     const { data, error } = await supabase.storage
       .from("certificate-template")
-      .createSignedUrl(latestFile.name, 60 * 60); // URL berlaku 1 jam
+      .createSignedUrl(latestFile.name, 3600); // 1 jam
 
     if (error) {
-      console.error("Error creating signed URL:", error);
+      // console.error("Error creating signed URL:", error);
       return null;
     }
 
-    return data.signedUrl;
+    return data?.signedUrl ?? null;
 
   } catch (error) {
-    console.error("Error in getCertificateTemplate:", error);
+    // console.error("Error in getCertificateTemplate:", error);
     return null;
   }
 }
@@ -108,6 +124,7 @@ async function getSupervisorSignature(userId: string) {
   const { data: signatureData, error } = await supabase
     .from("signatures")
     .select("signature_url")
+    // .eq("supervisor_id", userId)
     .eq("supervisor_id", userId)
     .eq("is_active", true)
     .order("created_at", { ascending: false })
@@ -115,7 +132,7 @@ async function getSupervisorSignature(userId: string) {
     .single();
 
   if (error) {
-    console.error("Error fetching supervisor signature:", error);
+    // console.error("Error fetching supervisor signature:", error);
     return null;
   }
 
@@ -130,9 +147,10 @@ export default async function InternRecord() {
   }
 
   const userData = await getUserData(user.id);
+  // console.log(userData)
   const templateUrl = await getCertificateTemplate();
   const requestInfo = await getRequestInfo(userData?.id);
-  const signatureData = await getSupervisorSignature(userData?.supervisor_id)
+  const signatureData = await getSupervisorSignature(userData.supervisor_id);
   const supName = await getSupervisorData(userData?.supervisor_id)
   
   // console.log("data supName:", requestInfo)
