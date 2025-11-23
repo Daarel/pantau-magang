@@ -90,7 +90,7 @@ export default async function AdminDashboard() {
       title: "Supervisors",
       value: stats.supervisors,
       contentColor: "text-indigo-600",
-    },
+    }, 
     {
       Icon: FaBuilding,
       title: "Gedung Terdaftar",
