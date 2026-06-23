@@ -64,21 +64,3 @@ Menggunakan arsitektur tanpa *server backend* khusus, mengandalkan Supabase seba
 * **Database & Auth:** Supabase (PostgreSQL, Authentication)
 * **Real-time:** Supabase Realtime Subscriptions
 * **Storage:** Supabase Storage (untuk foto presensi & tanda tangan)
-
----
-
-## 🚀 Cara Menjalankan Projek (Local Development)
-
-### 1. Prasyarat
-Pastikan Anda telah menginstal:
-* Node.js
-* Git
-
-### 2. Instalasi & Konfigurasi Lingkungan
-
-1. **Setup Environment Variables (.env)**
-   Anda perlu membuat dan mengisi file `.env.local` di *root* folder. Anda dapat menggunakan file `.env.example` (jika tersedia) sebagai referensi. Nilai yang umum dibutuhkan adalah *keys* dari Supabase.
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
