@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎓 Pantau Magang
+# PantauMagang
 
 **Sistem Monitoring Magang Modern & Terintegrasi**
 
